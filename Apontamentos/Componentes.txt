@@ -1,0 +1,14 @@
+C1 - Team A - Gestão de Utilizadores
+C2 - Team B - Gestão de Atividades
+C3 - Team B - Gestão de Coordenadores
+C4 - Team A - Gestão de Notificações
+C5 - Team A - Gestão de Inscrições
+C6 - Team B - Gestão de configuração do Dia Aberto
+C7 - Team A - Gestão de Colaboradores
+
+
+Notas sobre o template/pagina:
+Almoços podem ser divididos entre campus
+Trocar coluna Vagas e Espaço na inscrição a atividades
+Administrador não cria transporte para escola, adiciona transporte com numero de pessoas e local de partida
+Um autocarro pode ter varios horarios
