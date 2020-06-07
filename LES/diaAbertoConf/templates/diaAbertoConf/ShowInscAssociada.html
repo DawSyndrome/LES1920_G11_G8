@@ -1,0 +1,94 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class = "row mx-4 my-4">
+			<div class="col-xs-3 col-sm-3 col-md-3">
+				<p class="text-muted">Dados do Transporte</p>
+				<hr>
+                <p>Transporte: {{ dados_rota.transporteid}}</p>
+                <p>Capacidade: {{ dados_rota.transporteid.capacidade}}</p>
+                <p>Lugares Ocupados: {{lugaresOcupados}}</p>
+                <hr>
+                <p class="text-muted">Dados da Rota</p>
+                <p>Origem: {{ dados_rota.origem}}</p>
+                <p>Destino: {{ dados_rota.destino}}</p>
+                <p>Data: {{ dados_rota.data}}</p>
+                <p>Horario: {{ dados_rota.horarioid}}</p>	
+            </div>
+			<div class="col-xs-8 col-sm-8 col-md-8">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:allTransportes' %}">Transportes</a></li>
+						<li class="breadcrumb-item active">Grupos Associadas</li>
+					</ol>
+				</nav>
+
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'diaAbertoConf:createInscAssociadas' id=dados_rota.id%}">+ Associar Grupo</a>
+
+    	    	<table class="table">
+                    <thead>
+                        <tr>
+						    <th scope="col">Grupo</th>
+                            <th scope="col">Escola</th>
+                            <th scope="col">Passageiros</th>
+                            <th scope="col" colspan="2"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+						{% for rotaInsc in dados_rotaInsc %}
+							<tbody>
+                        		<tr>
+									<td>{{ rotaInsc.inscricaoid.id }}</td>
+                                    <td>{{ rotaInsc.inscricaoid.escolaid }}</td>
+                                    <td>{{ rotaInsc.num_passageiros}}</td>
+									<td><a class="btn btn-outline-success far fa-edit"  href="{% url 'diaAbertoConf:updateInscAssociadas' id=dados_rota.id idRota_Insc=rotaInsc.id %}"></a></td>
+                                    <td><a class="btn btn-outline-danger fas fa-trash-alt delete" href="" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:deleteInscAssociadas' id=dados_rota.id idRota_Insc=rotaInsc.id %}"></a></td>
+                                		<div class="modal fade" id="Modal">
+                                    		<div class="modal-dialog">
+                                    			<div class="modal-content">
+
+                                    		    	<!-- Modal Header -->
+                                    		    	<div class="modal-header">
+                                    		    	  <h4 class="modal-title">Aviso</h4>
+                                    		    	  <button type="button" class="close" data-dismiss="modal">×</button>
+                                    		    	</div>
+
+                                    		    	<!-- Modal body -->
+                                    		    	<div class="modal-body">
+                                    		    	  Tem a certeza que pretende remover?
+                                    		    	</div>
+
+                                    		    	<!-- Modal footer -->
+                                    		    	<div class="modal-footer">
+                                    		    	    <form id="deleteModal" action="" method="post">
+                                    		    	        {% csrf_token %}
+                                    		    	  		<button type="submit" class="btn btn-success" >Sim</button>
+                                    		    	  		<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                    		  			</form>
+                                    		    	</div>        
+                                    		  	</div>
+                                    		</div>
+                                  		</div>
+                                </tr>
+							</tbody>
+						{% endfor %}
+                    </tbody>
+                </table>
+
+			</div>
+        </div>
+	{% endblock %}
+
+    {% block js %}
+		<script type='text/javascript'>
+
+			$(function () {
+                $('.delete').click(function (){
+                    var data_var = $(this).data('id');
+                    $("#deleteModal").attr("action", data_var);
+                })
+            });
+
+		</script>
+	{% endblock %}

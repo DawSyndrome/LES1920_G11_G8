@@ -1,0 +1,210 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+    {% block content %}
+        <div class="mt-3 mx-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-white">
+                    <li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'atividades:allAtividades' %}">Atividades</a></li>
+                    <li class="breadcrumb-item active">Detalhes da Atividade</li>
+                </ol>
+            </nav>
+            <div class = "row">
+                <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Detalhes da Atividade</h4>
+                </div>
+                <div class = "col-sm-4 offset-sm-4">
+            </div>
+            </div>
+            <hr class="mx-5">
+            <div class = "row">
+                <div class = "col-sm-6 offset-sm-3">
+                    <form>
+                        <div class="form-group row">
+                            <div class="col-sm-4 col-form-label">
+                                <label for="nome">Nome</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input id="nome" type="text" name="nome" class="form-control" value = "{{ atividade.nome }}" readonly>
+                            </div>
+                        </div>
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  <label for="nome">Tipo de atividade</label>
+              </div>
+                <div class="col-sm-8">
+                    <input id="tipo_atividade" type="text" name="tipo_atividade" class="form-control" value = "{{ atividade.tipo_atividade }}"readonly>
+                </div>
+              </div>
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  <label for="descricao">Descrição</label>
+              </div>
+                <div class="col-sm-8">
+                  <textarea rows="5" cols="3"  id="descricao" type="text" name="descricao" class="form-control" readonly>{{atividade.descricao}}</textarea>
+                </div>
+              </div> 
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  <label for="public_alvo">Público alvo</label>
+              </div>
+                <div class="col-sm-8">
+                    <input id="public_alvo" type="text" name="public_alvo" class="form-control" value ="{{atividade.public_alvo}}" min="1" readonly>
+                </div>
+              </div>
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  <label for="limite_de_participantes">Limite de participantes</label>
+              </div>
+                <div class="col-sm-8">
+                    <input id="limite_de_participantes" type="number" name="limite_de_participantes" class="form-control" value ="{{atividade.limite_de_participantes}}" min="1" readonly>
+                </div>
+              </div>
+              <!-- <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  <label for="validada">Validada</label>
+              </div>
+                <div class="col-sm-8">
+                    <input id="validada" type="text" name="validada" class="form-control" value ="{{atividade.validada}}" min="1" required>
+                </div>
+              </div>
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  <label for="editavel">Editável</label>
+              </div>
+                <div class="col-sm-8">
+                    <input id="editavel" type="text" name="editavel" class="form-control" value ="{{atividade.editavel}}" min="1" required>
+                </div>
+              </div> -->
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  <label for="duracao">Duração</label>
+              </div>
+                <div class="col-sm-8">
+                    <input id="duracao" type="number" name="duracao" class="form-control" value ="{{atividade.duracao}}" min="10" readonly>
+                </div>
+              </div>
+              <!-- <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  <label for="unidadeorganicaid">Unidade Orgânica</label>
+              </div>
+                <div class="col-sm-8">
+                  <input name="unidadeorganicaid" id = "unidadeorganicaid" class = "form-control" value="{{atividade.unidadeorganicaid.nome}}" readonly>
+                </div>
+              </div> -->
+              <!-- <div class="form-group row">
+            <div class="col-sm-4 col-form-label">
+                <label for="localid">Local</label>
+            </div>
+                <div class="col-sm-8">
+                    {% for local in allLocais %}
+                        {% if local.id == atividade.localid.id %}
+                    <input name="localid" id = "localid" class = "form-control" value="{{local}}" readonly>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                            </div>
+                        </div> -->
+              {% for form in listTematica %}
+              <div class = "tematica-form-comp">
+                <div class="form-group row">
+                  <div class="col-sm-4 col-form-label">
+                    Temática
+                  </div>
+                  <div class="col-sm-8">
+                    <input class="form-control" value ="{{form}}" readonly>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+              <hr>
+              {% for form in listMaterial %}
+              <div class = "material-form-comp">
+                <div class="form-group row">
+                  <div class="col-sm-2 col-form-label">
+                    Material
+                  </div>
+                  <div class="col-sm-4">
+                    <input class="form-control" value ="{{form.0}}" readonly>
+                  </div>
+                  <div class="col-sm-2 col-form-label">
+                    Quantidade
+                  </div>
+                  <div class="col-sm-4">
+                    <input class="form-control" value ="{{form.1}}" readonly>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+              <hr>
+            <div class="form-group row">
+            </div>
+        </div>
+                        <div class="modal fade" id="myModal">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Aviso</h4>
+                                          <button type="button" class="close" data-dismiss="modal">×</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                          Tem a certeza que pretende aceitar a atividade?
+                                        </div>
+                                        
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                          <a href="{% url 'atividades:validAtividade' id=atividade.id %}" class="btn btn-success">Sim</a>
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                        </div>        
+                                      </div>
+                                    </div>
+                                  </div>
+
+                          <div class="modal fade" id="myModal2">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Aviso</h4>
+                                          <button type="button" class="close" data-dismiss="modal">×</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                          Tem a certeza que pretende recusar a atividade?
+                                        </div>
+                                        
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                          <a href="{% url 'atividades:recuseAtividade' id=atividade.id %}" class="btn btn-success">Sim</a>
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                        </div>        
+                                      </div>
+                                    </div>
+                                  </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    {% endblock %}
+
+    {% block js %}
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script type="text/javascript">
+            $('.validate').click(function (){
+                var data_var = $(this).data('id');
+                $("#validateModal").attr("action", data_var);
+                console.log($(this).data('id'));
+            })
+     </script>
+     {% endblock %}

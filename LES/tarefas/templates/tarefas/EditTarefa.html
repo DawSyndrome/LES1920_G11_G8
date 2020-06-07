@@ -1,0 +1,146 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class="mt-3 mx-2 mb-5 pb-5">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'tarefas:showTarefas' %}">Tarefas</a></li>
+					<li class="breadcrumb-item active">Editar Tarefa</li>
+				</ol>
+			</nav>
+    	    <div class = "row">
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Editar Tarefa</h4>
+    		    </div>
+            </div>
+    	    <hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6  offset-sm-3">
+					<form action = "{% url 'tarefas:updateTarefa' id=tarefa.id%}" method="post">
+						{% csrf_token %}
+						<div class="form-group row">
+    						<label class="form-check-label col-sm-3"> {{formTarefa.nome.label}} </label>
+    						<div class="col-sm-8">
+                                {{formTarefa.nome}}
+    						</div>
+  						</div>
+  						<div class="form-group row">
+    						<label class="form-check-label col-sm-3"> {{formTarefa.descricao.label}} </label>
+    						<div class="col-sm-8">
+                                {{formTarefa.descricao}}
+    						</div>
+  						</div>
+                        <hr>
+                        {% if tarefa.tipoTarefa == 'Atividade' %}
+							<div class="TarefaAtividade">
+								<div class="form-group row">
+                        		    <label class="form-check-label col-sm-3"> {{formTarefaAtividade.atividade.label}} </label>
+    								<div class="col-sm-8">
+                        		        {{formTarefaAtividade.atividade}}
+    								</div>
+  								</div>
+								<div class="form-group row">
+                        		    <label class="form-check-label col-sm-3"> {{formTarefaAtividade.sessaoAtividade.label}} </label>
+    								<div class="col-sm-8">
+                        		        {{formTarefaAtividade.sessaoAtividade}}
+    								</div>
+  								</div>
+							</div>
+                        {% elif tarefa.tipoTarefa == 'Transporte' %}
+							<div class="TarefaTransporte">
+								<div class="form-group row">
+                        		    <label class="form-check-label col-sm-3"> {{formTarefaTransporte.dia.label}} </label>
+    								<div class="col-sm-8">
+                        		        <input id="dia" type="date" name="dia" class="form-control date-Set" min="{{diaAberto.data_inicio}}" max="{{diaAberto.data_fim}}" value={{formTarefaTransporte.dia.value |date:"Y-m-d"}}>
+    								</div>
+  								</div>
+								<div class="form-group row">
+                        		    <label class="form-check-label col-sm-3"> {{formTarefaTransporte.sessaoAtividade_origem.label}} </label>
+    								<div class="col-sm-8">
+                        		        {{formTarefaTransporte.sessaoAtividade_origem}}
+    								</div>
+  								</div>
+								<div class="form-group row">
+                        		    <label class="form-check-label col-sm-3"> {{formTarefaTransporte.origem.label}} </label>
+    								<div class="col-sm-8">
+										<input type="text" name="origem" class="form-control" id="id_origem" value={{formTarefaTransporte.origem.value}}>    							
+									</div>
+  								</div>
+								<div class="form-group row">
+                        		    <label class="form-check-label col-sm-3"> {{formTarefaTransporte.sessaoAtividade_destino.label}} </label>
+    								<div class="col-sm-8">
+                        		        {{formTarefaTransporte.sessaoAtividade_destino}}
+    								</div>
+  								</div>
+								<div class="form-group row">
+                        		    <label class="form-check-label col-sm-3"> {{formTarefaTransporte.destino.label}} </label>
+    								<div class="col-sm-8">
+										<input type="text" name="destino" class="form-control" id="id_destino" value={{formTarefaTransporte.destino.value}}>    							
+									</div>
+  								</div>
+								<div class="form-group row">
+                        		    <label class="form-check-label col-sm-3"> {{formTarefaTransporte.horario.label}} </label>
+    								<div class="col-sm-8">
+						    	  		<input id="horario" type="time" name="horario" class="form-control" value={{formTarefaTransporte.horario.value|time:"H:i"}}>
+    								</div>
+  								</div>
+								{{formSetTarefaGrupos.management_form}}
+								{% for grupo in formSetTarefaGrupos %}
+								<div class="tarefaGrupo-form-comp">
+									<hr>
+									<div class="form-group row">
+                        			    <label class="form-check-label col-sm-3"> {{grupo.inscricao.label}} </label>
+    									<div class="col-sm-8">
+                        			        {{grupo.inscricao}}
+    									</div>
+  									</div>
+									<div class="form-group row">
+										<div class="col-sm-10">
+											<button class="remove-form-row btn btn-outline-danger mr-3">Remover Grupo</button>
+											<button class="add-form-row btn btn-outline-success">Adicionar Grupo</button>
+										</div>								
+									</div>
+								</div>
+								{% endfor %}
+							</div>
+                        {% endif %}
+						<hr>
+						<div class="form-group row">
+							<div class="col-sm-2">
+								<a type="button" class="btn btn-secondary" href="{% url 'tarefas:showTarefas' %}">Cancelar</a>
+							</div>
+							<div class="col-sm-2">
+								<a class="btn btn-primary" href="" data-toggle="modal" data-target="#Modal">Guardar</a>
+							</div>
+							<div class="modal" id="Modal">
+								<div class="modal-dialog">
+									<div class="modal-content">
+									    <!-- Modal Header -->
+											<div class="modal-header">
+												<h4 class="modal-title">Aviso</h4>
+												<button type="button" class="close" data-dismiss="modal">×</button>
+											</div>
+											<!-- Modal body -->
+											<div class="modal-body">
+												<p>Tem a certeza que pretende guardar as alteracoes?</p>
+                                                <p>A tarefa passara ao estado de 'Nao Atribuida'</p>
+											</div>
+											<!-- Modal footer -->
+											<div class="modal-footer">
+												<button type="submit" class="btn btn-success" >Sim</button>
+												<button type="button" class="btn btn-danger" data-dismiss="modal">Nao</button>
+											</div>
+                                    </div>   
+                                </div>     
+							</div>
+						</div>
+					</form>
+    		    </div>
+    	    </div>
+    	</div>
+	{% endblock %}
+	{% block js %}
+	{% load static %}
+			<script src={% static "tarefas/AdicionarTarefa.js" %}></script>
+	{% endblock %}

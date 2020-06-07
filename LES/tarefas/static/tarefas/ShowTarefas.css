@@ -1,0 +1,21 @@
+table { 
+    border-collapse: collapse !important;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+
+.tableBorderH:hover{
+    border-bottom: solid gray;
+}
+
+.tableBorder{
+    border-bottom: solid gray !important;
+}
+
+td{
+    border-top: none !important;
+}
+
+
+

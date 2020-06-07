@@ -1,0 +1,183 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class="mt-3 mx-2">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'atividades:allLocais' %}">Locais</a></li>
+					<li class="breadcrumb-item active">Editar Local</li>
+				</ol>
+			</nav>
+    	    <div class = "row">
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Editar Local</h4>
+    		    </div>
+    		    <div class = "col-sm-4 offset-sm-4">
+            </div>
+            </div>
+			<hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 offset-sm-3">
+					<form enctype="multipart/form-data" action = "{% url 'atividades:updateLocal' id=local.id %}" method="post">
+						{% csrf_token %}
+ 						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label for="campusid">Campus</label>
+							</div>
+    						<div class="col-sm-8">
+                  <select name="campusid" id = "campusid" class = "form-control">
+                  {% for campus in allCampus %}
+                  {% if campus.id == local.campusid.id %}
+                  <option selected="selected" value="{{campus.id}}">{{campus.nome}}</option>
+                  {% else %}
+                  <option value="{{campus.id}}">{{campus.nome}}</option>
+                  {% endif %}
+                  {% endfor %}
+                  </select>
+                </div>
+  						</div>
+  						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label for="nome">Interior</label>
+							</div>
+    						<div class="form-check col-sm-7">
+                                {% if local.indoor %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;<input class="show-indoor form-check-input" type="radio" value="True" id="indoor" name="indoor" checked>
+                                <label class="form-check-label" for="Sim">Sim</label>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input class="hide-indoor form-check-input" type="radio" value="False" id="indoor" name="indoor">
+                                <label class="form-check-label" for="Nao">Não</label>
+                                {% else %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;<input class="show-indoor form-check-input" type="radio" value="True" id="indoor" name="indoor">
+                                <label class="form-check-label" for="Sim">Sim</label>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input class="hide-indoor form-check-input" type="radio" value="False" id="indoor" name="indoor" checked>
+                                <label class="form-check-label" for="Nao">Não</label>
+                                {% endif %}
+                            </div>
+  						</div>
+  						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label for="descricao">Descrição</label>
+							</div>
+    						<div class="col-sm-8">
+                  <textarea rows="5" cols="3"  id="descricao" type="text" name="descricao" class="form-control" required>{{local.descricao}}</textarea>
+                </div>
+  						</div>
+            {% if local.indoor %}
+              <div class="hideable form-group row">
+                            <label for="edificio" class="col-sm-4 col-form-label">Edifício</label>
+                            <div class="col-sm-8">
+                                <select name="edicifioid" id = "edicifioid" class = "form-control">
+                                    {% for edificio in allEdificios %}
+                                    {% if edificio.id == local.edicifioid.id %}
+                                    <option selected="selected" value="{{edificio.id}}">{{edificio.nome_edificio}}</option>
+                                    {% else %}
+                                    <option value="{{edificio.id}}">{{edificio.nome_edificio}}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hideable form-group row">
+                            <label for="andar" class="col-sm-4 col-form-label">Andar</label>
+                            <div class="col-sm-8">
+                                <input id="andar" type="number" name="andar" class="form-control" value="{{local.andar}}" required>
+                            </div>
+                        </div>
+                        <div class="hideable form-group row">
+                            <label for="andar" class="col-sm-4 col-form-label">Sala</label>
+                            <div class="col-sm-8">
+                                <input id="sala" type="text" name="sala" class="form-control" value="{{local.sala}}" required>
+                            </div>
+                        </div>
+                        <div class="hideable form-group row">
+                            <label for="mapa_sala" class="col-sm-4 col-form-label">Mapa</label>
+                            <div class="col-sm-8">
+                                <input id="mapa_sala" type="file" name="mapa_sala" value="{{local.mapa_sala}}">
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="hideable form-group row" style="display:none">
+                            <label for="edificio" class="col-sm-4 col-form-label">Edifício</label>
+                            <div class="col-sm-8">
+                                <select name="edicifioid" id = "edicifioid" class = "form-control">
+                                    {% for edificio in allEdificios %}
+                                    {% if edificio.id == local.edicifioid.id %}
+                                    <option selected="selected" value="{{edificio.id}}">{{edificio.nome_edificio}}</option>
+                                    {% else %}
+                                    <option value="{{edificio.id}}">{{edificio.nome_edificio}}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hideable form-group row" style="display:none">
+                            <label for="andar" class="col-sm-4 col-form-label">Andar</label>
+                            <div class="col-sm-8">
+                                <input id="andar" type="number" name="andar" class="form-control" value="{{local.andar}}">
+                            </div>
+                        </div>
+                        <div class="hideable form-group row" style="display:none">
+                            <label for="andar" class="col-sm-4 col-form-label">Sala</label>
+                            <div class="col-sm-8">
+                                <input id="sala" type="text" name="sala" class="form-control" value="{{local.sala}}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="mapa_sala" class="col-sm-4 col-form-label">Mapa</label>
+                            <div class="col-sm-8">
+                                <input id="mapa_sala" type="file" name="mapa_sala" value="{{local.mapa_sala}}">
+                            </div>
+                        </div>
+                        {% endif %}
+						<div class="form-group row">
+							<div class="col-sm-2">
+								<a type="button" class="btn btn-secondary" href="{% url 'atividades:allLocais' %}">Cancelar</a>
+							</div>
+							<div class="col-sm-2">
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Alterar</button>
+							</div>
+						</div>
+						<div class="modal fade" id="myModal">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Aviso</h4>
+                                          <button type="button" class="close" data-dismiss="modal">×</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                          Tem a certeza que pretende guardar as alterações?
+                                        </div>
+                                        
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                          <button type="submit" class="btn btn-success">Sim</button>
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                        </div>        
+                                      </div>
+                                    </div>
+                                  </div>
+					</form>
+    		    </div>
+    	    </div>
+    	</div>
+
+	{% endblock %}
+  {% block js %}
+  
+  <script type="text/javascript">
+        $(document).on('click', '.show-indoor', function(){
+            $('.hideable').show();
+        });
+        $(document).on('click', '.hide-indoor', function(){
+            $('.hideable').hide();
+        });
+    </script>
+
+    {% endblock %}

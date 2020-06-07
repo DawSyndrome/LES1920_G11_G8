@@ -1,0 +1,40 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class="mt-3 mx-2 mb-5 pb-5">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'atividades:allSessoes' %}">Horários Sessões</a></li>
+					<li class="breadcrumb-item active">Adicionar Horário Sessão</li>
+				</ol>
+			</nav>
+    	    <div class = "row">
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Adicionar Horário Sessão</h4>
+    		    </div>
+            </div>
+    	    <hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6  offset-sm-3">
+					<form action = "{% url 'atividades:addSessao' %}" method="post">
+						{% csrf_token %}
+  						<div class="form-group row mb-4 mt-5">
+    						<label for="hora_de_inicio" class="col-sm-4 col-form-label">Hora de Inicio</label>
+    						<div class="col-sm-8">
+      							<input id="hora_de_inicio" type="time" name="hora_de_inicio" class="form-control" required>
+    						</div>
+  						</div>
+						<div class="form-group row mt-5">
+							<div class="col-sm-2">
+								<a type="button" class="btn btn-secondary" href="{% url 'atividades:allSessoes' %}">Cancelar</a>
+							</div>
+							<div class="col-sm-2">
+								<button type="submit" class="btn btn-primary">Guardar</button>
+							</div>
+						</div>
+					</form>
+    		    </div>
+    	    </div>
+    	</div>
+	{% endblock %}

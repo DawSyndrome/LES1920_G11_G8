@@ -1,0 +1,304 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+    {% block css %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static "atividades/showAtividades.css" %}">
+    {% endblock %}
+
+	{% block content %}
+    	<div class = "row mx-4 my-4">
+			<div class="col-xs-3 col-sm-3 col-md-3">
+				<p class="text-muted">Filtros Atividades</p>
+				<form>
+					<hr>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input type="text" class="form-control" placeholder="DEFINIR">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input type="text" class="form-control" placeholder="DEFINIR">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input type="text" class="form-control" placeholder="DEFINIR">
+						</div>
+					</div>
+					<hr>
+					<div class="form-group row">
+						<label class="text-muted">De:</label>
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-clock"></i></span>
+						  </div>
+						  <input type="time" class="form-control">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="text-muted">Até:</label>
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-clock"></i></span>
+						  </div>
+						  <input type="time" class="form-control">
+						</div>
+					</div>
+					<hr>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-calendar"></i></span>
+						  </div>
+						  <input type="date" class="form-control">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="col-xs-9 col-sm-9 col-md-9">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+						<li class="breadcrumb-item active">Atividades</li>
+					</ol>
+				</nav>
+
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:createAtividade' %}"> + Adicionar Atividade</a>
+
+    	    	<!-- <table class="table table-hover"> -->
+    	    		<table class="table">
+                    <thead>
+                        <tr>
+                        	<th style="width: 8%" scope="col"></th>
+                            <th style="width: 25%" class="tableBorderH"  scope="col">Nome</th>
+                            <th style="width: 25%" class="tableBorderH" scope="col">Tipo de atividade</th>
+                            <!-- <th scope="col">Local</th> -->
+                            <!-- <th scope="col">Utilizador</th> -->
+                            <!-- <th scope="col">Unidade Orgânica</th> -->
+                            <!-- <th scope="col">Validada</th> -->
+                            <!-- <th scope="col">Limite de participantes</th> -->
+                            <!-- <th scope="col">Duração</th> -->
+                            <th style="width: 25%" class="tableBorderH" scope="col">Estado</th>
+                            <th style="width: 8%" scope="col"></th>
+                            <th style="width: 8%" scope="col"></th>
+                            <!-- <th scope="col"></th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+						{% for atividade in page_obj %}
+                        	<!-- <tr class="clickable-row" data-href="{% url 'atividades:showDetailsAtividade' id=atividade.id %}"> -->
+                        		<tr>
+                        		<td><i class="fas fa-chevron-right"></i></td>
+                        	    <td>{{ atividade.nome }}</td>
+                        	    <td>{{ atividade.tipo_atividade }}</td>
+                        	    <!-- <td>{{ atividade.localid.nome }}</td> -->
+                        	    <!-- <td>{{ atividade.validada }}</td> -->
+                        	    <!-- <td>{{ atividade.limite_de_participantes }}</td> -->
+                        	    <!-- <td>{{ atividade.duracao }}</td> -->
+                        	    {% if atividade.validada == 1 %}
+                        	    <td><h5><span class="badge badge-success">Aceite</span></h5></td>
+                        	    {% elif atividade.validada == 0 %}
+                        	    <td><h5><span class="badge badge-danger">Recusada</span></h5></td>
+                        	    {% elif atividade.validada == -1 %}
+                        	    <td><h5><span class="badge badge-warning ">Pendente</span></h5></td>
+                        	    {% endif %}
+                        	    <td><a class="btn btn-outline-success far fa-edit" href="{% url 'atividades:updateAtividade' id=atividade.id %}"></a></td>
+                        	    <td><a href="" class="delete btn btn-outline-danger fas fa-trash-alt" data-toggle="modal" data-target="#Modal" data-id="{% url 'atividades:deleteAtividade' id=atividade.id %}"></a></td>
+
+                                </tr>
+                            </tbody>
+                    <tbody class="hide">
+										<tr>
+											<td colspan="1"></td>
+											<td colspan="2">
+												<div>
+													<p><b>Descrição:</b> {{ atividade.descricao}}</p>
+													
+													<p><b>Local:</b> {{ atividade.localid}}</p>
+													<p><b>Duração:</b> {{ atividade.duracao}}</p>
+                        				    		<p><b>Sessão:</b><p>
+                        							{% for form in listSessao %}
+                        							{% if form.atividadeid.id == atividade.id %} 
+                        				    		<p>&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;{{form.data}}, {{form.sessaoid.hora_de_inicio}}</p>
+                        				    		{% endif %}
+                        				    		{% endfor %}
+											</div>
+											<td colspan="3">
+												<div>
+                                                    <p><b>Colaboradores:</b> {{ atividade.num_colaboradores }}
+													<p><b>Público alvo:</b> {{ atividade.public_alvo}}</p>
+													<p><b>Temática:</b></p>
+                        							{% for form in listTematica %}
+                        							{% if form.atividadeid.id == atividade.id %} 
+                        				    		<p>&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;{{form.tematicaid.nome}}</p>
+                        				    		{% endif %}
+                        				    		{% endfor %}
+                        				    		<p><b>Limite de participantes:</b> {{ atividade.limite_de_participantes}}</p>
+                        				    		<p><b>Material:</b></p>
+                        							{% for form in listMaterial %}
+                        							{% if form.atividadeid.id == atividade.id %} 
+                        				    		<p>&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;{{form.materialid.nome}} x {{form.quantidade}}</p>
+                        				    		{% endif %}
+                        				    		{% endfor %}
+												</div>
+											</td>
+                        				</tr>
+                                        <tr>
+                                            <td></td>
+                                            <td colspan="5">
+                                                {% if atividade.validada == -1 %}
+                                                <p><!-- <a href="" class="btn btn-outline-success validate" data-toggle="modal" data-target="#myModal1" data-id="{% url 'atividades:validAtividade' id=atividade.id %}">Aceitar atividade</a> -->
+                                                <br>
+                                                <a href="{% url 'atividades:atribuirLocal' id=atividade.id %}" class="btn btn-outline-success mr-3">Aceitar atividade</a>
+                                                <a href="" class="recuse btn btn-outline-danger" data-toggle="modal" data-target="#Modalrecusar" data-id="{% url 'atividades:recuseAtividade' id=atividade.id %}">Recusar atividade</a>
+                                                </p>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+
+                        				<!-- <tr>
+                        					{% if atividade.validada == -1 %}
+											<td colspan="4"></td>
+											<td><a href="" class="btn btn-outline-success validate" data-toggle="modal" data-target="#myModal1" data-id="{% url 'atividades:validAtividade' id=atividade.id %}">Aceitar atividade</a></td>
+											<td><a href="{% url 'atividades:recuseAtividade' id=atividade.id %}" class="btn btn-outline-danger">Recusar atividade</a></td>
+											{% endif %}
+										</tr> -->
+							<tbody>
+								{% endfor %}
+                    </tbody>
+                </table>
+
+
+
+				<div class="pagination d-flex justify-content-end">
+				    <span class="step-links">
+				        {% if page_obj.has_previous %}
+				            <a class="btn btn-outline-secondary fas fa-angle-double-left" href="?page=1"></a>
+				            <a class="btn btn-outline-secondary fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}"></a>
+				        {% endif %}
+
+				        <span class="current">
+				            &nbsp{{ page_obj.number }}&nbsp
+				        </span>
+
+				        {% if page_obj.has_next %}
+				            <a class="btn btn-outline-secondary fas fa-angle-double-right" href="?page={{ page_obj.next_page_number }}"></a>
+				            <a class="btn btn-outline-secondary fas fa-angle-right" href="?page={{ page_obj.paginator.num_pages }}"></a>
+				        {% endif %}
+				    </span>
+				</div>
+			</div>
+        </div>
+
+        <div class="modal fade" id="Modal">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Aviso</h4>
+                                          <button type="button" class="close" data-dismiss="modal">×</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                          Tem a certeza que pretende remover?
+                                        </div>
+                                        
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                            <form id="deleteModal" action="" method="post">
+                                                {% csrf_token %}
+                                          <button type="submit" class="btn btn-success" >Sim</button>
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                      </form>
+                                        </div>        
+                                      </div>
+                                    </div>
+                                  </div>
+
+
+                    <div class="modal fade" id="Modalrecusar">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Aviso</h4>
+                                          <button type="button" class="close" data-dismiss="modal">×</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                          Tem a certeza que pretende recusar a atividade?
+                                        </div>
+                                        
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                          <form id="recuseModal" action="" method="post">
+                                                {% csrf_token %}
+                                          <button type="submit" class="btn btn-success" >Sim</button>
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                      </form>
+                                        </div>        
+                                      </div>
+                                    </div>
+                                  </div>
+
+        
+
+	{% endblock %}
+	
+	{% block js %}
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script type="text/javascript">
+            $('.delete').click(function (){
+                var data_var = $(this).data('id');
+                $("#deleteModal").attr("action", data_var);
+            })
+
+        $('.recuse').click(function (){
+                var data_var = $(this).data('id');
+                $("#recuseModal").attr("action", data_var);
+                console.log($(this).data('id'));
+            })
+
+        /*$(".clickable-row").on('click', function(event) {
+        	event.stopPropagation();
+            var target = $(event.target);
+            if(!target.is('a'))
+        		window.location = $(this).data("href");
+    	});*/
+
+    	$(".hide").hide();
+
+			$("table").click(function(event) {
+    			var target = $(event.target);
+				if(!target.is('a')){
+					if ( target.closest('tbody').find('i').hasClass('fas fa-chevron-right') ){
+						target.closest('tbody').next().show();
+        				target.closest('tbody').find('i').removeClass();
+						target.closest('tbody').find('i').addClass('fas fa-chevron-down');	
+
+					}else if( target.closest('tbody').find('i').hasClass('fas fa-chevron-down') ){
+						target.closest('tbody').next().hide();
+        				target.closest('tbody').find('i').removeClass();
+						target.closest('tbody').find('i').addClass('fas fa-chevron-right');	
+						
+					}    				
+				}
+			})
+
+     </script>
+     {% endblock %}

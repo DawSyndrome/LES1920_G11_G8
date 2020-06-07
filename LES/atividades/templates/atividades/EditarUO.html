@@ -1,0 +1,68 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class="mt-3 mx-2">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'atividades:allUnidadeOrganicas' %}">Edifícios</a></li>
+					<li class="breadcrumb-item active">Editar Unidade Orgânica</li>
+				</ol>
+			</nav>
+    	    <div class = "row">
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Unidade Orgânica</h4>
+    		    </div>
+    		    <div class = "col-sm-4 offset-sm-4">
+            </div>
+            </div>
+			<hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 offset-sm-3">
+					<form action = "{% url 'atividades:updateUnidadeOrganica' id=unidadeorganica.id %}" method="post">
+						{% csrf_token %}
+  						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label for="nome">Nome</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="nome" type="text" name="nome" class="form-control" value="{{unidadeorganica.nome}}" required>
+    						</div>
+  						</div>
+						<div class="form-group row">
+							<div class="col-sm-2">
+								<a type="button" class="btn btn-secondary" href="{% url 'atividades:allUnidadeOrganicas' %}">Cancelar</a>
+							</div>
+							<div class="col-sm-2">
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Alterar</button>
+							</div>
+						</div>
+						<div class="modal fade" id="myModal">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Aviso</h4>
+                                          <button type="button" class="close" data-dismiss="modal">×</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                          Tem a certeza que pretende guardar as alterações?
+                                        </div>
+                                        
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                          <button type="submit" class="btn btn-success">Sim</a>
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                        </div>        
+                                      </div>
+                                    </div>
+                                  </div>
+					</form>
+    		    </div>
+    	    </div>
+    	</div>
+
+	{% endblock %}

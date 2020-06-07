@@ -1,0 +1,106 @@
+{% extends "diaAbertoConf/Home.html"%}
+
+	{% block content %}
+		<div class = "row mx-4 my-4">
+			<div class="col-xs-3 col-sm-3 col-md-3">
+				<p class="text-muted">Filtros Horarios Transporte</p>
+				<form>
+					<hr>
+					<div class="form-group row">
+						<label class="text-muted">De:</label>
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-clock"></i></span>
+						  </div>
+						  <input type="time" class="form-control">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="text-muted">Até:</label>
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-clock"></i></span>
+						  </div>
+						  <input type="time" class="form-control">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="col-xs-9 col-sm-9 col-md-9">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:allTransportes'%}">Transportes</a></li>
+						<li class="breadcrumb-item active">Horários Transportes</li>
+					</ol>
+				</nav>
+
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'diaAbertoConf:createHorarioTransporte' %}"> + Adicionar Horário</a>
+
+				{% if allHorarios_Transporte %}
+    		    		<table class="table">
+                    	    <thead>
+                    	        <tr>
+                    	            <th scope="col">Hora partida</th>
+                    	            <th scope="col">Hora chegada</th>
+                    	            <th scope="col"></th>
+                    	            <th scope="col"></th>
+                    	        </tr>
+                    	    </thead>
+                    	    <tbody>
+								{% for horario in allHorarios_Transporte %}
+                    	        	<tr>
+                    	        	    <td>{{ horario.hora_de_partida }}</td>
+                    	        	    <td>{{ horario.hora_de_chegada}}</td>
+                    	        	    <td><a class="btn btn-outline-success far fa-edit" href="{% url 'diaAbertoConf:updateHorarioTransporte' id=horario.id %}"></a></td>
+                    	        	    <td><a class="btn btn-outline-danger fas fa-trash-alt delete" href="" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:deleteHorarioTransporte' id=horario.id %}"></a></td>
+                                		<div class="modal fade" id="Modal">
+                                    		<div class="modal-dialog">
+                                    			<div class="modal-content">
+
+                                    		    	<!-- Modal Header -->
+                                    		    	<div class="modal-header">
+                                    		    	  <h4 class="modal-title">Aviso</h4>
+                                    		    	  <button type="button" class="close" data-dismiss="modal">×</button>
+                                    		    	</div>
+
+                                    		    	<!-- Modal body -->
+                                    		    	<div class="modal-body">
+                                    		    	  Tem a certeza que pretende remover?
+                                    		    	</div>
+
+                                    		    	<!-- Modal footer -->
+                                    		    	<div class="modal-footer">
+                                    		    	    <form id="deleteModal" action="" method="post">
+                                    		    	        {% csrf_token %}
+                                    		    	  		<button type="submit" class="btn btn-success" >Sim</button>
+                                    		    	  		<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                    		  			</form>
+                                    		    	</div>        
+                                    		  	</div>
+                                    		</div>
+                                  		</div>
+                    	        	</tr>
+								{% endfor %}
+                    	    </tbody>
+                    	</table>
+					{% else %}
+						<h2>Dados não se encontram disponiveis</h2>
+					{% endif %}
+			</div>
+    	</div>
+	{% endblock %}
+
+
+	{% block js %}
+		<script type='text/javascript'>
+
+			$(function () {
+                $('.delete').click(function (){
+                    var data_var = $(this).data('id');
+                    $("#deleteModal").attr("action", data_var);
+                })
+            });
+
+		</script>
+	{% endblock %}

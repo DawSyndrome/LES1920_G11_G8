@@ -1,0 +1,126 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class = "row mx-4 my-4">
+			<div class="col-xs-3 col-sm-3 col-md-3">
+				<p class="text-muted">Filtros Edifícios</p>
+				<form method="get">
+					<hr>
+					<div class="form-group row">
+						<div class="col">
+							<div class="float-right">
+						  		<a href="{% url 'atividades:allEdificios' %}">Limpar filtros</a>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend"><button class="btn btn-secondary fas fa-search" type="submit"></button>
+						  </div>
+						  <input {% if nome_edificio %} value="{{nome_edificio}}" {% endif %} name="nome_edificio" id="id_nome_edificio" type="text" class="form-control" placeholder="Pesquisar por nome">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend"><button class="btn btn-secondary fas fa-search" type="submit"></button>
+						  </div>
+						  <input {% if campusid %} value="{{campusid}}" {% endif %} name="campusid" id="id_campusid" type="text" class="form-control" placeholder="Pesquisar por campus">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="col-xs-9 col-sm-9 col-md-9">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+						<li class="breadcrumb-item active">Edifícios</li>
+					</ol>
+				</nav>
+
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:showCreateEdificio' saved='0' %}"> + Adicionar Edifício</a>
+
+    	    	<table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Campus</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Número</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+							<th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+						{% for edificio in page_obj %}
+                        	<tr>
+                        	    <td>{{ edificio.campusid.nome}}</td>
+                        	    <td>{{ edificio.nome_edificio}}</td>
+                                <td>{{ edificio.num_edificio }}</td>
+                        	    <td><a class="btn btn-outline-success far fa-edit" href="{% url 'atividades:showUpdateEdificio' id=edificio.id %}"></a></td>
+                        	    <td><a href="" class="delete btn btn-outline-danger fas fa-trash-alt" data-toggle="modal" data-target="#Modal" data-id="{% url 'atividades:deleteEdificio' id=edificio.id %}"></a></td>
+                        	</tr>
+						{% endfor %}
+                    </tbody>
+                </table>
+
+				<div class="pagination d-flex justify-content-end">
+				    <span class="step-links">
+				        {% if page_obj.has_previous %}
+				            <a class="btn btn-outline-secondary fas fa-angle-double-left" href="?page=1"></a>
+				            <a class="btn btn-outline-secondary fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}"></a>
+				        {% endif %}
+
+				        <span class="current">
+				            &nbsp{{ page_obj.number }}&nbsp
+				        </span>
+
+				        {% if page_obj.has_next %}
+				            <a class="btn btn-outline-secondary fas fa-angle-double-right" href="?page={{ page_obj.next_page_number }}"></a>
+				            <a class="btn btn-outline-secondary fas fa-angle-right" href="?page={{ page_obj.paginator.num_pages }}"></a>
+				        {% endif %}
+				    </span>
+				</div>
+			</div>
+        </div>
+
+        <div class="modal fade" id="Modal">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Aviso</h4>
+                                          <button type="button" class="close" data-dismiss="modal">×</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                          Tem a certeza que pretende remover?
+                                        </div>
+                                        
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                            <form id="deleteModal" action="" method="post">
+                                                {% csrf_token %}
+                                          <button type=submit" class="btn btn-success" >Sim</button>
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                      </form>
+                                        </div>        
+                                      </div>
+                                    </div>
+                                  </div>
+
+	{% endblock %}
+	
+	{% block js %}
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script type="text/javascript">
+        $(function () {
+            $('.delete').click(function (){
+                var data_var = $(this).data('id');
+                $("#deleteModal").attr("action", data_var);
+            })
+        });
+     </script>
+     {% endblock %}

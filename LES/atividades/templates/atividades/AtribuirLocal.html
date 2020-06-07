@@ -1,0 +1,134 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class = "row mx-4 my-4">
+			<div class="col-xs-4 col-sm-4 col-md-4">
+				<p class="text-muted">Dados da atividade</p>
+				<hr>
+                
+                <p>Nome: {{ atividade.nome}}</p>
+                <p>Tipo de atividade: {{ atividade.tipo_atividade }}</p> 
+                <p>Descrição: {{ atividade.descricao}}</p>
+                <p>Público alvo: {{ atividade.public_alvo}}</p>
+                <p>Limite de participantes: {{ atividade.limite_de_participantes }}</p>
+                <p>Colaboradores: {{ atividade.num_colaboradores }}</p>
+                <p>Duração: {{ atividade.duracao }}</p>
+                Temática:
+                {% for form in listTematica %}
+                {% if form.atividadeid.id == atividade.id %}
+                <p>{{ form.tematicaid.nome }}</p>
+                {% endif %}
+                {% endfor %}
+                Material: 
+                {% for form in listMaterial %}
+                {% if form.atividadeid.id == atividade.id %}
+                <p>{{ form.materialid.nome }} x {{ form.quantidade }}</p>
+                {% endif %}
+                {% endfor %}
+                Sessao:
+                {% for form in listSessao %}
+                {% if form.atividadeid.id == atividade.id %}
+                <p>{{ form.data }}, {{ form.sessaoid }}</p>
+                {% endif %}
+                {% endfor %}
+            </div>
+			<div class="col-xs-8 col-sm-8 col-md-8">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'atividades:allAtividades' %}">Atividades</a></li>
+                        <li class="breadcrumb-item active">Atribuir local</li>
+					</ol>
+				</nav>
+
+                <form action = "{% url 'atividades:atribuirLocal' id=atividade.id %}" method="post">
+                	{% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-sm-4 col-form-label">
+                             <label for="campusid">Campus</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <select name="campusid" id="campusid" class = "form-control" required>
+                            {% for campus in allCampus %}
+                                <option value="{{campus.id}}">{{campus.nome}}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hideable form-group row">
+                        <label for="edificio" class="col-sm-4 col-form-label">Edifício</label>
+                        <div class="col-sm-6">
+                            <select name="edicifioid" id = "edicifioid" class = "form-control">
+                            {% for edificio in allEdificios %}
+                                <option value="{{edificio.id}}">{{edificio.nome_edificio}}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hideable form-group row">
+                        <label for="andar" class="col-sm-4 col-form-label">Local</label>
+                        <div class="col-sm-6">
+                            <select name="localid" id = "localid" class = "form-control">
+                            {% for local in allLocais %}
+                                <option value="{{local.id}}">Andar {{local.andar}}, Sala {{local.sala}}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <hr>
+					<div class="form-group row">
+						<div class="col-sm-1 mr-5">
+							<a type="button" class="btn btn-secondary" href="{% url 'atividades:allAtividades'%}">Cancelar</a>
+						</div>
+						<div class="col-sm-1">
+							<button type="submit" class="btn btn-primary">Atribuir</button>
+						</div>
+					</div>
+				</form>
+			</div>
+        </div>
+	{% endblock %}
+
+	{% block js %}
+		<script type='text/javascript'> 
+            $('select[name=campusid]').change(function(){
+                $('select[name=edicifioid]').find('option').each(function(){
+                    $(this).remove();
+                })
+                campusid = $(this).val();
+                console.log(campusid);
+                request_url = '/GestaoAtividades/getEdificio/' + campusid;
+                $.ajax({
+                    url: request_url,
+                    dataType: "json",
+                    success: function(data){
+                        $.each(data, function(index, text){
+                            $('select[name=edicifioid]').append(
+                                $('<option></option>').val(index).html(text)
+                            )
+                        })
+                    },
+                });
+            })
+
+            $('select[name=edicifioid]').change(function(){
+                $('select[name=localid]').find('option').each(function(){
+                    $(this).remove();
+                })
+                campusid = $(this).val();
+                console.log(campusid);
+                request_url = '/GestaoAtividades/getLocal/' + campusid;
+                $.ajax({
+                    url: request_url,
+                    dataType: "json",
+                    success: function(data){
+                        $.each(data, function(index, text){
+                            $('select[name=localid]').append(
+                                $('<option></option>').val(index).html(text)
+                            )
+                        })
+                    },
+                });
+            })
+        </script> 
+	{% endblock %}

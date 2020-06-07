@@ -1,0 +1,243 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block css %}
+		{% load static %}
+		<link rel="stylesheet" href="{% static "tarefas/ShowTarefas.css" %}">
+	{% endblock %}
+
+	{% block content%}
+        <div class = "row mx-4 my-4">
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+				<p class="text-muted">Filtros Tarefa</p>
+				<form>
+					<hr>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input type="text" class="form-control" placeholder="Tarefa">
+						</div>
+					</div>
+                    <div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input type="text" class="form-control" placeholder="Colaborador">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						    <select id="tipoTarefa" name="tipo" class="form-control">
+                                <option value="" disabled selected>Tipo</option>
+                                <option value="Atividade">Atividade</option>
+                                <option value="Transporte">Transporte</option>
+                            </select>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						    <select id="estado" name="estado" class="form-control">
+                                <option value="" disabled selected>Estado</option>
+                                <option value="Atribuida">Atribuida</option>
+                                <option value="NaoAtribuida">Nao Atribuidas</option>
+                            </select>
+						</div>
+					</div>
+				</form>
+			</div>
+            <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+						<li class="breadcrumb-item active">Tarefas</li>
+					</ol>
+				</nav>
+
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'tarefas:createTarefa' %}"> + Adicionar Tarefa</a>
+               	<div class="table-responsive-sm">
+				<table class="table">
+                    <thead>
+                        <tr>
+							<th scope="col" style="width: 8%"></th>
+							{% if order_by == "nome" %}
+                            	<th scope="col" class="Sortable Nome {{direction}} tableBorderH" style="width: 25%"> Tarefa
+								{% if direction == 'asc'%} 
+									<i class="fas fa-caret-up fa-xs"></i>
+								{% elif direction == 'desc' %}
+									<i class="fas fa-caret-down fa-xs"></i>
+								{% endif %}
+								</th>
+							{% else %}
+								<th scope="col" class="Sortable Nome tableBorderH" style="width: 25%"> Tarefa</th>
+							{% endif %}
+							{% if order_by == "tipoTarefa" %}								
+                            	<th scope="col" class="Sortable Tipo {{direction}} tableBorderH" style="width: 25%">Tipo
+								{% if direction == 'asc'%} 
+									<i class="fas fa-caret-up fa-xs"></i>
+								{% elif direction == 'desc' %}
+									<i class="fas fa-caret-down fa-xs"></i>
+								{% endif %}
+								</th>
+							{% else %}
+								<th scope="col" class="Sortable Tipo tableBorderH" style="width: 25%">Tipo</th>
+							{% endif %}
+							{% if order_by == "estado" %}
+								<th scope="col" class="Sortable Estado {{direction}} tableBorderH" style="width: 25%">Tipo
+								{% if direction == 'asc'%} 
+									<i class="fas fa-caret-up fa-xs"></i>
+								{% elif direction == 'desc' %}
+									<i class="fas fa-caret-down fa-xs"></i>
+								{% endif %}
+								</th>
+							{% else %}
+							    <th scope="col" class="Sortable Estado tableBorderH" style="width: 25%">Estado</th>
+							{% endif %}
+                            <th scope="col" style="width: 8%"></th>
+                            <th scope="col" style="width: 8%"></th>
+                        </tr>
+                    </thead>
+					{% for tarefa in page_obj %}
+						<tbody>
+                    		<tr>
+								<td style="width: 8%"><i class="fas fa-chevron-right"></i></td>
+                    		    <td style="width: 25%">{{ tarefa.nome}}</td>
+                    		    <td style="width: 25%">{{ tarefa.tipoTarefa}}</td>
+								{% if tarefa.estado %}
+								<td style="width: 25%"><h5><span class="badge badge-success">Atribuída</span></h5></td>
+								{% else %}
+								<td style="width: 25%"><h5><span class="badge badge-warning">Não Atribuída</span></h5></td>
+								{% endif %}
+                    		    <td style="width: 8%"><a class="btn btn-outline-success far fa-edit" href="{% url 'tarefas:updateTarefa' id=tarefa.id %}" ></a></td>
+                    		    <td style="width: 8%"><button class="btn btn-outline-danger fas fa-trash-alt delete" data-toggle="modal" data-target="#Modal" data-id="{% url 'tarefas:deleteTarefa' id=tarefa.id %}"></button></td>									
+							</tr>
+						</tbody>
+						<tbody class="expand">
+                    	    <tr>
+								<td ></td>                   	        
+								{% if tarefa.tipoTarefa == 'Atividade' %}
+									<td colspan="2">	
+                    	        	    <p><b>Data:</b> {{ tarefa.data|date:"d/m/Y"}}</p>
+                    	        	    <p><b>Descrição:</b> {{tarefa.descricao}}</p>								
+                    	        	</td>
+									<td colspan="3">     
+                    	        	    <p><b>Atividade:</b> {{tarefa.sessao_atividadeid.atividadeid.nome}}</p>
+										<p><b>Local:</b> {{tarefa.sessao_atividadeid.atividadeid.localid}}</p>
+                    	        	    <p><b>Sessão:</b> {{tarefa.sessao_atividadeid.sessaoid.hora_de_inicio|time:"H:i"}}</p>
+									</td>
+								{% elif tarefa.tipoTarefa == 'Transporte' %}
+									<td>	
+                    	        	    <p><b>Data:</b> {{tarefa.data|date:"d/m/Y"}}</p>
+                    	        	    <p><b>Descrição:</b> {{tarefa.descricao}}</p>								
+                    	        	</td>
+									<td>     
+                    	        	    <p><b>Horário:</b> {{tarefa.horario|time:"H:i"}}</p>
+										<p><b>Atividade Origem:</b> {{tarefa.sessao_atividadeid_origem.atividadeid.nome}}</p>
+										<p><b>Origem:</b> {{tarefa.origem}}</p>
+                    	        	    <p><b>Atividade Destino:</b> {{tarefa.sessao_atividadeid_destino.atividadeid.nome}}</p>
+										<p><b>Destino:</b> {{tarefa.destino}}</p>
+									</td>
+									<td colspan="3">
+										<b>Grupos:</b>
+											{% for  key, tarefaGrupos in allTarefaGrupos.items %}
+												{% if key == tarefa.id %}
+													{% for grupo in tarefaGrupos%}
+														<p>{{grupo.inscricaoid}}</p>
+													{% endfor%}
+												{% endif %}
+											{% endfor %}			
+									</td>
+								{% endif %}
+                    	    </tr>
+							{% if not tarefa.estado %}
+							<tr>
+								<td></td>
+								<td colspan="5">
+                    	            <a type="button" class="btn btn-outline-success mb-2" href="{% url 'tarefas:atribuirTarefa' id=tarefa.id %}">Atribuir Colaborador</a><td>
+								</td>
+							</tr>
+							{% else %}
+							<tr>
+								<td></td>
+								<td colspan="5">
+									
+									<p><b>Colaborador Associado: </b>
+										{% for  key, tarefaColab in allTarefaColaboradores.items %}
+											{% if key == tarefa.id %}
+												{% for colab in tarefaColab%}
+													{{colab.utilizadorid.nome}}, {{colab.utilizadorid.email}}
+												{% endfor%}
+											{% endif %}
+										{% endfor %}			
+									</p>
+								</td>
+							</tr>
+							{% endif %}
+                    	</tbody>
+					{% endfor %}
+                </table>
+				</div>
+                <div class="pagination d-flex justify-content-end">
+				    <span class="step-links">
+				        {% if page_obj.has_previous %}
+							{% if order_by and direction %}
+				            	<a class="btn btn-outline-secondary  fas fa-angle-double-left " href="?page=1&order_by={{ order_by }}&direction={{ direction }}"></a>
+				            	<a class="btn btn-outline-secondary  fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}&order_by={{ order_by }}&direction={{ direction }}"></a>
+				        	{% else %}
+								<a class="btn btn-outline-secondary  fas fa-angle-double-left " href="?page=1"></a>
+				            	<a class="btn btn-outline-secondary  fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}"></a>
+							{% endif %}
+						{% endif %}
+
+				        <span class="current">{{ page_obj.number }}</span>
+
+				        {% if page_obj.has_next %}
+							{% if order_by and direction %}
+				            	<a class="btn btn-outline-secondary  fas fa-angle-right" href="?page={{ page_obj.next_page_number }}&order_by={{ order_by }}&direction={{ direction }}"></a>
+				            	<a class="btn btn-outline-secondary  fas fa-angle-double-right" href="?page={{ page_obj.paginator.num_pages }}&order_by={{ order_by }}&direction={{ direction }}"></a>
+				        	{% else %}
+								<a class="btn btn-outline-secondary  fas fa-angle-right" href="?page={{ page_obj.next_page_number }}"></a>
+				            	<a class="btn btn-outline-secondary  fas fa-angle-double-right" href="?page={{ page_obj.paginator.num_pages }}"></a>
+							{% endif %}
+						{% endif %}
+				    </span>
+				</div> 
+            </div>    
+        </div>
+
+		<div class="modal fade" id="Modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title">Aviso</h4>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
+					<!-- Modal body -->
+					<div class="modal-body">
+						Tem a certeza que pretende eliminar este item?
+					</div>
+					<!-- Modal footer -->
+					<div class="modal-footer">
+						<form id="deleteModal" action="" method="post">
+							{% csrf_token %}
+						<button type="submit" class="btn btn-success" >Sim</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Nao</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endblock %}
+
+    {% block js %}
+		{% load static %}
+		<script src={% static "tarefas/ShowTarefas.js" %}></script>
+	{% endblock%}

@@ -1,0 +1,289 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class="mt-3 mx-2">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'atividades:allAtividades' %}">Atividades</a></li>
+					<li class="breadcrumb-item active">Editar Atividade</li>
+				</ol>
+			</nav>
+    	    <div class = "row">
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Editar Atividade</h4>
+    		    </div>
+    		    <div class = "col-sm-4 offset-sm-4">
+            </div>
+            </div>
+			<hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 offset-sm-3">
+					<form action = "{% url 'atividades:updateAtividade' id=atividade.id %}" method="post">
+						{% csrf_token %}
+  						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							{{AtividadeForm.nome.label}}
+							</div>
+    						<div class="col-sm-8">
+                  {{AtividadeForm.nome}}
+    						</div>
+  						</div>
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                {{AtividadeForm.tipo_atividade.label}}
+              </div>
+                <div class="col-sm-8">
+                  {{AtividadeForm.tipo_atividade}}                
+                </div>
+              </div>
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                {{AtividadeForm.descricao.label}}
+              </div>
+                <div class="col-sm-8">
+                  {{AtividadeForm.descricao}}
+                </div>
+              </div>
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  {{AtividadeForm.public_alvo.label}}
+              </div>
+                <div class="col-sm-8">
+                  {{AtividadeForm.public_alvo}}
+                </div>
+              </div>
+              <div class="form-group row">
+              <div class="col-sm-4 col-form-label">
+                  {{AtividadeForm.limite_de_participantes.label}}
+              </div>
+                <div class="col-sm-8">
+                    {{AtividadeForm.limite_de_participantes}}
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-4 col-form-label">
+                    {{AtividadeForm.num_colaboradores.label}}
+                </div>
+                <div class="col-sm-8">
+                    {{AtividadeForm.num_colaboradores}}
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-4 col-form-label">
+                    {{AtividadeForm.duracao.label}}
+                </div>
+                <div class="col-sm-8">
+                    {{AtividadeForm.duracao}}
+                </div>
+              </div>
+              <hr>
+              {{ AtividadeTematicaFormset.management_form }}
+              {% for form in AtividadeTematicaFormset %}
+                <div class = "tematica-form-comp">
+                  <div class="form-group row">
+                    <div class="col-sm-4 col-form-label">
+                      {{form.tematicaid.label}}
+                    </div>
+                    <div class="col-sm-8">
+                      {{form.tematicaid}}
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-10">
+                      <button class="btn btn-outline-danger remove-form-row mr-3">Remover temática</button>
+                      <button class="btn btn-outline-success add-form-row">Adicionar temática</button>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              <hr>
+              {{ AtividadeMaterialFormset.management_form }}
+              {% for form in AtividadeMaterialFormset %}       
+                <div class = "material-form-comp">
+                  <div class="form-group row">
+                    <div class="col-sm-2 col-form-label">
+                      {{form.materialid.label}}
+                    </div>
+                    <div class="col-sm-4">
+                      {{form.materialid}}
+                    </div>
+                    <div class="col-sm-2 col-form-label">
+                      {{form.quantidade.label}}
+                    </div>
+                    <div class="col-sm-4">
+                      {{form.quantidade}}
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-10">
+                      <button class="btn btn-outline-danger remove-form-row mr-3">Remover material</button>
+                      <button class="btn btn-outline-success add-form-row">Adicionar material</button>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              <hr>
+              {{ AtividadeSessaoFormset.management_form }}
+              {% for form in AtividadeSessaoFormset %}
+                <div class = "sessao-form-comp">
+                  <div class="form-group row">
+                    <div class="col-sm-2 col-form-label">
+                      {{form.sessaoid.label}}
+                    </div>
+                    <div class="col-sm-4">
+                      {{form.sessaoid}}
+                    </div>
+                    <div class="col-sm-2 col-form-label">
+                      {{form.data.label}}
+                    </div>
+                    <div class="col-sm-4">
+                      <input id="id_formSessao-{{forloop.counter0}}-data" type="date" name="formSessao-{{forloop.counter0}}-data" value="{{form.data.value |date:"Y-m-d"}}" class="form-control date-Set" required min="{{diaAberto.data_inicio}}" max="{{diaAberto.data_fim}}"> 
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-10">
+                      <button class="btn btn-outline-danger remove-form-row mr-3">Remover sessão</button>
+                      <button class="btn btn-outline-success add-form-row">Adicionar sessão</button>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              <hr>
+						<div class="form-group row">
+							<div class="col-sm-2">
+								<a type="button" class="btn btn-secondary" href="{% url 'atividades:allAtividades' %}">Cancelar</a>
+							</div>
+							<div class="col-sm-2">
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Alterar</button>
+							</div>
+						</div>
+						<div class="modal fade" id="myModal">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                      
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                          <h4 class="modal-title">Aviso</h4>
+                                          <button type="button" class="close" data-dismiss="modal">×</button>
+                                        </div>
+                                        
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+                                          Tem a certeza que pretende guardar as alterações?
+                                        </div>
+                                        
+                                        <!-- Modal footer -->
+                                        <div class="modal-footer">
+                                          <button type="submit" class="btn btn-success">Sim</a>
+                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                        </div>        
+                                      </div>
+                                    </div>
+                                  </div>
+					</form>
+    		    </div>
+    	    </div>
+    	</div>
+
+	{% endblock %}
+
+  {% block js %}
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      
+
+        <script type='text/javascript'>
+
+function updateElementIndex(el, prefix, ndx) {
+    var id_regex = new RegExp('(' + prefix + '-\\d+)');
+    var replacement = prefix + '-' + ndx;
+    if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+    if (el.id) el.id = el.id.replace(id_regex, replacement);
+    if (el.name) el.name = el.name.replace(id_regex, replacement);
+}
+
+function cloneMore(selector, prefix) {
+    var newElement = $(selector + ':last').clone(true);
+    var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+    newElement.find('input, select').each(function() {
+
+        var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+        var id = $(this).attr('id').replace('-' + (total-1) + '-', '-' + total + '-');
+
+        $(this).attr({'name': name, 'id': id}).val('');
+
+    });
+    newElement.find('label').each(function() {
+        var forValue = $(this).attr('for');
+        if (forValue) {
+          forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
+          $(this).attr({'for': forValue});
+        }
+    });
+    total++;
+    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+    $(selector + ':last').after(newElement);
+    var conditionRow = $(selector + ':not(:last)');
+    conditionRow.find('.add-form-row').hide();
+    conditionRow.find('.remove-form-row').show();
+    return false;
+}
+
+function deleteForm(prefix, btn, selector) {
+    var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+    if (total > 1){
+        btn.closest(selector).remove();
+        var forms = $(selector);
+        $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+        for (var i=0, formCount=forms.length; i<formCount; i++) {
+            $(forms.get(i)).find('input, select, label').each(function() {
+                updateElementIndex(this, prefix, i);
+            });
+
+            if(i+1 == forms.length){
+                //console.log("hi")
+                $(forms.get(i)).find(".add-form-row").show();
+            }
+        }
+    }
+    return false;
+}
+
+$(document).on('click', '.add-form-row', function(e){
+    e.preventDefault();
+    if($(this).parents().hasClass('tematica-form-comp'))
+    {
+        //console.log($(this).parents('.tematica-form-comp'));
+        cloneMore('.tematica-form-comp', 'formTematica');
+    }
+    else if($(this).parents().hasClass('material-form-comp'))
+    {
+        cloneMore('.material-form-comp', 'formMaterial');
+    }
+    else if($(this).parents().hasClass('sessao-form-comp'))
+    {
+        cloneMore('.sessao-form-comp', 'formSessao');
+    }
+    return false;
+});
+
+$(document).on('click', '.remove-form-row', function(e){
+    e.preventDefault();
+    if($(this).parents().hasClass('tematica-form-comp'))
+    {
+        deleteForm('formTematica', $(this), '.tematica-form-comp');
+    }
+    else if($(this).parents().hasClass('material-form-comp'))
+    {
+        deleteForm('formMaterial', $(this), '.material-form-comp');
+    }
+    else if($(this).parents().hasClass('sessao-form-comp'))
+    {
+        deleteForm('formSessao', $(this), '.sessao-form-comp');
+    }
+    return false;
+});
+</script>
+    
+  {% endblock %}

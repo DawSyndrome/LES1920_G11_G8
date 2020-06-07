@@ -1,0 +1,116 @@
+
+{% extends 'diaAbertoConf/Home.html' %}
+
+
+{% block content %}
+	<div class="container">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 ">
+                    <h2>{{ementa.dia}}</h2>
+                    <hr>
+    		    </div>
+            </div>
+			<div class = "row">
+    		    <div class = "col-sm-6 ">
+					<form action = "{% url 'diaAbertoConf:editEmenta' id=ementa.id %}" method="post">
+						{% csrf_token %}
+  						<div class="form-group row">
+    						<label for="dia" class="col-sm-4 col-form-label">Data</label>
+    						<div class="col-sm-8">
+      							<input id="dia" type="date" name="dia" class="form-control"  value ="{{ ementa.dia }}" required>
+    						</div>
+  						</div>
+  						<div class="form-group row">
+    						<label for="preco_economico" class="col-sm-4 col-form-label">Preco Aluno</label>
+    						<div class="col-sm-8">
+      							{{diaAbertoData.preco_aluno}}
+    						</div>
+  						</div>
+						  <div class="form-group row">
+    						<label for="preco_normal" class="col-sm-4 col-form-label">Preco Professor</label>
+    						<div class="col-sm-8">
+      							{{diaAbertoData.preco_professor}}
+    						</div>
+  						</div>
+						  <button type="submit" class="btn btn-primary">Alterar</button>
+					</form>
+						<hr>		
+						<h2>Pratos</h2>
+						<div class = "col-sm-6 ">
+						{% if pratos %}
+							{% for prato in pratos %}
+								<form action = "{% url 'diaAbertoConf:editPrato' id=prato.id %}" method="post">
+									{% csrf_token %}
+									<input id="id" name="id" type="hidden" value="{{prato.id}}">
+									<input id="ementaid" name="ementaid" type="hidden" value="{{prato.ementaid.id}}">
+										<div class="form-group row">
+											<label  class="col-sm-4 col-form-label">Tipo de Prato</label>
+											<div class="col-sm-8">
+												<select id="tipo" name="tipo" >
+													{% if prato.tipo == 'Sopa' %} 
+														<option value="Sopa" selected>Sopa</option>
+													{% else %}	
+														<option value="Sopa">Sopa</option>
+													{% endif %}
+													{% if prato.tipo == 'Carne' %} 
+														<option value="Carne" selected>Carne</option>
+													{% else %}	
+														<option value="Carne">Carne</option>
+													{% endif %}
+													{% if prato.tipo == 'Peixe' %} 
+														<option value="Peixe" selected>Peixe</option>
+													{% else %}	
+														<option value="Peixe">Peixe</option>
+													{% endif %}
+													{% if prato.tipo == 'Vegetariano' %} 
+														<option value="Vegetariano" selected>Vegetariano</option>
+													{% else %}	
+														<option value="Vegetariano">Vegetariano</option>
+													{% endif %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label  class="col-sm-4 col-form-label">Nome</label>
+											<div class="col-sm-8">
+												<input id="nome" type="text" name="nome" class="form-control" value = "{{prato.nome}}" required>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label  class="col-sm-4 col-form-label">Descricao</label>
+											<div class="col-sm-8">
+												<textarea name="descricao" rows="4" cols="46">{{prato.descricao}}</textarea>
+											</div>
+										</div>
+										<button type="submit" class="btn btn-primary">Alterar</button>
+										<a href="{% url 'diaAbertoConf:deletePrato' id=prato.id %}" role="button" class="btn btn-danger">Eliminar</a>
+								</form>
+							</div>		
+								<hr>
+								<p></p>	
+							{% endfor %}
+						{% else %}
+							<h3>Esta ementa ainda nao tem pratos</h3>	
+								<a href="{% url 'diaAbertoConf:showNewPratos' id=ementa.id %}" role="button" class="btn btn-primary">Adicionar Pratos</a>				
+						{% endif %}
+						<p></p>
+				</div>
+    		    </div>
+    	    </div>
+    	</div>
+{% endblock content%}
+{% block js %}
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+            $(function () {
+                $('.delete').click(function (){
+                    var data_var = $(this).data('id');
+                    $("#deleteModal").attr("action", data_var);
+                })
+            });
+        </script>
+{% endblock js %}

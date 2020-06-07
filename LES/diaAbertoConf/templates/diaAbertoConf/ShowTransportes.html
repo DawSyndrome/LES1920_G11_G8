@@ -1,0 +1,194 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block content %}
+    	<div class = "row mx-4 my-4">
+			<div class="col-xs-3 col-sm-3 col-md-3">
+				<p class="text-muted">Filtros Transporte</p>
+				<form>
+					<hr>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input type="text" class="form-control" placeholder="Transporte">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input type="text" class="form-control" placeholder="Origem">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input type="text" class="form-control" placeholder="Destino">
+						</div>
+					</div>
+					<hr>
+					<div class="form-group row">
+						<label class="text-muted">De:</label>
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-clock"></i></span>
+						  </div>
+						  <input type="time" class="form-control">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="text-muted">Até:</label>
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-clock"></i></span>
+						  </div>
+						  <input type="time" class="form-control">
+						</div>
+					</div>
+					<hr>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-calendar"></i></span>
+						  </div>
+						  <input type="date" class="form-control">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="col-xs-9 col-sm-9 col-md-9">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+						<li class="breadcrumb-item active">Transportes</li>
+					</ol>
+				</nav>
+
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'diaAbertoConf:createTransporte' %}"> + Adicionar Transporte</a>
+				<a type="button" class="btn btn-outline-secondary mr-2 mb-4" href="{% url 'diaAbertoConf:allHorarios' %}"> Horarios Transportes</a>
+
+    	    	<table class="table">
+                    <thead>
+                        <tr>
+						    <th scope="col"></th>
+                            <th scope="col">Transporte</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">Origem</th>
+                            <th scope="col">Destino</th>
+                            <th scope="col">Horário</th>
+                            <th scope="col" colspan="3"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+						{% for transporte in page_obj %}
+							<tbody>
+                        		<tr>
+									<td><i class="fas fa-chevron-right"></i></td>
+									<td colspan="6">{{ transporte.tipo_transporte }}</td>
+									<td><a class="btn btn-outline-success far fa-edit" href="{% url 'diaAbertoConf:updateTransporte' id=transporte.id%}"></a></td>
+									<td><a class="btn btn-outline-danger fas fa-trash-alt" href="{% url 'diaAbertoConf:deleteTransporte' id=transporte.id %}"></a></td>
+                        		   {% comment %}  <td><a href="" class="delete" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:deleteTransporte' id=transporte.id %}">Remover</a></td>
+                                	<div class="modal fade" id="Modal">
+                                    	<div class="modal-dialog">
+                                    		<div class="modal-content">
+	
+                                    	    	<!-- Modal Header -->
+                                    	    	<div class="modal-header">
+                                    	    	  <h4 class="modal-title">Aviso</h4>
+                                    	    	  <button type="button" class="close" data-dismiss="modal">×</button>
+                                    	    	</div>
+	
+                                    	    	<!-- Modal body -->
+                                    	    	<div class="modal-body">
+                                    	    	  Tem a certeza que pretende remover?
+                                    	    	</div>
+	
+                                    	    	<!-- Modal footer -->
+                                    	    	<div class="modal-footer">
+                                    	    	    <form id="deleteModal" action="" method="post">
+                                    	    	        {% csrf_token %}
+                                    	    	  		<button type="submit" class="btn btn-success" >Sim</button>
+                                    	    	  		<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                                    	  			</form>
+                                    	    	</div>        
+                                    	  	</div>
+                                    	</div>
+                                  	</div> {% endcomment %}
+								</tr>
+							</tbody>
+							<tbody class="hide">
+								{% for rota in rotas %}
+									{% if rota.transporteid.id == transporte.id %}
+										<tr>
+											<td colspan="2"></td>
+                        				    <td>{{ rota.data|date:"d/m/Y"}}</td>
+                            			    <td>{{ rota.origem}}</td>
+                        				    <td>{{ rota.destino}}</td>
+                        				    <td>{{ rota.horarioid}}</td>
+											<td colspan="2"></td>
+											<td><a href="{% url 'diaAbertoConf:showInscAssociadas' id=rota.id %}" class="btn btn-outline-primary">Grupos Associadas</a></td>
+										</tr>
+									{% endif %}
+								{% endfor %}
+							<tbody>
+						{% endfor %}
+                    </tbody>
+                </table>
+
+				<div class="pagination d-flex justify-content-end">
+				    <span class="step-links">
+				        {% if page_obj.has_previous %}
+				            <a class="btn btn-outline-secondary  fas fa-angle-double-left " href="?page=1"></a>
+				            <a class="btn btn-outline-secondary  fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}"></a>
+				        {% endif %}
+
+				        <span class="current">
+						&nbsp {{ page_obj.number }} &nbsp
+				        </span>
+
+				        {% if page_obj.has_next %}
+				            <a class="btn btn-outline-secondary  fas fa-angle-right" href="?page={{ page_obj.next_page_number }}"></a>
+				            <a class="btn btn-outline-secondary  fas fa-angle-double-right" href="?page={{ page_obj.paginator.num_pages }}"></a>
+				        {% endif %}
+				    </span>
+				</div> 
+			</div>
+        </div>
+	{% endblock %}
+
+	{% block js %}
+		<script type='text/javascript'>
+
+			$(".hide").hide();
+
+			$("table").click(function(event) {
+    			event.stopPropagation();
+    			var target = $(event.target);
+				if(!target.is('a')){
+					if ( target.closest('tbody').find('i').hasClass('fas fa-chevron-right') ){
+						target.closest('tbody').next().show();
+        				target.closest('tbody').find('i').removeClass();
+						target.closest('tbody').find('i').addClass('fas fa-chevron-down');	
+
+					}else if( target.closest('tbody').find('i').hasClass('fas fa-chevron-down') ){
+						target.closest('tbody').next().hide();
+        				target.closest('tbody').find('i').removeClass();
+						target.closest('tbody').find('i').addClass('fas fa-chevron-right');	
+						
+					}    				
+				}
+			})
+
+			/*$(function () {
+                $('.delete').click(function (){
+                    var data_var = $(this).data('id');
+                    $("#deleteModal").attr("action", data_var);
+                })
+            }); */
+
+		</script>
+	{% endblock %}

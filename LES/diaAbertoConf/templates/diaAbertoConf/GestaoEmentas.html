@@ -1,0 +1,92 @@
+
+{% extends 'diaAbertoConf/Home.html' %}
+
+
+{% block content %}
+<div class="container mb-5 pb-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 ">
+                    <nav aria-label="breadcrumb">
+						<ol class="breadcrumb bg-white">
+							<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+							<li class="breadcrumb-item active">Almocos</li>
+						</ol>
+					</nav>
+                    <hr>
+    		    </div>
+            </div>
+            {% comment %} <div class="container">
+                <a href="{% url 'diaAbertoConf:showNewEmenta'%}" class="btn btn-info btn-lg">
+                    <span class="glyphicon glyphicon-plus"></span> Nova Ementa 
+                </a>
+            </div> {% endcomment %}
+			<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'diaAbertoConf:showNewEmenta' %}"> + Adicionar Ementa</a>
+            <p></p>
+    	    <div class = "row">
+    		    <div class = "col-sm-10 ">
+					{% if allEmentas %}
+    		    		<table class="table">
+                    	    <thead>
+                    	        <tr>
+                    	            <th scope="col">Dia</th>
+                                    <th scope="col"></th>
+                    	            <th scope="col"></th>
+                    	        </tr>
+                    	    </thead>
+                    	    <tbody>
+								{% for ementa in allEmentas %}
+                    	        	<tr>
+                    	        	    <th scope="row">{{ ementa.dia }}</th>
+                    	        	    <td><a class="btn btn-outline-success far fa-edit" href="{% url 'diaAbertoConf:showEditEmenta' id=ementa.id %}"  ></a></td>
+                    	        	   	<td><a class="btn btn-outline-danger fas fa-trash-alt" href="" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:deleteEmenta' id=ementa.id %}"></a></td>
+										<div class="modal" id="Modal">
+											<div class="modal-dialog">
+												<div class="modal-content">
+
+												<!-- Modal Header -->
+												<div class="modal-header">
+													<h4 class="modal-title">Aviso</h4>
+													<button type="button" class="close" data-dismiss="modal">×</button>
+												</div>
+
+												<!-- Modal body -->
+												<div class="modal-body">
+													Tem a certeza que pretende eliminar este item?
+												</div>
+
+												<!-- Modal footer -->
+												<div class="modal-footer">
+													<form id="deleteModal" action="" method="post">
+														{% csrf_token %}
+													<button type="submit" class="btn btn-success" >Sim</button>
+													<button type="button" class="btn btn-danger" data-dismiss="modal">Nao</button>
+												</div>
+
+											</div>
+										</div>
+									</tr>
+								{% endfor %}
+                    	    </tbody>
+                    	</table>
+					{% else %}
+						<h2>Dados não se encontram disponiveis</h2>
+					{% endif %}
+    		    </div>
+    	    </div>
+    	</div>
+{% endblock content%}
+{% block js %}
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+            $(function () {
+                $('.delete').click(function (){
+                    var data_var = $(this).data('id');
+                    $("#deleteModal").attr("action", data_var);
+                })
+            });
+    </script>
+{% endblock js %}
