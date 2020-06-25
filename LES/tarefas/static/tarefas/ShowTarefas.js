@@ -1,21 +1,41 @@
 $('th.Sortable').click(function(){
+
+    var form = $('#formfilters')
+
     if($(this).hasClass('Nome')){
-        if($(this).hasClass('asc'))
-            window.location.href =  "?page=" + $('span.current').html() + "&order_by=nome&direction=desc"
-        else
-            window.location.href =  "?page=" + $('span.current').html() + "&order_by=nome&direction=asc"
+        if($(this).hasClass('asc')){
+            form.find("#id_order_by").val("nome")
+            form.find("#id_direction").val("desc")
+        }else{
+            form.find("#id_order_by").val("nome")
+            form.find("#id_direction").val("asc")    
+        }
     }else if($(this).hasClass('Tipo')){
-        if($(this).hasClass('asc'))
-            window.location.href =  "?page=" + $('span.current').html() + "&order_by=tipoTarefa&direction=desc"
-        else
-            window.location.href =  "?page=" + $('span.current').html() + "&order_by=tipoTarefa&direction=asc"
+        if($(this).hasClass('asc')){
+            form.find("#id_order_by").val("tipoTarefa")
+            form.find("#id_direction").val("desc")
+        }else{
+            form.find("#id_order_by").val("tipoTarefa")
+            form.find("#id_direction").val("asc")
+        }
     }else if($(this).hasClass('Estado')){
-        if($(this).hasClass('asc'))
-            window.location.href =  "?page=" + $('span.current').html() + "&order_by=estado&direction=desc"
-        else
-            window.location.href =  "?page=" + $('span.current').html() + "&order_by=estado&direction=asc"
+        if($(this).hasClass('asc')){
+            form.find("#id_order_by").val("estado")
+            form.find("#id_direction").val("desc")
+        }else{
+            form.find("#id_order_by").val("estado")
+            form.find("#id_direction").val("asc")
+        }
     }
-})  
+    form.submit()
+})
+
+$('button.page').click(function(){
+    var page = $(this).data('page')
+    var form = $('#formfilters')
+    form.find("#id_page").val(page)
+    form.submit()
+})
 
 $(document).ready( function(){
     $('th.Sortable').each(function(){
@@ -27,6 +47,11 @@ $(document).ready( function(){
 $('.delete').click(function (){
     var data_var = $(this).data('id');
     $("#deleteModal").attr("action", data_var);
+})
+
+$('.rmcolab').click(function (){
+    var data_var = $(this).data('id');
+    $("#removeColabModal").attr("action", data_var);
 })
 
 

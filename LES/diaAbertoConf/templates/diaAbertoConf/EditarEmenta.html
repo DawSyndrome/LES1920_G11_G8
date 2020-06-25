@@ -1,0 +1,161 @@
+
+{% extends "diaAbertoConf/Home.html" %}
+
+	{% block css%}
+		{% load static %}
+		<link rel="stylesheet" type="text/css" href="{% static 'diaAbertoConf/Transporte.css' %}">
+	{% endblock%}
+
+	{% block content %}
+    	<div class="mt-3 mx-2 pb-5">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:gestaoEmentas' %}">Almoços</a></li>
+					<li class="breadcrumb-item active">Editar ementa</li>
+				</ol>
+			</nav>
+    	    <div class = "row">
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Editar ementa</h4>
+    		    </div>
+
+            </div>
+			<hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 offset-sm-3">
+					<form action = "{% url 'diaAbertoConf:EditarEmenta' id=ementa.id %}" method="post">
+						{% csrf_token %}
+ 						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+								<label>Dia</label>
+							</div>
+    						<div class="col-sm-8">
+      							<select id="id_dia" name="dia" class="form-control">
+                                    {% for dia in datasDiaAberto%}
+                                    	{% if dia  == ementa.dia %}
+                                        	<option value={{ dia |date:"Y-m-d"}} selected>{{dia|date:"d-m-Y"}}</option>
+                                    	{% else %}
+                                        	<option value={{ dia |date:"Y-m-d"}}>{{dia|date:"d-m-Y"}}</option>
+                                    	{% endif %}
+                                	{% endfor %}   
+                                </select>
+    						</div>
+  						</div>
+						 <hr> 
+						{{pratoformset.management_form}}
+						{% for prato in pratoformset %}
+							<div class="prato-form-comp"> 
+								<div class="form-group row">
+									<div class="col-sm-4 col-form-label">
+										<label>Tipo</label>
+									</div>
+    								<div class="col-sm-8">
+										<select id="id_form-{{ forloop.counter0 }}-tipo" name="form-{{ forloop.counter0 }}-tipo" class="form-control">
+                                            {% if prato.tipo.value == 'Sopa' %} 
+												<option value="Sopa" selected>Sopa</option>
+											{% else %}	
+												<option value="Sopa">Sopa</option>
+											{% endif %}
+											{% if prato.tipo.value == 'Carne' %} 
+												<option value="Carne" selected>Carne</option>
+											{% else %}	
+												<option value="Carne">Carne</option>
+											{% endif %}
+											{% if prato.tipo.value == 'Peixe' %} 
+												<option value="Peixe" selected>Peixe</option>
+											{% else %}	
+												<option value="Peixe">Peixe</option>
+											{% endif %}
+											{% if prato.tipo.value == 'Vegetariano' %} 
+												<option value="Vegetariano" selected>Vegetariano</option>
+											{% else %}	
+												<option value="Vegetariano">Vegetariano</option>
+											{% endif %}
+                                            {% if prato.tipo.value == 'Sobremesa' %} 
+												<option value="Sobremesa" selected>Sobremesa</option>
+											{% else %}	
+												<option value="Sobremesa">Sobremesa</option>
+											{% endif %}
+                                        </select>
+    								</div>
+  								</div>
+								<div class="form-group row">
+									<div class="col-sm-4 col-form-label">
+										<label>Nome</label>
+									</div>
+    								<div class="col-sm-8">
+										<input id="id_form-{{ forloop.counter0 }}-nome" type="text" name="form-{{ forloop.counter0 }}-nome" class="form-control"   value="{{prato.nome.value}}" required>
+    								</div>
+  								</div>
+								<div class="form-group row">
+									<div class="col-sm-4 col-form-label">
+										<label>Descrição</label>
+									</div>
+    								<div class="col-sm-8">
+      									<input id="id_form-{{ forloop.counter0 }}-descricao" type="text" name="form-{{ forloop.counter0 }}-descricao" class="form-control" value="{{prato.descricao.value}}">
+    								</div>
+  								</div>
+								<div class="form-group row mt-5">
+									<div class="col-sm-10">
+										<button class="remove-form-row btn btn-outline-danger mr-3">Remover prato</button>
+										<button class="add-form-row btn btn-outline-success">Adicionar prato</button>
+									</div>								
+								</div>
+								<hr>
+							</div>						
+						{% endfor %}
+						
+						<div class="form-group row mt-5">
+							<div class="col-sm-10">
+								<a type="button" class="btn btn-secondary mr-3" href="{% url 'diaAbertoConf:gestaoEmentas' %}">Cancelar</a>
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:EditarEmenta' id=ementa.id %}">Guardar</button>
+							</div>
+
+							<div class="modal" id="Modal">
+								<div class="modal-dialog">
+									<div class="modal-content">
+
+									<!-- Modal Header -->
+									<div class="modal-header">
+										<h4 class="modal-title">Aviso</h4>
+										<button type="button" class="close" data-dismiss="modal">×</button>
+									</div>
+
+									<!-- Modal body -->
+									<div class="modal-body">
+										Tem a certeza que pretende guardar estas alterações?
+									</div>
+
+									<!-- Modal footer -->
+									<div class="modal-footer">
+										<form id="deleteModal" action="" method="post">
+											{% csrf_token %}
+											<button type="submit" class="btn btn-success" >Sim</button>
+											<button type="button" class="btn btn-danger" data-dismiss="modal">Nao</button>
+									</div>
+
+								</div>
+							</div>
+					</form>
+    		    </div>
+    	    </div>
+    	</div>
+
+	{% endblock %}
+{% block js %}
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    {% load static %}
+	<script src={% static "diaAbertoConf/Ementa.js" %}></script>
+	<script type='text/javascript'>
+		$(window).on('load' ,function() { 
+			$('.prato-form-comp').each(function(){
+				$(this).find('.add-form-row').hide();
+			})
+			$('.prato-form-comp').last().find('.add-form-row').show();
+		})
+
+
+	</script>
+{% endblock js %}

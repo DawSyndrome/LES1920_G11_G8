@@ -1,24 +1,32 @@
-{% extends "diaAbertoConf/Home.html" %}
+{% extends "atividades/ShowAtividades.html" %}
 
 	{% block content %}
-    	<div class="mt-3 mx-2">
+    	<div class="mt-3 mx-2 pb-5">
 			<nav aria-label="breadcrumb">
 				<ol class="breadcrumb bg-white">
 					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
-					<li class="breadcrumb-item"><a href="{% url 'atividades:allEdificios' %}">Edifícios</a></li>
-					<li class="breadcrumb-item active">Editar Departamento</li>
+
+					<li class="breadcrumb-item"><a href="{% url 'atividades:allDepartamentos' %}">Departamento</a></li>
+					<li class="breadcrumb-item active">Editar departamento</li>
 				</ol>
 			</nav>
     	    <div class = "row">
     		    <div class = "col-sm-4 offset-sm-4">
-                    <h4 style="text-align:center;">Editar Departamento</h4>
+                    <h4 style="text-align:center;">Editar departamento</h4>
     		    </div>
     		    <div class = "col-sm-4 offset-sm-4">
-            </div>
+              {% for key, value in form.errors.items %}
+                {% for error in value %}
+                  <div class="alert alert-danger" style="text-align:center;">
+                    {{ error }}
+                  </div>
+                {% endfor %}
+              {% endfor %}
+              </div>
             </div>
 			<hr class="mx-5">
     	    <div class = "row">
-    		    <div class = "col-sm-6 offset-sm-3">
+    		    <div class = "col-sm-6 offset-sm-3 mt-5">
 					<form action = "{% url 'atividades:updateDepartamento' id=departamento.id %}" method="post">
 						{% csrf_token %}
  						<div class="form-group row">
@@ -45,11 +53,9 @@
       							<input id="nome" type="text" name="nome" class="form-control" value = "{{ departamento.nome }}"required>
     						</div>
   						</div>
-						<div class="form-group row">
-							<div class="col-sm-2">
-								<a type="button" class="btn btn-secondary" href="{% url 'atividades:allDepartamentos' %}">Cancelar</a>
-							</div>
-							<div class="col-sm-2">
+						<div class="form-group row mt-5">
+							<div class="col-sm-10">
+								<a type="button" class="btn btn-secondary mr-3" href="{% url 'atividades:allDepartamentos' %}">Cancelar</a>
 								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Alterar</button>
 							</div>
 						</div>

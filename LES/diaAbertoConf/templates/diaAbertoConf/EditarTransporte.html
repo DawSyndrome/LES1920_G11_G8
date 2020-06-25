@@ -1,4 +1,4 @@
-{% extends "diaAbertoConf/Home.html" %}
+{% extends "diaAbertoConf/ShowTransportes.html"%}
 	
 	{% block css%}
 		{% load static %}
@@ -6,22 +6,22 @@
 	{% endblock%}
 	
 	{% block content %}
-    	<div class="mt-3 mx-2">
+    	<div class="mt-3 mx-2 pb-5">
 			<nav aria-label="breadcrumb">
 				<ol class="breadcrumb bg-white">
 					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
 					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:allTransportes' %}">Transportes</a></li>
-					<li class="breadcrumb-item active">Editar Transporte</li>
+					<li class="breadcrumb-item active">Editar transporte</li>
 				</ol>
 			</nav>
     	    <div class = "row">
     		    <div class = "col-sm-4 offset-sm-4">
-                    <h4 style="text-align:center;">Editar Transporte</h4>
+                    <h4 style="text-align:center;">Editar transporte</h4>
     		    </div>
             </div>
 			<hr class="mx-5">
     	    <div class = "row">
-    		    <div class = "col-sm-6 offset-sm-3">
+    		    <div class = "col-sm-6 offset-sm-3 mt-5">
 					<form action = "{% url 'diaAbertoConf:updateTransporte' id=dadosTransporte.id %}" method="post">
 						{% csrf_token %}
  						<div class="form-group row">
@@ -40,10 +40,18 @@
       							{{ transporteform.capacidade }}
     						</div>
   						</div>
-						<hr>
+						
 						{{rotaformset.management_form}}
 						{% for rota in rotaformset %}
-							<div class="rota-form-comp"> 
+							<div class="rota-form-comp">
+								<hr>
+								{% for key, value in rota.errors.items %}
+									{% for error in value %}
+            							<div class="alert alert-danger" style="text-align:center;">
+               								{{ error }}
+            							</div>
+									{% endfor%}
+								{% endfor %} 
 								<div class="form-group row">
 									<div class="col-sm-4 col-form-label">
 										<label>{{ rota.origem.label}}</label>
@@ -65,7 +73,7 @@
 										<label>{{ rota.data.label}}</label>
 									</div>
     								<div class="col-sm-8">
-      									<input id="id_form-{{ forloop.counter0 }}-data" type="date" name="form-{{ forloop.counter0 }}-data" value="{{rota.data.value |date:"Y-m-d"}}" class="form-control date-Set" required min="{{diaAberto.data_inicio}}" max="{{diaAberto.data_fim}}">
+      									{{rota.data}}
     								</div>
   								</div>
 								<div class="form-group row">
@@ -74,7 +82,7 @@
 									</div>
     								<div class="col-sm-8 multiselect">
 										<div class="selectBox">
-											<select class="form-control"><option>Selecione os Horários</option></select>
+											<select class="form-control"><option>Selecione os horários</option></select>
 											<div class="overSelect"></div>
 										</div>
 										<div id="checkboxes" class="checkboxes">
@@ -88,16 +96,35 @@
 										<button class="add-form-row btn btn-outline-success">Adicionar Rota</button>
 									</div>								
 								</div>
-							<hr>
+							
 							</div>
 						{% endfor %}
-						<div class="form-group row">
-							<div class="col-sm-2">
-								<a type="button" class="btn btn-secondary" href="{% url 'diaAbertoConf:allTransportes' %}">Cancelar</a>
+						<hr>
+						<div class="form-group row mt-5">
+							<div class="col-sm-10">
+								<a type="button" class="btn btn-secondary mr-3" href="{% url 'diaAbertoConf:allTransportes' %}">Cancelar</a>
+								<a class="btn btn-primary" href="" data-toggle="modal" data-target="#Modal">Editar</a>
 							</div>
-							<div class="col-sm-2">
-								<button type="submit" class="btn btn-primary">Editar</button>
-							</div>
+						</div>
+						<div class="modal" id="Modal">
+							<div class="modal-dialog">
+								<div class="modal-content">
+								    <!-- Modal Header -->
+										<div class="modal-header">
+											<h4 class="modal-title">Aviso</h4>
+											<button type="button" class="close" data-dismiss="modal">×</button>
+										</div>
+										<!-- Modal body -->
+										<div class="modal-body">
+											<p>Tem a certeza que pretende guardar as alteracões?</p>
+										</div>
+										<!-- Modal footer -->
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-success" >Sim</button>
+											<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+										</div>
+                                </div>   
+                            </div>     
 						</div>
 					</form>
     		    </div>
@@ -109,7 +136,7 @@
 	{% load static %}
 		<script src={% static "diaAbertoConf/Transporte.js" %}></script>
     	<script type='text/javascript'>
-			$(window).on('load' ,function exampleFunction() { 
+			$(window).on('load' ,function() { 
 				$('.rota-form-comp').each(function(){
 					$(this).find('.add-form-row').hide();
 				})

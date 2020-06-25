@@ -26,14 +26,8 @@ urlpatterns = [
 
     path('GestaoEmentas/',views.gestaoEmentas, name='gestaoEmentas'),
     path('GestaoEmentas/delete/<int:id>',views.deleteEmenta, name='deleteEmenta'),
-    path('GestaoEmentas/create',views.showNewEmenta, name='showNewEmenta'),
-    path('GestaoEmentas/add', views.newEmenta, name='newEmenta'),
-    path('GestaoEmentas/create/createPratos/<int:id>',views.showNewPratos, name='showNewPratos'),
-    path('GestaoEmentas/create/addPratos/<int:id>', views.newPrato, name='newPratos'),
-    path('GestaoEmentas/update/<int:id>', views.showEditEmenta, name='showEditEmenta'),
-    path('GestaoEmentas/updates/<int:id>', views.editEmenta, name= 'editEmenta'),
-    path('GestaoEmentas/update/update_Prato/<int:id>', views.editPrato, name= 'editPrato'),
-    path('GestaoEmentas/update/delete_Prato/<int:id>', views.deletePrato, name= 'deletePrato'),
+    path('GestaoEmentas/create',views.createEmenta, name='createEmenta'),
+    path('GestaoEmentas/update/<int:id>', views.EditarEmenta, name='EditarEmenta'),
     
 
 ]   

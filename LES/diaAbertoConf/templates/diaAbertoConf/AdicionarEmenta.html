@@ -1,56 +1,108 @@
 
-{% extends 'diaAbertoConf/Home.html' %}
+{% extends "diaAbertoConf/Home.html" %}
 
+	{% block css%}
+		{% load static %}
+		<link rel="stylesheet" type="text/css" href="{% static 'diaAbertoConf/Transporte.css' %}">
+	{% endblock%}
 
-{% block content %}
-	<div class="container mb-5 pb-5">
-		<p></p>
-			<div class = "row">
-    		    <div class = "col-sm-6 ">
-                    <nav aria-label="breadcrumb">
-						<ol class="breadcrumb bg-white">
-							<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
-							<li class="breadcrumb-item "><a href="{% url 'diaAbertoConf:gestaoEmentas' %}">Almocos</a></li>
-							<li class="breadcrumb-item active">Nova Ementa</li>
-						</ol>
-					</nav>
-    		    </div>
-            </div>
-			<p></p>
+	{% block content %}
+    	<div class="mt-3 mx-2 pb-5">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:gestaoEmentas' %}">Almoços</a></li>
+					<li class="breadcrumb-item active">Adicionar ementa</li>
+				</ol>
+			</nav>
     	    <div class = "row">
-    		    <div class = "col-sm-6 ">
-                    <h2>Nova Ementa</h2>
-                    <hr>
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Adicionar ementa</h4>
     		    </div>
+				<div class = "col-sm-4 offset-sm-4">
+    		    	{% if saved %}
+                    	<div class="alert alert-primary" role="alert" style="text-align:center;">
+                       	 A Ementa foi guardada com sucesso!
+                    	</div>
+                	{% endif %}
+            	</div>
             </div>
-			<div class = "row">
-    		    <div class = "col-sm-6 ">
-					<form action = "{% url 'diaAbertoConf:newEmenta' %}" method="post">
+			<hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 offset-sm-3">
+					<form action = "{% url 'diaAbertoConf:createEmenta' %}" method="post">
 						{% csrf_token %}
-  						<div class="form-group row">
-    						<label for="dia" class="col-sm-4 col-form-label">Data</label>
+ 						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+								<label>Dia</label>
+							</div>
     						<div class="col-sm-8">
-      							<input id="dia" type="date" name="dia" class="form-control" required>
+      							<select id="id_dia" name="dia" class="form-control">
+                                    {% for dia in datasDiaAberto%}
+                                        <option value="{{dia|date:"Y-m-d"}}">{{dia|date:"d-m-Y"}}</option>
+                                	{% endfor %}
+                                </select>
     						</div>
   						</div>
-						<button type="submit" class="btn btn-outline-success mr-2 mb-4">Adicionar Pratos</button>
+						{{pratoformset.management_form}}
+						{% for prato in pratoformset %}
+							<div class="prato-form-comp"> 
+								<hr>
+								<div class="form-group row">
+									<div class="col-sm-4 col-form-label">
+										<label>Tipo</label>
+									</div>
+    								<div class="col-sm-8">
+										<select id="id_form-{{ forloop.counter0 }}-tipo" name="form-{{ forloop.counter0 }}-tipo" class="form-control">
+                                            <option value="Sopa">Sopa</option>
+                                            <option value="Carne">Carne</option>
+                                            <option value="Peixe">Peixe</option>
+                                            <option value="Vegetariano">Vegetariano</option>
+                                            <option value="Sobremesa">Sobremesa</option>
+                                        </select>
+    								</div>
+  								</div>
+								<div class="form-group row">
+									<div class="col-sm-4 col-form-label">
+										<label>Nome</label>
+									</div>
+    								<div class="col-sm-8">
+										<input id="id_form-{{ forloop.counter0 }}-nome" type="text" name="form-{{ forloop.counter0 }}-nome" class="form-control"  required>
+    								</div>
+  								</div>
+								<div class="form-group row">
+									<div class="col-sm-4 col-form-label">
+										<label>Descricão</label>
+									</div>
+    								<div class="col-sm-8">
+										<input id="id_form-{{ forloop.counter0 }}-descricao" type="text" name="form-{{ forloop.counter0 }}-descricao" class="form-control">
+      									<!--<textarea id="id_form-{{ forloop.counter0 }}-descricao" name="form-{{ forloop.counter0 }}-descricao" class="form-control" rows="4"></textarea>-->
+    								</div>
+  								</div>
+								<div class="form-group row">
+									<div class="col-sm-10">
+										<button class="remove-form-row btn btn-outline-danger mr-3">Remover prato</button>
+										<button class="add-form-row btn btn-outline-success">Adicionar prato</button>
+									</div>								
+								</div>
+							</div>
+							<hr>
+						{% endfor %}
+						<div class="form-group row mt-5">
+							<div class="col-sm-10">
+								<a type="button" class="btn btn-secondary mr-3" href="{% url 'diaAbertoConf:gestaoEmentas' %}">Cancelar</a>
+								<button type="submit" class="btn btn-primary" >Guardar</button>
+							</div>
+						</div>
 					</form>
     		    </div>
     	    </div>
     	</div>
-{% endblock content%}
+
+	{% endblock %}
 {% block js %}
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-            $(function () {
-                $('.delete').click(function (){
-                    var data_var = $(this).data('id');
-                    $("#deleteModal").attr("action", data_var);
-                })
-            });
-        </script>
+    {% load static %}
+	<script src={% static "diaAbertoConf/Ementa.js" %}></script>
 {% endblock js %}

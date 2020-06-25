@@ -1,13 +1,19 @@
+import datetime
+
 from django.shortcuts import render , redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.functions import Lower
+from django.contrib.auth.decorators import login_required, permission_required
 
 from diaAbertoConf.models import Transporte, Rota, HorarioTransporte, Ementa, Prato, Rota_Inscricao, DiaAberto
 from atividades.models import Inscricao
-from diaAbertoConf.forms import TransporteForm, RotaFormSet, RotaForm, HorarioTransporteForm, RotaInscForm, RotasInscFormset, EmentaForm, PratoForm, DiaAbertoForm, formset_factory
+from diaAbertoConf.forms import TransporteForm, RotaFormSet, RotaForm, HorarioTransporteForm, RotaInscForm, EmentaForm, PratoForm, DiaAbertoForm, formset_factory, PratoFormset
+
+from diaAbertoConf.filters import RotaFilter, TransporteFilter, HorarioTransporteFilter, InscRotaFilter
 
 # Create your views here.
 def index(request):
@@ -20,6 +26,8 @@ def index(request):
         context ={}
     return render(request, 'diaAbertoConf/Home.html',context)
 
+@login_required()
+@permission_required('diaAbertoConf.add_diaaberto', raise_exception=True)
 def editConfDiaAberto(request):
     try:
         diaAberto_data = DiaAberto.objects.all()[0]
@@ -44,21 +52,73 @@ def editConfDiaAberto(request):
 #--------------------------------------------------------
 
 #show all transporteUniversidade_Horarios
+@login_required()
+@permission_required('diaAbertoConf.view_transporte', raise_exception=True)
 def showTransportes(request):
     allTransportes = Transporte.objects.all()
-    allTransportesUni_Horario = Rota.objects.all()
+    allRotas = Rota.objects.all()
 
-    paginator = Paginator(allTransportes, 5) 
+    #Filtering
+    transportesFiltered = TransporteFilter(request.GET, queryset=allTransportes)
+    rotasFiltered = RotaFilter(request.GET, queryset=allRotas)
+
+    #Ordering Results
+    order_by = request.GET.get('order_by')
+    direction = request.GET.get('direction')
+    if order_by:
+        ordering = Lower(order_by)
+        if direction == 'desc':
+            ordering = '-{}'.format(order_by)
+
+        if order_by == 'tipo_transporte':
+            transportes = transportesFiltered.qs.order_by(ordering)
+            rotas = rotasFiltered.qs
+        else:
+            transportes = transportesFiltered.qs
+            rotas = rotasFiltered.qs.order_by(ordering)
+    else:
+        transportes = transportesFiltered.qs
+        rotas = rotasFiltered.qs
+
+    #Pagination
+    paginator = Paginator(transportes, 5) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    #Gets all the dates of the diaAberto
+    daysDiaAberto = []
+    try:           
+        diaAberto = DiaAberto.objects.all()[0]
+        start_date = diaAberto.data_inicio
+        end_date = diaAberto.data_fim
+        current_date = start_date
+        daysDiaAberto.append(start_date)
+        while current_date <  end_date:
+            current_date += datetime.timedelta(days=1)
+            daysDiaAberto.append(current_date)
+    except IndexError:
+        pass
+
     context = { 'page_obj': page_obj,
-                'rotas': allTransportesUni_Horario,}
+                'rotas': rotas,
+                'order_by': order_by,
+                'direction': direction,
+                'datasDiaAberto': daysDiaAberto,
+                'tipoTransporteSearched': request.GET.get('tipo_transporte'),
+                'origemSearched': request.GET.get('origem'),
+                'destinoSearched': request.GET.get('destino'),
+                'hora_gte_Searched': request.GET.get('hora_gte'),
+                'hora_lte_Searched': request.GET.get('hora_lte'),
+                'dataSearched': request.GET.get('data'),
+            }
+
     return render(request, 'diaAbertoConf/ShowTransportes.html', context)
 
 #Creates new transporte
+@login_required()
+@permission_required('diaAbertoConf.add_transporte', raise_exception=True)
 def createTransporte(request):
-    
+    saved = False
     horarios = HorarioTransporte.objects.all()
 
     if request.method == "GET":
@@ -79,16 +139,21 @@ def createTransporte(request):
                         data = form.cleaned_data['data'],
                     )
                     result.save()
+            saved = True
+            transporteform = TransporteForm()
+            rotaformset = RotaFormSet()
             
-            return redirect('diaAbertoConf:allTransportes')
         
     return render(request, 'diaAbertoConf/AdicionarTransporte.html', {
         'transporteform' : transporteform,
         'rotaformset': rotaformset,
         'horarios': horarios,
+        'saved': saved,
         })
 
 #deletes a transporteUniversidade_Horario
+@login_required()
+@permission_required('diaAbertoConf.delete_transporte', raise_exception=True)
 def deleteTransporte(request, id):
     dados_Transporte = Transporte.objects.get(id = id)
     dados_Transporte.delete()
@@ -109,6 +174,8 @@ def getTotalHorarios(rotaformset):
             result+=1
     return result
 
+@login_required()
+@permission_required('diaAbertoConf.change_transporte', raise_exception=True)
 def updateTransporte(request, id):
     dados_Transporte = Transporte.objects.get(id = id)
     rotas_Transporte = Rota.objects.filter(transporteid = dados_Transporte.id)
@@ -197,23 +264,55 @@ def updateTransporte(request, id):
 #------------------------------------------------------------
 
 #show all Horarios Transporte
+@login_required()
+@permission_required('diaAbertoConf.view_horariotransporte', raise_exception=True)
 def showHorarios_Transporte(request):
     allHorarios_Transporte = HorarioTransporte.objects.all()
-    context = {'allHorarios_Transporte': allHorarios_Transporte,}
+    horariosFiltered = HorarioTransporteFilter(request.GET, queryset=allHorarios_Transporte)
+
+    #Ordering Results
+    order_by = request.GET.get('order_by')
+    direction = request.GET.get('direction')
+    if order_by:
+        ordering = Lower(order_by)
+        if direction == 'desc':
+            ordering = '-{}'.format(order_by)
+
+        horarios = horariosFiltered.qs.order_by(ordering)
+    else:
+        horarios = horariosFiltered.qs
+
+    #Pagination
+    paginator = Paginator(horarios, 5) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = { 'page_obj': page_obj,
+                'hora_de_partidaSearched': request.GET.get('hora_de_partida'),
+                'hora_de_chegadaSearched': request.GET.get('hora_de_chegada'),
+                'order_by': order_by,
+                'direction': direction,
+        }
+
     return render(request, 'diaAbertoConf/ShowHorarioTransportes.html', context)
 
 #Creates new Horario Transporte
+@login_required()
+@permission_required('diaAbertoConf.add_horariotransporte', raise_exception=True)
 def createHorario_Transporte(request):
-
+    saved = False
     form = HorarioTransporteForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
             form.save()
-            return redirect('diaAbertoConf:allHorarios')
-    
-    return render(request, 'diaAbertoConf/AdicionarHorarioTransporte.html', {'form': form})
+            saved = True    
+            form = HorarioTransporteForm()
+            
+    return render(request, 'diaAbertoConf/AdicionarHorarioTransporte.html', {'form': form, 'saved':saved})
 
 #updates the fields of a spcific Horario_Transporte
+@login_required()
+@permission_required('diaAbertoConf.change_horariotransporte', raise_exception=True)
 def updateHorario_Transporte(request, id):
     dados_Horario_Transporte = HorarioTransporte.objects.get(id = id)
     form = HorarioTransporteForm(None)
@@ -229,6 +328,8 @@ def updateHorario_Transporte(request, id):
     return render(request, 'diaAbertoConf/EditarHorarioTransporte.html', context)
 
 #deletes a Horario_Transporte
+@login_required()
+@permission_required('diaAbertoConf.delete_horariotransporte', raise_exception=True)
 def deleteHorario_Transporte(request, id):
     dados_Horario_Transporte = HorarioTransporte.objects.get(id = id)
     dados_Horario_Transporte.delete()
@@ -238,6 +339,8 @@ def deleteHorario_Transporte(request, id):
 #Rotas Inscrições - CRUD
 #---------------------------------------------------------------------------------------
 
+@login_required()
+@permission_required('diaAbertoConf.view_rota_inscricao', raise_exception=True)
 def showInscAssociada(request, id):
     dados_rota = Rota.objects.get(id=id)
     dados_rotaInsc = Rota_Inscricao.objects.filter(rotaid = dados_rota.id)
@@ -246,15 +349,55 @@ def showInscAssociada(request, id):
     for rotaInsc in dados_rotaInsc:
         lugaresOcupados += rotaInsc.num_passageiros
 
+    #Ordering Results
+    order_by = request.GET.get('order_by')
+    direction = request.GET.get('direction')
+    if order_by:
+        ordering = order_by
+        if direction == 'desc':
+            ordering = '-{}'.format(order_by)
+
+        dados_rotaInsc = dados_rotaInsc.order_by(ordering)
+
     context = { 'dados_rota': dados_rota,
                 'dados_rotaInsc': dados_rotaInsc,
-                'lugaresOcupados': lugaresOcupados}
+                'lugaresOcupados': lugaresOcupados,
+                'lugaresDisponiveis': dados_rota.transporteid.capacidade - lugaresOcupados,
+                'order_by': order_by,
+                'direction': direction,
+            }
 
     return render(request, 'diaAbertoConf/ShowInscAssociada.html', context)
 
+@login_required()
+@permission_required('diaAbertoConf.add_rota_inscricao', raise_exception=True)
 def createInscAssociada(request, id):
+    saved = False
     dados_rota = Rota.objects.get(id=id)
     dados_rotaInsc = Rota_Inscricao.objects.filter(rotaid = dados_rota.id)
+    allInsc = Inscricao.objects.filter(dia = dados_rota.data)
+
+    inscFiltered = InscRotaFilter(request.GET, queryset=allInsc)
+
+    numGrupoSearched = request.GET.get("num_grupo")
+    escolaSearched = request.GET.get("nome_escola")
+
+    #Ordering Results
+    order_by = request.GET.get('order_by')
+    direction = request.GET.get('direction')
+    if order_by:
+        ordering = order_by
+        if direction == 'desc':
+            ordering = '-{}'.format(order_by)
+
+        insc = inscFiltered.qs.order_by(ordering)
+    else:
+        insc = inscFiltered.qs
+
+    #Pagination
+    paginator = Paginator(insc, 5) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     error = ""
 
@@ -262,64 +405,78 @@ def createInscAssociada(request, id):
     for rotaInsc in dados_rotaInsc:
         lugaresOcupados += rotaInsc.num_passageiros
 
-    if request.method == "GET":  
-        formset = RotasInscFormset(queryset=Rota_Inscricao.objects.none(), form_kwargs={'choices':[(insc.id, insc) for insc in Inscricao.objects.filter(dia = dados_rota.data)]})
-    elif request.method =="POST":
-        formset = RotasInscFormset(request.POST, form_kwargs={'choices':[(insc.id, insc) for insc in Inscricao.objects.filter(dia = dados_rota.data)]})        
-                
-        if formset.is_valid():
-            num_passageiros = 0
-            for form in formset:
-                num_passageiros += form.cleaned_data['num_passageiros']
+    form = RotaInscForm(request.POST or None)  
 
+    if request.method =="POST":            
+        if form.is_valid():
+            num_passageiros = form.cleaned_data['num_passageiros']
+            
             if num_passageiros + lugaresOcupados > dados_rota.transporteid.capacidade:
                 error = "Lugares insufecientes para o número de passageiros"
             else:
-                for form in formset:
-                    v = form.save(commit=False)
-                    v.rotaid = dados_rota
-                    v.save()
-                return redirect('diaAbertoConf:showInscAssociadas', id=dados_rota.id)
+                v = form.save(commit=False)
+                v.rotaid = dados_rota
+                v.save()
+                saved = True
+                form = RotaInscForm(None) 
+                lugaresOcupados += num_passageiros 
 
     context = { 'dados_rota': dados_rota,
-                'formset':formset,
+                'page_obj': page_obj,
+                'order_by': order_by,
+                'direction': direction,
+                'form':form,
                 'lugaresOcupados': lugaresOcupados,
-                'error':error}
+                'lugaresDisponiveis': dados_rota.transporteid.capacidade - lugaresOcupados,
+                'error':error,
+                'numGrupoSearched': numGrupoSearched,
+                'escolaSearched': escolaSearched,
+                'saved': saved,
+            }
 
     return render(request, 'diaAbertoConf/AdicionarInscAssociada.html', context)
 
+@login_required()
+@permission_required('diaAbertoConf.change_rota_inscricao', raise_exception=True)
 def updateInscAssociada(request, id, idRota_Insc):
     dados_rota = Rota.objects.get(id=id)
     dadosRota_Insc = Rota_Inscricao.objects.get(id=idRota_Insc)
+    grupo = dadosRota_Insc.inscricaoid
 
     error = ""
 
     all_rotaInsc = Rota_Inscricao.objects.filter(rotaid = dados_rota.id)
+    
     lugaresOcupados = -dadosRota_Insc.num_passageiros
     for rotaInsc in all_rotaInsc:
         lugaresOcupados += rotaInsc.num_passageiros
 
-    if request.method == "GET":
-        form = RotaInscForm(initial={'inscricaoid': dadosRota_Insc.inscricaoid.id, 'num_passageiros': dadosRota_Insc.num_passageiros}, choices =[(insc.id, insc) for insc in Inscricao.objects.filter(dia = dados_rota.data)])   
-    elif request.method == "POST":
-        form = RotaInscForm(request.POST, instance=dadosRota_Insc, choices =[(insc.id, insc) for insc in Inscricao.objects.filter(dia = dados_rota.data)])
-        
+    form = RotaInscForm(request.POST or None, instance=dadosRota_Insc)
+
+    if request.method == "POST":   
         if form.is_valid():
             num_passageiros = form.cleaned_data['num_passageiros']
 
             if num_passageiros + lugaresOcupados > dados_rota.transporteid.capacidade:
                 error = "Lugares insufecientes para o número de passageiros"
             else:
-                form.save()
+                insc = form.save(commit=False)
+                insc.inscricaoid = Rota_Inscricao.objects.get(id=idRota_Insc).inscricaoid
+                insc.save()
                 return redirect('diaAbertoConf:showInscAssociadas', id=dados_rota.id)
     
     context = { 'dados_rota': dados_rota,
                 'dadosRota_Insc': dadosRota_Insc,
+                'grupo':grupo,
                 'form': form,
                 'lugaresOcupados': lugaresOcupados,
+                'lugaresDisponiveis': dados_rota.transporteid.capacidade - lugaresOcupados,
                 'error': error}
+
     return render(request, 'diaAbertoConf/EditarInscAssociada.html', context)
 
+@login_required()
+@permission_required('diaAbertoConf.delete_rota_inscricao', raise_exception=True)
 def deleteInscAssociada(reques,id, idRota_Insc):
     dados_rotaInsc = Rota_Inscricao.objects.get(id = idRota_Insc)
     dados_rotaInsc.delete()
@@ -330,85 +487,130 @@ def deleteInscAssociada(reques,id, idRota_Insc):
 #Gestao de Ementas
 #--------------------------------------------------------------------------------------
 
+@login_required()
+@permission_required('diaAbertoConf.view_ementa', raise_exception=True)
 def gestaoEmentas(request):
+    diaAberto_data = DiaAberto.objects.get(id=1)
     allEmentas = Ementa.objects.all()
-    context = {'allEmentas' : allEmentas,}
+    allPratos = Prato.objects.all()
+    pratosType = ['Sopa','Carne','Peixe','Vegetariano','Sobremesa']
+    context = {'allEmentas' : allEmentas, 'allPratos' : allPratos, 'diaAberto':diaAberto_data, 'pratosType' : pratosType}
     return render(request, 'diaAbertoConf/GestaoEmentas.html', context)
 
+@login_required()
+@permission_required('diaAbertoConf.delete_ementa', raise_exception=True)
 def deleteEmenta(request, id):
     dados_Ementa = Ementa.objects.get(id = id)
     dados_Ementa.delete()
     return HttpResponseRedirect(reverse('diaAbertoConf:gestaoEmentas'))
 
-def newEmenta(request):
-    if request.method == "POST":
-        form = EmentaForm(request.POST)
-        if form.is_valid():
-            ementaData=form.save()
-            #add later
-            return HttpResponseRedirect(reverse('diaAbertoConf:showNewPratos',args=(),kwargs={'id': ementaData.id}))
-        else:
-            form = EmentaForm()
-        #add later
-        return render(request, 'diaAbertoConf/AdicionarEmenta.html')
+@login_required()
+@permission_required('diaAbertoConf.add_ementa', raise_exception=True)
+def createEmenta(request):
+    saved=False
+    if request.method == "GET":
+        ementaForm = EmentaForm(request.GET or None)
+        pratoFormSet=PratoFormset(request.GET or None)
+    elif request.method == "POST":  
+        ementaForm = EmentaForm(request.POST)
+        pratoFormSet=PratoFormset(request.POST)
+        if ementaForm.is_valid() and pratoFormSet.is_valid():
+            ementa=ementaForm.save()
+            for prato in pratoFormSet:
+               newPrato = prato.save(commit=False)
+               newPrato.ementaid = ementa
+               newPrato.save()
+            saved=True   
+            
 
-def showNewEmenta(request):
-     return render(request, 'diaAbertoConf/AdicionarEmenta.html')
+    #Gets all the dates of the diaAberto
+    daysDiaAberto = []
+    try:
+        diaAberto = DiaAberto.objects.all()[0]
+        start_date = diaAberto.data_inicio
+        end_date = diaAberto.data_fim
+        current_date = start_date
+        daysDiaAberto.append(start_date)
+        while current_date <  end_date:
+            current_date += datetime.timedelta(days=1)
+            daysDiaAberto.append(current_date)
+    except IndexError:
+        pass
 
-def showNewPratos(request, id):
+    context={
+        'ementaform' : ementaForm,
+        'pratoformset': pratoFormSet,
+        'datasDiaAberto': daysDiaAberto,
+        'saved' : saved,
+        }  
+    return render(request, 'diaAbertoConf/AdicionarEmenta.html', context)  
+
+
+@login_required()
+@permission_required('diaAbertoConf.change_ementa', raise_exception=True)
+def EditarEmenta(request,id):
     dados_Ementa = Ementa.objects.get(id = id)
-    context={ 'ementaData': dados_Ementa,}
-    return render(request, 'diaAbertoConf/newPratos.html',context)
+    pratos = Prato.objects.filter(ementaid = id)
 
-def newPrato(request,id):
-    dados_Ementa = Ementa.objects.get(id = id)
-    context={ 'ementaData': dados_Ementa,}
-    if request.method == "POST":
-        form = PratoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('diaAbertoConf:showNewPratos',args=(),kwargs={'id': id}))
-        else:
-            form = PratoForm()
-        return render(request,'diaAbertoConf/newPratos.html',context)   
+    PratoFormset = formset_factory(PratoForm, extra=0)
 
-
-def showEditEmenta(request, id):
-    diaAberto_data = DiaAberto.objects.get(id=1)
-    dados_Ementa = Ementa.objects.get(id = id)
-    dados_Pratos = Prato.objects.filter(ementaid = id)
-    context = {'ementa' : dados_Ementa, 'pratos' : dados_Pratos, 'diaAbertoData' : diaAberto_data}
-    return render(request, 'diaAbertoConf/editEmenta.html', context)        
-
-def editEmenta(request, id):
-    diaAberto_data = DiaAberto.objects.get(id=1)
-    dados_Ementa = Ementa.objects.get(id = id)
-    dados_Pratos = Prato.objects.filter(ementaid = dados_Ementa.id)
-    form = EmentaForm(request.POST, instance = dados_Ementa)
-    if form.is_valid():
-        form.save()
-        return  HttpResponseRedirect(reverse('diaAbertoConf:gestaoEmentas'))
-    context = {'ementa' : dados_Ementa, 'pratos' : dados_Pratos,'diaAbertoData' : diaAberto_data}
-    return render(request, 'diaAbertoConf/editEmenta.html', context)
-
-def editPrato(request,id):
-    dados_Prato= Prato.objects.get(id = id)
-    form = PratoForm(request.POST, instance=dados_Prato)
-    if form.is_valid():
-        form.save()
-        dados_Ementa = Ementa.objects.get(id=dados_Prato.ementaid)
-        dados_Pratos_Ementa = Prato.objects.filter(ementaid = dados_Ementa.id)
-        context = {'ementa' : dados_Ementa, 'pratos' : dados_Pratos_Ementa}  
-        return render(request, 'diaAbertoConf/editEmenta.html', context)
-    else:
-       return  HttpResponseRedirect(reverse('diaAbertoConf:gestaoEmentas')) 
-
-def deletePrato(request, id):
-    diaAberto_data = DiaAberto.objects.get(id=1)
-    dados_Prato = Prato.objects.get(id = id)
-    dados_Ementa = Ementa.objects.get(id=dados_Prato.ementaid.id)
-    dados_Prato.delete()
-    dados_Pratos_Ementa = Prato.objects.filter(ementaid = dados_Ementa.id)
-    context = {'ementa' : dados_Ementa, 'pratos' : dados_Pratos_Ementa, 'diaAbertoData' : diaAberto_data}  
-    return render(request, 'diaAbertoConf/editEmenta.html', context)
+    if request.method == "GET":
         
+        form = EmentaForm(instance=dados_Ementa) 
+        pratoformset= PratoFormset(initial = [{'pratoid':p.id, 'nome': p.nome, 'tipo' : p.tipo, 'descricao':p.descricao } for p in pratos])
+    
+    elif request.method == "POST":
+        
+        form = EmentaForm(request.POST,instance=dados_Ementa)
+        pratoformset= PratoFormset(request.POST, initial = [{'pratoid':p.id, 'nome': p.nome, 'tipo' : p.tipo, 'descricao':p.descricao } for p in pratos])
+        
+        if form.is_valid() and pratoformset.is_valid():
+            ementaform=form.save()
+
+            if len(pratoformset) >= len(pratos):
+                for index, form in enumerate(pratoformset):
+                    if index < len(pratos):
+                        pratos[index].nome = form.cleaned_data['nome']
+                        pratos[index].tipo = form.cleaned_data['tipo']
+                        pratos[index].descricao = form.cleaned_data['descricao']
+                        pratos[index].save()
+                    else:
+                        new_prato = Prato(
+                            ementaid=ementaform,
+                            nome=form.cleaned_data['nome'],
+                            tipo=form.cleaned_data['tipo'],
+                            descricao=form.cleaned_data['descricao'],
+                        )
+                        new_prato.save()  
+
+            else:
+                for index, p in enumerate(pratos):  
+                    if index < len(pratoformset): 
+                        p.nome=pratoformset[index].cleaned_data['nome']
+                        p.tipo=pratoformset[index].cleaned_data['tipo']
+                        p.descricao=pratoformset[index].cleaned_data['descricao']
+                        p.save()
+                    else:
+                        p.delete()   
+
+        return redirect('diaAbertoConf:gestaoEmentas')                 
+    
+    daysDiaAberto = []
+    try:
+        diaAberto = DiaAberto.objects.all()[0]
+        start_date = diaAberto.data_inicio
+        end_date = diaAberto.data_fim
+        current_date = start_date
+        daysDiaAberto.append(start_date)
+        while current_date <  end_date:
+            current_date += datetime.timedelta(days=1)
+            daysDiaAberto.append(current_date)
+    except IndexError:
+        pass
+
+    context= { 'ementa' : dados_Ementa,
+               'datasDiaAberto': daysDiaAberto,
+               'pratoformset' : pratoformset,
+            }
+
+    return render(request,'diaAbertoConf/EditarEmenta.html',context)

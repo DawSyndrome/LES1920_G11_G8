@@ -22,5 +22,6 @@ urlpatterns = [
     path('', include('diaAbertoConf.urls')),
     path('GestaoAtividades/', include('atividades.urls')),
     path('Tarefas/', include('tarefas.urls')),
+    path('Utilizador/', include('utilizadores.urls')),
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)

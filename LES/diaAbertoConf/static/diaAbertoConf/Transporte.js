@@ -9,16 +9,21 @@ function updateElementIndex(el, prefix, ndx) {
 function cloneMore(selector, prefix) {
 	var newElement = $(selector).clone(true);
 	var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-	newElement.find('input, ul').each(function() {
+	newElement.find('input, ul, select').each(function() {
 	
-		if($(this).is('input'))
-	    	var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
-		var id = $(this).attr('id').replace('-' + (total-1) + '-', '-' + total + '-');
-		if($(this).attr('type') === "checkbox"){
-			$(this).attr({'name': name, 'id': id}).prop('checked', false);
-		}else {
-			$(this).attr({'name': name, 'id': id}).val('');
-		}		
+		//if($(this).is('input'))
+		if(!$(this).parent().is(".selectBox")){
+			if(!$(this).is('ul'))
+	    		var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+			var id = $(this).attr('id').replace('-' + (total-1) + '-', '-' + total + '-');
+
+			if($(this).attr('type') === "checkbox"){
+				$(this).attr({'name': name, 'id': id}).prop('checked', false);
+			}else {
+				$(this).attr({'name': name, 'id': id}).val('');
+			}	
+		}
+		
 	});
 	newElement.find('label').each(function() {
 	    var forValue = $(this).attr('for');
@@ -31,6 +36,10 @@ function cloneMore(selector, prefix) {
 	total++;
 	$('#id_' + prefix + '-TOTAL_FORMS').val(total);
 	newElement.find('#checkboxes').hide();
+	
+	//Removes error message so it doesnt appear in the new form
+	newElement.find('.alert-danger').remove()
+	
 	$(selector).after(newElement);
 	var conditionRow = $('.rota-form-comp:not(:last)');
 	conditionRow.find('.add-form-row').hide()
@@ -64,7 +73,7 @@ function deleteForm(prefix, btn) {
 function showHorarios(horarios, dateVal){
 	var checkedHorarios = [];
 	$('.checkboxes').find('input').each(function() {
-		if($(this).parents('.rota-form-comp').find('input[type="date"]').val() == dateVal && $(this).prop("checked")){
+		if($(this).parents('.rota-form-comp').find('.date-Set').val() == dateVal && $(this).prop("checked")){
 			checkedHorarios.push(this);
 		}
 	});
@@ -90,7 +99,7 @@ function showHorarios(horarios, dateVal){
 
 function updateHorarios(){
 	$('.checkboxes').each(function(){
-		var dateVal = $(this).parents('.rota-form-comp').find('input[type="date"]').val();
+		var dateVal = $(this).parents('.rota-form-comp').find('.date-Set').val();
 		var horarios = $(this).find('input');
 		showHorarios(horarios, dateVal);
 	});
@@ -109,21 +118,18 @@ $(document).on('click', '.remove-form-row', function(e){
     return false;
 });
 
-var expanded = false;
 
 $(document).on('click', '.selectBox', function(){
 	var checkboxes = $(this).nextAll('#checkboxes').first();
-	var dateVal = $(this).parents('.rota-form-comp').find('input[type="date"]').val();
+	var dateVal = $(this).parents('.rota-form-comp').find('.date-Set').val();
 	var horarios = checkboxes.find('input');
-	if(!expanded && dateVal!=''){
+	if(checkboxes.is(':hidden') && dateVal != null){
 		console.log("show");
 		checkboxes.show();
-		expanded = true;
 		showHorarios(horarios, dateVal);
 	}else {
 		console.log("hide");
 		checkboxes.hide();
-		expanded = false;
 	}
 })
 

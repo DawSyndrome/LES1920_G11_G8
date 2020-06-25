@@ -1,10 +1,18 @@
-{% extends "diaAbertoConf/Home.html" %}
+{% extends "atividades/ShowAtividades.html" %}
+	
+	{% block css %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static "atividades/showGestao.css" %}">
+    {% endblock %}
 
 	{% block content %}
     	<div class = "row mx-4 my-4">
 			<div class="col-xs-3 col-sm-3 col-md-3">
-				<p class="text-muted">Filtros Campus</p>
-				<form method="get">
+				<p class="text-muted">Filtros campus</p>
+				<form id="formfilters" method="get">
+					<input id="id_page" name="page" value="{{page_obj.number}}" type="hidden">
+					<input id="id_order_by" name="order_by" {% if order_by %} value="{{order_by}}" {% endif %} type="hidden">
+					<input id="id_direction" name="direction" {% if direction %} value="{{direction}}" {% endif %} type="hidden">
 					<hr>
 					<div class="form-group row">
 						<div class="col">
@@ -15,18 +23,25 @@
 					</div>
 					<div class="form-group row">
 						<div class="input-group">
-						  <div class="input-group-prepend"><button class="btn btn-secondary fas fa-search" type="submit"></button>
+						  <div class="input-group-prepend">
+						  	<span class="input-group-text"><i class="fas fa-search"></i></span>
 						  </div>
 						  <input {% if nome %} value="{{nome}}" {% endif %} name="nome" id="id_nome" type="text" class="form-control" placeholder="Pesquisar por nome">
 						</div>
 					</div>
 					<div class="form-group row">
 						<div class="input-group">
-						  <div class="input-group-prepend"><button class="btn btn-secondary fas fa-search" type="submit"></button>
+						  <div class="input-group-prepend">
+						  	<span class="input-group-text"><i class="fas fa-search"></i></span>
 						  </div>
-						  <input {% if localizacao %} value="{{localizacao}}" {% endif %} name="localizacao" id="id_localizacao" type="text" class="form-control" placeholder="Pesquisar por Localização">
+						  <input {% if localizacao %} value="{{localizacao}}" {% endif %} name="localizacao" id="id_localizacao" type="text" class="form-control" placeholder="Pesquisar por localização">
 						</div>
 					</div>
+					<hr>
+					<div class="form-group row float-right">
+						<button class="btn btn-outline-primary" type="submit"><i class="fas fa-search fa-sm"></i> Procurar</button>
+					</div>
+
 				</form>
 			</div>
 			<div class="col-xs-9 col-sm-9 col-md-9">
@@ -37,16 +52,35 @@
 					</ol>
 				</nav>
 
-				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:showCreateCampus' saved='0' %}"> + Adicionar Campus</a>
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:addCampus' %}"> + Adicionar campus</a>
 
     	    	<table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Nome</th>
-                            <th scope="col">Localização</th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-							<th scope="col"></th>
+                        	{% if order_by == "nome" %}
+                            <th style="width: 25%" class="Sortable Nome {{direction}} tableBorderH" scope="col">Nome
+                            {% if direction == 'asc'%} 
+								<i class="fas fa-caret-up fa-xs"></i>
+							{% elif direction == 'desc' %}
+								<i class="fas fa-caret-down fa-xs"></i>
+							{% endif %}
+							</th>
+							{% else %}
+							<th scope="col" class="Sortable Nome tableBorderH" style="width: 25%"> Nome</th>
+							{% endif  %}
+							{% if order_by == "localizacao" %}
+                            <th style="width: 25%" class="Sortable Localizacao {{direction}} tableBorderH" scope="col">Localização
+                            {% if direction == 'asc'%} 
+								<i class="fas fa-caret-up fa-xs"></i>
+							{% elif direction == 'desc' %}
+								<i class="fas fa-caret-down fa-xs"></i>
+							{% endif %}
+							</th>
+							{% else %}
+							<th scope="col" class="Sortable Localizacao tableBorderH" style="width: 25%"> Localização</th>
+							{% endif %}
+                            <th style="width: 8%" scope="col"></th>
+                            <th style="width: 8%" scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,7 +88,7 @@
                         	<tr>
                         	    <td>{{ campus.nome}}</td>
                         	    <td>{{ campus.localizacao}}</td>
-                        	    <td><a class="btn btn-outline-success far fa-edit"href="{% url 'atividades:showUpdateCampus' id=campus.id %}"></a></td>
+                        	    <td><a class="btn btn-outline-success far fa-edit"href="{% url 'atividades:updateCampus' id=campus.id %}"></a></td>
                         	    <td><a href="" class="delete btn btn-outline-danger fas fa-trash-alt" data-toggle="modal" data-target="#Modal" data-id="{% url 'atividades:deleteCampus' id=campus.id %}"></a></td>
                         	</tr>
 						{% endfor %}
@@ -64,18 +98,16 @@
 				<div class="pagination d-flex justify-content-end">
 				    <span class="step-links">
 				        {% if page_obj.has_previous %}
-				            <a class="btn btn-outline-secondary fas fa-angle-double-left" href="?page=1"></a>
-				            <a class="btn btn-outline-secondary fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}"></a>
-				        {% endif %}
+				            <button class="btn btn-outline-secondary  fas fa-angle-double-left page" data-page="1"></button>
+				            <button class="btn btn-outline-secondary  fas fa-angle-left page" data-page="{{page_obj.previous_page_number}}"></button>
+						{% endif %}
 
-				        <span class="current">
-				            &nbsp{{ page_obj.number }}&nbsp
-				        </span>
+				        <span class="current">{{ page_obj.number }}</span>
 
 				        {% if page_obj.has_next %}
-				            <a class="btn btn-outline-secondary fas fa-angle-double-right" href="?page={{ page_obj.next_page_number }}"></a>
-				            <a class="btn btn-outline-secondary fas fa-angle-right" href="?page={{ page_obj.paginator.num_pages }}"></a>
-				        {% endif %}
+							<button class="btn btn-outline-secondary  fas fa-angle-right page" data-page="{{page_obj.next_page_number}}"></button>
+				            <button class="btn btn-outline-secondary  fas fa-angle-double-right page" data-page="{{page_obj.paginator.num_pages}}"></button>
+						{% endif %}
 				    </span>
 				</div>
 			</div>
@@ -121,5 +153,42 @@
                 $("#deleteModal").attr("action", data_var);
             })
         });
+
+    $('th.Sortable').click(function(){
+
+    var form = $('#formfilters')
+
+    if($(this).hasClass('Nome')){
+        if($(this).hasClass('asc')){
+            form.find("#id_order_by").val("nome")
+            form.find("#id_direction").val("desc")
+        }else{
+            form.find("#id_order_by").val("nome")
+            form.find("#id_direction").val("asc")    
+        }
+    }else if($(this).hasClass('Localizacao')){
+        if($(this).hasClass('asc')){
+            form.find("#id_order_by").val("localizacao")
+            form.find("#id_direction").val("desc")
+        }else{
+            form.find("#id_order_by").val("localizacao")
+            form.find("#id_direction").val("asc")
+        }
+    }
+    form.submit()
+})
+
+$('button.page').click(function(){
+    var page = $(this).data('page')
+    var form = $('#formfilters')
+    form.find("#id_page").val(page)
+    form.submit()
+})
+
+$(document).ready( function(){
+    $('th.Sortable').each(function(){
+        $(this).has('i').addClass('tableBorder')
+    })
+})
      </script>
      {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "diaAbertoConf/Home.html" %}
+{% extends "diaAbertoConf/ShowTransportes.html"%}
 
 	{% block content%}
 
@@ -7,27 +7,28 @@
 				<ol class="breadcrumb bg-white">
 					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
 					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:allTransportes' %}">Transportes</a></li>
-					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:allHorarios'%}">Horários Transportes</a></li>
-					<li class="breadcrumb-item active">Editar Horário</li>
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:allHorarios'%}">Horários transportes</a></li>
+					<li class="breadcrumb-item active">Editar horário</li>
 				</ol>
 			</nav>
     	    <div class = "row">
     		    <div class = "col-sm-4 offset-sm-4">
-                    <h4 style="text-align:center;">Editar Horário Transporte</h4>
+                    <h4 style="text-align:center;">Editar horário transporte</h4>
+					{% for key, value in form.errors.items %}
+						{% for error in value %}
+            				<div class="alert alert-danger" style="text-align:center;">
+               					{{ error }}
+            				</div>
+						{% endfor%}
+					{% endfor%}
     		    </div>
-            </div>
+            </div>			
     	    <hr class="mx-5">
     	    <div class = "row">
-    		    <div class = "col-sm-6  offset-sm-3">
+    		    <div class = "col-sm-6  offset-sm-3 mt-5">
 					<form action = "{% url 'diaAbertoConf:updateHorarioTransporte' id=horario.id %}" method="post">
 						{% csrf_token %}
-						{% for key, value in form.errors.items %}
-							{% for error in value %}
-            					<div class="alert alert-danger">
-               						{{ error }}
-            					</div>
-							{% endfor%}
-						{% endfor%}
+						
   						<div class="form-group row mb-4">
     						<label for="hora_de_partida" class="col-sm-4 col-form-label">Hora de partida</label>
     						<div class="col-sm-8">
@@ -41,12 +42,30 @@
     						</div>
   						</div>
 						<div class="form-group row mt-5">
-							<div class="col-sm-2">
-								<a type="button" class="btn btn-secondary" href="{% url 'diaAbertoConf:allHorarios' %}">Cancelar</a>
+							<div class="col-sm-10">
+								<a type="button" class="btn btn-secondary mr-3" href="{% url 'diaAbertoConf:allHorarios' %}">Cancelar</a>
+								<a class="btn btn-primary" href="" data-toggle="modal" data-target="#Modal">Editar</a>
 							</div>
-							<div class="col-sm-2">
-								<button type="submit" class="btn btn-primary">Editar</button>
-							</div>
+						</div>
+						<div class="modal" id="Modal">
+							<div class="modal-dialog">
+								<div class="modal-content">
+								    <!-- Modal Header -->
+										<div class="modal-header">
+											<h4 class="modal-title">Aviso</h4>
+											<button type="button" class="close" data-dismiss="modal">×</button>
+										</div>
+										<!-- Modal body -->
+										<div class="modal-body">
+											<p>Tem a certeza que pretende guardar as alteracões?</p>
+										</div>
+										<!-- Modal footer -->
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-success" >Sim</button>
+											<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+										</div>
+                                </div>   
+                            </div>     
 						</div>
 					</form>
     		    </div>

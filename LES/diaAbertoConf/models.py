@@ -3,9 +3,6 @@ from datetime import datetime
 # Create your models here.
 
 class Transporte(models.Model):
-    #id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    #hora_chegada = models.TimeField(db_column='Hora_de_chegada', blank=True, null=True)  # Field name made lowercase.
-    #hora_partida = models.TimeField(db_column='Hora_de_partida', blank=True, null=True)  # Field name made lowercase.
     tipo_transporte = models.CharField(db_column='Tipo_de_transporte', max_length=255, blank=True, null=True)  # Field name made lowercase.
     capacidade = models.IntegerField(db_column='Capacidade', blank=True, null=True)  # Field name made lowercase.
 
@@ -13,20 +10,19 @@ class Transporte(models.Model):
         return str(self.tipo_transporte)
 
     class Meta:
-        managed = True
+        
         db_table = 'transporte'
 
 class HorarioTransporte(models.Model):
     #id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     hora_de_partida = models.TimeField(db_column='Hora_de_partida', blank=True, null=True)  # Field name made lowercase.
     hora_de_chegada = models.TimeField(db_column='Hora_de_chegada', blank=True, null=True)  # Field name made lowercase.
-    #data = models.DateField(db_column='Data', blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
-        return str(self.hora_de_partida) + " - " + str(self.hora_de_chegada)
+        return self.hora_de_partida.strftime("%H:%M") + " - " + self.hora_de_chegada.strftime("%H:%M")
 
     class Meta:
-        managed = True
+        
         db_table = 'horario'
 
 class Rota(models.Model):
@@ -38,7 +34,7 @@ class Rota(models.Model):
     data = models.DateField(db_column='Data', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = True
+        
         db_table = 'transporte_universitario_horario'
         
 
@@ -49,7 +45,7 @@ class Rota_Inscricao(models.Model):
     num_passageiros = models.IntegerField(db_column='Num_passageiros', blank=True, null=True)
 
     class Meta:
-        managed = True
+        
         db_table = 'transporte_universitario_horario_inscricao'
 
 
@@ -66,7 +62,6 @@ class Ementa(models.Model):
         return "Ementa " + str(self.id)
 
     class Meta:
-        #managed = False
         db_table = 'ementa'
 
 
@@ -78,7 +73,6 @@ class Prato(models.Model):
     descricao = models.CharField(db_column='Descricao', max_length=255, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        #managed = False
         db_table = 'prato'
 
 
@@ -101,5 +95,4 @@ class DiaAberto(models.Model):
 
 
     class Meta:
-        #managed = False
         db_table = 'dia_aberto'

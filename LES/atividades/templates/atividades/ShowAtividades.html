@@ -1,68 +1,199 @@
 {% extends "diaAbertoConf/Home.html" %}
 
-    {% block css %}
-        {% load static %}
-        <link rel="stylesheet" href="{% static "atividades/showAtividades.css" %}">
-    {% endblock %}
+  {% block css %}
+      {% load static %}
+      <link rel="stylesheet" href="{% static "atividades/showAtividades.css" %}">
+  {% endblock %}
+
+  {% block navContent %}
+    <ul class="navbar-nav mr-auto">
+			{% if user.is_authenticated %}
+				{% if perms.atividades.view_inscricao%}
+					<li class="nav-item">
+            				<a class="nav-link" href="#">Inscrições</a>
+          				</li>
+				{% endif %}
+				{% if perms.atividades.view_atividade%}
+					{% if  perms.atividades.view_edificio and perms.atividades.view_campus and perms.atividades.view_local and perms.atividades.view_unidadeorganica and  perms.atividades.view_departamento and perms.atividades.view_tematica and perms.atividades.view_material and perms.atividades.view_sessaoatividade %}
+          					<li class="nav-item dropdown">
+    							<a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Atividades
+    							</a>
+    							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+    									<a class="dropdown-item" href="{% url 'atividades:allAtividades'%}">Atividades</a>
+    									<a class="dropdown-item" href="{% url 'atividades:allEdificios'%}">Edifícios</a>
+    									<a class="dropdown-item" href="{% url 'atividades:allCampus'%}">Campus</a>
+    									<a class="dropdown-item" href="{% url 'atividades:allLocais'%}">Locais</a>
+    									<a class="dropdown-item" href="{% url 'atividades:allUnidadeOrganicas'%}">Unidade Orgânicas</a>
+    									<a class="dropdown-item" href="{% url 'atividades:allDepartamentos'%}">Departamentos</a>
+    									<a class="dropdown-item" href="{% url 'atividades:allTematicas'%}">Temáticas</a>
+    									<a class="dropdown-item" href="{% url 'atividades:allMateriais'%}">Materiais</a>
+    									<a class="dropdown-item" href="{% url 'atividades:allSessoes'%}">Horários de Sessões</a>
+							</div>
+    					</li>
+					{%else%}
+						<li class="nav-item">
+            					<a class="nav-link" href="{% url 'atividades:allAtividades' %}">Atividades</a>
+          					</li>  
+					{%endif%}
+				{% endif %}
+				{% if perms.diaAbertoConf.view_diaaberto%}
+					<li class="nav-item">
+            				<a class="nav-link" href="{% url 'diaAbertoConf:editConfig' %}">Configuração do Dia Aberto</a>
+          				</li>
+				{% endif %}
+				{% if perms.diaAbertoConf.view_transporte %}        	      		
+          				<li class="nav-item dropdown">
+    						<a class="nav-link dropdown-toggle" href="#" id="DiaAbertoConfNavbar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    								Transportes
+    						</a>
+    						<div class="dropdown-menu" aria-labelledby="DiaAbertoConfNavbar">
+    							<a class="dropdown-item" href="{% url 'diaAbertoConf:allTransportes'%}">Gestão de Transportes</a>
+    						  	<a class="dropdown-item" href="{% url 'diaAbertoConf:allHorarios'%}">Horários de Transportes</a>
+    						</div>
+    					</li>
+				{% endif %}
+				{% if perms.diaAbertoConf.view_ementa %}  
+          				<li class="nav-item">
+            				<a class="nav-link" href="{% url 'diaAbertoConf:gestaoEmentas'%}">Almoços</a>
+          				</li>
+				{% endif %}
+				{% if perms.tarefas.view_tarefa %}
+					<li class="nav-item">
+            				<a class="nav-link" href="{% url 'tarefas:showTarefas' %}">Tarefas</a>
+          				</li>
+				{% endif %}
+			{% endif %}
+		</ul>
+	{% endblock %}
 
 	{% block content %}
-    	<div class = "row mx-4 my-4">
+    <div class = "row mx-4 my-4">
 			<div class="col-xs-3 col-sm-3 col-md-3">
-				<p class="text-muted">Filtros Atividades</p>
-				<form>
+				<p class="text-muted">Filtros atividades</p>
+				<form id="formfilters" method="get">
+                    <input id="id_page" name="page" value="{{page_obj.number}}" type="hidden">
+                    <input id="id_order_by" name="order_by" {% if order_by %} value="{{order_by}}" {% endif %} type="hidden">
+                    <input id="id_direction" name="direction" {% if direction %} value="{{direction}}" {% endif %} type="hidden">
 					<hr>
+          <div class="form-group row">
+              <div class="col">
+                  <div class="float-right">
+                      <a href="{% url 'atividades:allAtividades' %}">Limpar filtros</a>
+                  </div>
+              </div>
+          </div>
 					<div class="form-group row">
-						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="fas fa-search"></i></span>
-						  </div>
-						  <input type="text" class="form-control" placeholder="DEFINIR">
-						</div>
-					</div>
-					<div class="form-group row">
-						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="fas fa-search"></i></span>
-						  </div>
-						  <input type="text" class="form-control" placeholder="DEFINIR">
-						</div>
-					</div>
-					<div class="form-group row">
-						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="fas fa-search"></i></span>
-						  </div>
-						  <input type="text" class="form-control" placeholder="DEFINIR">
-						</div>
-					</div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+              </div>
+              <input {% if nome %} value="{{nome}}" {% endif %} name="nome" id="id_nome" type="text" class="form-control" placeholder="Pesquisar por nome">
+            </div>
+            </div>
+            <div class="form-group row">
+              <select id="id_tipo_atividade" name="tipo_atividade" class="form-control">
+                    <option value="" disabled selected>Tipo de atividade</option>
+                {% if tipo_atividade == 'Laboratorial' %}
+                    <option value="Laboratorial" selected>Laboratorial</option>
+                    <option value="Prática">Prática</option>
+                    <option value="Teórica">Teórica</option>
+                {% elif tipo_atividade == 'Prática' %}
+                    <option value="Laboratorial">Laboratorial</option>
+                    <option value="Prática" selected>Prática</option>
+                    <option value="Teórica">Teórica</option>
+                {% elif tipo_atividade == 'Teórica' %}
+                    <option value="Laboratorial">Laboratorial</option>
+                    <option value="Prática">Prática</option>
+                    <option value="Teórica" selected>Teórica</option>
+                {% else %}
+                    <option value="Laboratorial">Laboratorial</option>
+                    <option value="Prática">Prática</option>
+                    <option value="Teórica">Teórica</option>
+                {% endif %}
+              </select>
+            </div>
+            <div class="form-group row">
+              <select id="id_validada" name="validada" class="form-control">
+                    <option value="" disabled selected>Estado da atividade</option>
+                {% if validada == "-1" %}
+                    <option value="1">Aceite</option>
+                    <option value="-1" selected>Pendente</option>
+                    <option value="0">Recusada</option>
+                {% elif validada == "0" %}
+                    <option value="1">Aceite</option>
+                    <option value="-1">Pendente</option>
+                    <option value="0" selected>Recusada</option>
+                {% elif validada == "1" %}
+                    <option value="1" selected>Aceite</option>
+                    <option value="-1">Pendente</option>
+                    <option value="0">Recusada</option>
+                {% else %}
+                    <option value="1">Aceite</option>
+                    <option value="-1">Pendente</option>
+                    <option value="0">Recusada</option>
+                {% endif %}
+              </select>
+            </div>
+            <div class="form-group row">                          
+              <select id="id_localcampus" name="localcampus" class="form-control">
+                <option disabled selected>Pesquisar por campus</option>
+                {% for campus in allCampus %}
+                  {% if campus.id == localcampusSearched %}
+                    <option value="{{campus.id}}" selected>{{campus.nome}}</option>
+                  {% else %}
+                    <option value="{{campus.id}}">{{campus.nome}}</option>
+                  {% endif %} 
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group row">
+              <select id="id_localedicifio" name="localedicifio" class="form-control">
+                <option disabled selected>Pesquisar por edifício</option>
+                {% for edicifio in allEdificios %}
+                  {% if localedificioSearched == edicifio.id %}
+                    <option value="{{edicifio.id}}" selected>{{edicifio.nome_edificio}}, {{edicifio.campusid}}</option>
+                  {% else %}
+                    <option value="{{edicifio.id}}">{{edicifio.nome_edificio}}, {{edicifio.campusid}}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>
 					<hr>
 					<div class="form-group row">
 						<label class="text-muted">De:</label>
 						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="far fa-clock"></i></span>
-						  </div>
-						  <input type="time" class="form-control">
+						  <input {% if sessao_gte %} value="{{sessao_gte}}" {% endif %} name="sessao_gte" id="id_sessao_gte" type="time" class="form-control" placeholder="Pesquisar por sessão">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="text-muted">Até:</label>
 						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="far fa-clock"></i></span>
-						  </div>
-						  <input type="time" class="form-control">
+						  <input {% if sessao_lte %} value="{{sessao_lte}}" {% endif %} name="sessao_lte" id="id_sessao_lte" type="time" class="form-control" placeholder="Pesquisar por sessão">
 						</div>
 					</div>
 					<hr>
 					<div class="form-group row">
-						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="far fa-calendar"></i></span>
-						  </div>
-						  <input type="date" class="form-control">
-						</div>
-					</div>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="far fa-calendar"></i></span>
+                          </div>
+                          <select id="id_data" name="data" class="form-control">
+                                <option disabled selected>Pesquisar por data</option>
+                                {% for dia in daysDiaAberto %}
+                                    {% if dia|date:"m/d/Y" == data %}
+                                        <option selected value={{ dia | date:"m/d/Y"}}>{{dia |date:"d-m-Y"}}</option>
+                                    {% else %}
+                                        <option value={{ dia | date:"m/d/Y"}}>{{dia |date:"d-m-Y"}}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row float-right">
+                        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search fa-sm"></i> Procurar</button>
+                    </div>
 				</form>
 			</div>
 			<div class="col-xs-9 col-sm-9 col-md-9">
@@ -73,68 +204,87 @@
 					</ol>
 				</nav>
 
-				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:createAtividade' %}"> + Adicionar Atividade</a>
+        {% if inDate %}
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:createAtividade' %}"> + Adicionar atividade</a>
+        {% endif %}
 
     	    	<!-- <table class="table table-hover"> -->
-    	    		<table class="table">
-                    <thead>
-                        <tr>
-                        	<th style="width: 8%" scope="col"></th>
-                            <th style="width: 25%" class="tableBorderH"  scope="col">Nome</th>
-                            <th style="width: 25%" class="tableBorderH" scope="col">Tipo de atividade</th>
-                            <!-- <th scope="col">Local</th> -->
-                            <!-- <th scope="col">Utilizador</th> -->
-                            <!-- <th scope="col">Unidade Orgânica</th> -->
-                            <!-- <th scope="col">Validada</th> -->
-                            <!-- <th scope="col">Limite de participantes</th> -->
-                            <!-- <th scope="col">Duração</th> -->
-                            <th style="width: 25%" class="tableBorderH" scope="col">Estado</th>
-                            <th style="width: 8%" scope="col"></th>
-                            <th style="width: 8%" scope="col"></th>
-                            <!-- <th scope="col"></th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-						{% for atividade in page_obj %}
-                        	<!-- <tr class="clickable-row" data-href="{% url 'atividades:showDetailsAtividade' id=atividade.id %}"> -->
-                        		<tr>
-                        		<td><i class="fas fa-chevron-right"></i></td>
-                        	    <td>{{ atividade.nome }}</td>
-                        	    <td>{{ atividade.tipo_atividade }}</td>
-                        	    <!-- <td>{{ atividade.localid.nome }}</td> -->
-                        	    <!-- <td>{{ atividade.validada }}</td> -->
-                        	    <!-- <td>{{ atividade.limite_de_participantes }}</td> -->
-                        	    <!-- <td>{{ atividade.duracao }}</td> -->
-                        	    {% if atividade.validada == 1 %}
-                        	    <td><h5><span class="badge badge-success">Aceite</span></h5></td>
-                        	    {% elif atividade.validada == 0 %}
-                        	    <td><h5><span class="badge badge-danger">Recusada</span></h5></td>
-                        	    {% elif atividade.validada == -1 %}
-                        	    <td><h5><span class="badge badge-warning ">Pendente</span></h5></td>
-                        	    {% endif %}
-                        	    <td><a class="btn btn-outline-success far fa-edit" href="{% url 'atividades:updateAtividade' id=atividade.id %}"></a></td>
-                        	    <td><a href="" class="delete btn btn-outline-danger fas fa-trash-alt" data-toggle="modal" data-target="#Modal" data-id="{% url 'atividades:deleteAtividade' id=atividade.id %}"></a></td>
-
-                                </tr>
-                            </tbody>
+    	  <table class="table">
+          <thead>
+              <tr>
+              	<th style="width: 8%" scope="col"></th>
+                  {% if order_by == "nome" %}
+                    <th style="width: 25%" class="Sortable Nome {{direction}} tableBorderH" scope="col">Nome
+                    {% if direction == 'asc'%} 
+                    <i class="fas fa-caret-up fa-xs"></i>
+                    {% elif direction == 'desc' %}
+                    <i class="fas fa-caret-down fa-xs"></i>
+                    {% endif %}
+                    </th>
+                    {% else %}
+                    <th scope="col" class="Sortable Nome tableBorderH" style="width: 25%"> Nome</th>
+                    {% endif  %}
+                  {% if order_by == "tipo_atividade" %}
+                            <th style="width: 25%" class="Sortable Tipo {{direction}} tableBorderH" scope="col">Tipo de atividade
+                            {% if direction == 'asc'%} 
+                                <i class="fas fa-caret-up fa-xs"></i>
+                            {% elif direction == 'desc' %}
+                                <i class="fas fa-caret-down fa-xs"></i>
+                            {% endif %}
+                            </th>
+                            {% else %}
+                            <th scope="col" class="Sortable Tipo tableBorderH" style="width: 25%"> Tipo de atividade</th>
+                            {% endif  %}
+                  <th style="width: 25%" scope="col">Estado</th>
+                  <th style="width: 8%" scope="col"></th>
+                  <th style="width: 8%" scope="col"></th>
+              </tr>
+          </thead>
+          {% for atividade in page_obj %}
+            <tbody>
+              <tr>
+                <td><i class="fas fa-chevron-right"></i></td>
+                <td>{{ atividade.nome }}</td>
+                <td>{{ atividade.tipo_atividade }}</td>
+                {% if atividade.validada == 1 %}
+                  <td><h5><span class="badge badge-success">Aceite</span></h5></td>
+                {% elif atividade.validada == 0 %}
+                  <td><h5><span class="badge badge-danger">Recusada</span></h5></td>
+                {% elif atividade.validada == -1 %}
+                  <td><h5><span class="badge badge-warning ">Pendente</span></h5></td>
+                {% endif %}
+                {% if inDate %}
+                <td><a class="btn btn-outline-success far fa-edit" href="{% url 'atividades:updateAtividade' id=atividade.id %}"></a></td>
+                <td><a href="" class="delete btn btn-outline-danger fas fa-trash-alt" data-toggle="modal" data-target="#Modal" data-id="{% url 'atividades:deleteAtividade' id=atividade.id %}"></a></td>
+                {% else %}
+                <td></td>
+                <td></td>
+                {% endif %}  
+                </tr>
+            </tbody>
                     <tbody class="hide">
 										<tr>
 											<td colspan="1"></td>
 											<td colspan="2">
 												<div>
+                          <p><b>Criador da atividade:</b> {{atividade.utilizadorid.nome}}</p>
 													<p><b>Descrição:</b> {{ atividade.descricao}}</p>
+													<p><b>Unidade Orgânica:</b> {{ atividade.unidadeorganicaid.nome}}</p>
 													
-													<p><b>Local:</b> {{ atividade.localid}}</p>
-													<p><b>Duração:</b> {{ atividade.duracao}}</p>
+													<p><b>Duração:</b> {{ atividade.duracao}} minutos</p>
                         				    		<p><b>Sessão:</b><p>
                         							{% for form in listSessao %}
                         							{% if form.atividadeid.id == atividade.id %} 
-                        				    		<p>&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;{{form.data}}, {{form.sessaoid.hora_de_inicio}}</p>
+                        				    		<p>&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;{{form.data|date:"d-m-Y"}}, {{form.sessaoid.hora_de_inicio|time:"H:i"}}</p>
                         				    		{% endif %}
                         				    		{% endfor %}
 											</div>
 											<td colspan="3">
 												<div>
+                          <p><b>Local:</b> {% if atividade.localid %} {{atividade.localid}} {% else %} Não atribuído {% endif %}</p>
+                          {% if atividade.localid %}
+                            <p><b>Mapa do Local: </b><a class="imageShow" href="" data-toggle="modal" data-target="#ImageModal" data-image="{{atividade.localid.mapa_sala}}">Visualizar a imagem</a></p>
+                          {% endif %}
                                                     <p><b>Colaboradores:</b> {{ atividade.num_colaboradores }}
 													<p><b>Público alvo:</b> {{ atividade.public_alvo}}</p>
 													<p><b>Temática:</b></p>
@@ -144,161 +294,144 @@
                         				    		{% endif %}
                         				    		{% endfor %}
                         				    		<p><b>Limite de participantes:</b> {{ atividade.limite_de_participantes}}</p>
-                        				    		<p><b>Material:</b></p>
-                        							{% for form in listMaterial %}
-                        							{% if form.atividadeid.id == atividade.id %} 
-                        				    		<p>&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;{{form.materialid.nome}} x {{form.quantidade}}</p>
-                        				    		{% endif %}
-                        				    		{% endfor %}
+
+                                        {% for  key, material in listMaterial.items %}
+												                  {% if key == atividade.id %}
+                                            <p><b>Material:</b></p>
+                                            {% for m in material %}                        				    		                     							
+                        				    		      <p>&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;{{m.materialid.nome}} x {{m.quantidade}}</p>
+                        				    		    {% endfor %}
+                                          {% endif %}
+                                        {% endfor %}
 												</div>
 											</td>
                         				</tr>
+                                        {% if perms.atividades.validates_atividade and perms.atividades.alterar_local %}
+                                        {% if inDate %}
                                         <tr>
                                             <td></td>
                                             <td colspan="5">
                                                 {% if atividade.validada == -1 %}
-                                                <p><!-- <a href="" class="btn btn-outline-success validate" data-toggle="modal" data-target="#myModal1" data-id="{% url 'atividades:validAtividade' id=atividade.id %}">Aceitar atividade</a> -->
+                                                <p>
                                                 <br>
                                                 <a href="{% url 'atividades:atribuirLocal' id=atividade.id %}" class="btn btn-outline-success mr-3">Aceitar atividade</a>
                                                 <a href="" class="recuse btn btn-outline-danger" data-toggle="modal" data-target="#Modalrecusar" data-id="{% url 'atividades:recuseAtividade' id=atividade.id %}">Recusar atividade</a>
                                                 </p>
                                                 {% endif %}
+                                                {% if atividade.validada == 1 %}
+                                                <p>
+                                                <br>
+                                                <a href="{% url 'atividades:updateAtribuirLocal' id=atividade.id %}" class="btn btn-outline-success mr-3">Alterar local</a>
+                                                </p>
+                                                {% endif %}
+
                                             </td>
                                         </tr>
-
-                        				<!-- <tr>
-                        					{% if atividade.validada == -1 %}
-											<td colspan="4"></td>
-											<td><a href="" class="btn btn-outline-success validate" data-toggle="modal" data-target="#myModal1" data-id="{% url 'atividades:validAtividade' id=atividade.id %}">Aceitar atividade</a></td>
-											<td><a href="{% url 'atividades:recuseAtividade' id=atividade.id %}" class="btn btn-outline-danger">Recusar atividade</a></td>
-											{% endif %}
-										</tr> -->
+                                        {% endif %}
+                                        {% endif %}
 							<tbody>
 								{% endfor %}
                     </tbody>
                 </table>
+				
 
+                <div class="pagination d-flex justify-content-end">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <button class="btn btn-outline-secondary  fas fa-angle-double-left page" data-page="1"></button>
+                            <button class="btn btn-outline-secondary  fas fa-angle-left page" data-page="{{page_obj.previous_page_number}}"></button>
+                        {% endif %}
 
+                        <span class="current">{{ page_obj.number }}</span>
 
-				<div class="pagination d-flex justify-content-end">
-				    <span class="step-links">
-				        {% if page_obj.has_previous %}
-				            <a class="btn btn-outline-secondary fas fa-angle-double-left" href="?page=1"></a>
-				            <a class="btn btn-outline-secondary fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}"></a>
-				        {% endif %}
+                        {% if page_obj.has_next %}
+                            <button class="btn btn-outline-secondary  fas fa-angle-right page" data-page="{{page_obj.next_page_number}}"></button>
+                            <button class="btn btn-outline-secondary  fas fa-angle-double-right page" data-page="{{page_obj.paginator.num_pages}}"></button>
+                        {% endif %}
+                    </span>
+                </div>
 
-				        <span class="current">
-				            &nbsp{{ page_obj.number }}&nbsp
-				        </span>
-
-				        {% if page_obj.has_next %}
-				            <a class="btn btn-outline-secondary fas fa-angle-double-right" href="?page={{ page_obj.next_page_number }}"></a>
-				            <a class="btn btn-outline-secondary fas fa-angle-right" href="?page={{ page_obj.paginator.num_pages }}"></a>
-				        {% endif %}
-				    </span>
-				</div>
 			</div>
+    </div>
+
+    <div class="modal fade" id="Modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Aviso</h4>
+            <button type="button" class="close" data-dismiss="modal">×</button>
+          </div>
+          
+          <!-- Modal body -->
+          <div class="modal-body">
+            Tem a certeza que pretende remover?
+          </div>
+          
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <form id="deleteModal" action="" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success" >Sim</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+            </form>
+          </div>        
         </div>
-
-        <div class="modal fade" id="Modal">
-                                    <div class="modal-dialog">
-                                      <div class="modal-content">
-                                      
-                                        <!-- Modal Header -->
-                                        <div class="modal-header">
-                                          <h4 class="modal-title">Aviso</h4>
-                                          <button type="button" class="close" data-dismiss="modal">×</button>
-                                        </div>
-                                        
-                                        <!-- Modal body -->
-                                        <div class="modal-body">
-                                          Tem a certeza que pretende remover?
-                                        </div>
-                                        
-                                        <!-- Modal footer -->
-                                        <div class="modal-footer">
-                                            <form id="deleteModal" action="" method="post">
-                                                {% csrf_token %}
-                                          <button type="submit" class="btn btn-success" >Sim</button>
-                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
-                                      </form>
-                                        </div>        
-                                      </div>
-                                    </div>
-                                  </div>
+      </div>
+    </div>
 
 
-                    <div class="modal fade" id="Modalrecusar">
-                                    <div class="modal-dialog">
-                                      <div class="modal-content">
-                                      
-                                        <!-- Modal Header -->
-                                        <div class="modal-header">
-                                          <h4 class="modal-title">Aviso</h4>
-                                          <button type="button" class="close" data-dismiss="modal">×</button>
-                                        </div>
-                                        
-                                        <!-- Modal body -->
-                                        <div class="modal-body">
-                                          Tem a certeza que pretende recusar a atividade?
-                                        </div>
-                                        
-                                        <!-- Modal footer -->
-                                        <div class="modal-footer">
-                                          <form id="recuseModal" action="" method="post">
-                                                {% csrf_token %}
-                                          <button type="submit" class="btn btn-success" >Sim</button>
-                                          <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
-                                      </form>
-                                        </div>        
-                                      </div>
-                                    </div>
-                                  </div>
+    <div class="modal fade" id="Modalrecusar">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Aviso</h4>
+            <button type="button" class="close" data-dismiss="modal">×</button>
+          </div>
+          
+          <!-- Modal body -->
+          <div class="modal-body">
+            Tem a certeza que pretende recusar a atividade?
+          </div>
+          
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <form id="recuseModal" action="" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success" >Sim</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+            </form>
+          </div>        
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="ImageModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">Mapa do Local</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <img src=""  width="100%" height="100%">
+          </div>
+        </div>
+      </div>
+    </div>
 
         
 
 	{% endblock %}
 	
 	{% block js %}
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-	<script type="text/javascript">
-            $('.delete').click(function (){
-                var data_var = $(this).data('id');
-                $("#deleteModal").attr("action", data_var);
-            })
 
-        $('.recuse').click(function (){
-                var data_var = $(this).data('id');
-                $("#recuseModal").attr("action", data_var);
-                console.log($(this).data('id'));
-            })
-
-        /*$(".clickable-row").on('click', function(event) {
-        	event.stopPropagation();
-            var target = $(event.target);
-            if(!target.is('a'))
-        		window.location = $(this).data("href");
-    	});*/
-
-    	$(".hide").hide();
-
-			$("table").click(function(event) {
-    			var target = $(event.target);
-				if(!target.is('a')){
-					if ( target.closest('tbody').find('i').hasClass('fas fa-chevron-right') ){
-						target.closest('tbody').next().show();
-        				target.closest('tbody').find('i').removeClass();
-						target.closest('tbody').find('i').addClass('fas fa-chevron-down');	
-
-					}else if( target.closest('tbody').find('i').hasClass('fas fa-chevron-down') ){
-						target.closest('tbody').next().hide();
-        				target.closest('tbody').find('i').removeClass();
-						target.closest('tbody').find('i').addClass('fas fa-chevron-right');	
-						
-					}    				
-				}
-			})
-
-     </script>
-     {% endblock %}
+    {% load static %}
+		<script src={% static "atividades/showAtividades.js" %}></script>  
+  {% endblock %}

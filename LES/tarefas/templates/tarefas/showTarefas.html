@@ -5,53 +5,174 @@
 		<link rel="stylesheet" href="{% static "tarefas/ShowTarefas.css" %}">
 	{% endblock %}
 
+	{% block navContent %}
+    	<ul class="navbar-nav mr-auto">
+			{% if user.is_authenticated %}
+				{% if perms.atividades.view_inscricao%}
+					<li class="nav-item">
+        				<a class="nav-link" href="#">Inscrições</a>
+        			</li>
+				{% endif %}
+				{% if perms.atividades.view_atividade%}
+					{% if  perms.atividades.view_edificio and perms.atividades.view_campus and perms.atividades.view_local and perms.atividades.view_unidadeorganica and  perms.atividades.view_departamento and perms.atividades.view_tematica and perms.atividades.view_material and perms.atividades.view_sessaoatividade %}
+        				<li class="nav-item dropdown">
+        					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Atividades
+        					</a>
+        					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        						<a class="dropdown-item" href="{% url 'atividades:allAtividades'%}">Atividades</a>
+        						<a class="dropdown-item" href="{% url 'atividades:allEdificios'%}">Edifícios</a>
+        						<a class="dropdown-item" href="{% url 'atividades:allCampus'%}">Campus</a>
+        						<a class="dropdown-item" href="{% url 'atividades:allLocais'%}">Locais</a>
+        						<a class="dropdown-item" href="{% url 'atividades:allUnidadeOrganicas'%}">Unidade Orgânicas</a>
+        						<a class="dropdown-item" href="{% url 'atividades:allDepartamentos'%}">Departamentos</a>
+        						<a class="dropdown-item" href="{% url 'atividades:allTematicas'%}">Temáticas</a>
+        						<a class="dropdown-item" href="{% url 'atividades:allMateriais'%}">Materiais</a>
+        						<a class="dropdown-item" href="{% url 'atividades:allSessoes'%}">Horários de Sessões</a>
+							</div>
+     					</li>
+					{%else%}
+						<li class="nav-item">
+        					<a class="nav-link" href="{% url 'atividades:allAtividades' %}">Atividades</a>
+        				</li>  
+					{%endif%}
+				{% endif %}
+				{% if perms.diaAbertoConf.view_diaaberto%}
+					<li class="nav-item">
+        				<a class="nav-link" href="{% url 'diaAbertoConf:editConfig' %}">Configuração do Dia Aberto</a>
+        			</li>
+				{% endif %}
+				{% if perms.diaAbertoConf.view_transporte %}        	      		
+        			<li class="nav-item dropdown">
+        				<a class="nav-link dropdown-toggle" href="#" id="DiaAbertoConfNavbar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        					Transportes
+        				</a>
+        				<div class="dropdown-menu" aria-labelledby="DiaAbertoConfNavbar">
+        					<a class="dropdown-item" href="{% url 'diaAbertoConf:allTransportes'%}">Gestão de Transportes</a>
+        				  	<a class="dropdown-item" href="{% url 'diaAbertoConf:allHorarios'%}">Horários de Transportes</a>
+        				</div>
+      				</li>
+				{% endif %}
+				{% if perms.diaAbertoConf.view_ementa %}  
+        			<li class="nav-item">
+        				<a class="nav-link" href="{% url 'diaAbertoConf:gestaoEmentas'%}">Almoços</a>
+        			</li>
+				{% endif %}
+				{% if perms.tarefas.view_tarefa %}
+					<li class="nav-item">
+        				<a class="nav-link active" href="{% url 'tarefas:showTarefas' %}">Tarefas</a>
+        			</li>
+				{% endif %}
+			{% endif %}
+		</ul>
+	{% endblock %}
+
 	{% block content%}
         <div class = "row mx-4 my-4">
             <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-				<p class="text-muted">Filtros Tarefa</p>
-				<form>
+				<p class="text-muted">Filtros tarefa</p>
+				<form id="formfilters" method="get">
+					<input id="id_page" name="page" value="{{page_obj.number}}" type="hidden">
+					<input id="id_order_by" name="order_by" {% if order_by %} value="{{order_by}}" {% endif %} type="hidden">
+					<input id="id_direction" name="direction" {% if direction %} value="{{direction}}" {% endif %} type="hidden">
+					<hr>
+					<div class="form-group row">
+						<div class="col">
+							<div class="float-right">
+						  		<a href="{% url 'tarefas:showTarefas' %}">Limpar filtros</a>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  	<div class="input-group-prepend">
+						    	<span class="input-group-text"><i class="fas fa-search"></i></span>
+						  	</div>
+						  	<input type="text" id="id_nome" name="nome" class="form-control" placeholder="Pesquisar por tarefa" {% if nomeTarefaSearched %} value="{{nomeTarefaSearched}}"{% endif %}>
+						</div>
+					</div>
+					<div class="form-group row">						
+						<select id="id_tipoTarefa" name="tipoTarefa" class="form-control" >
+                            <option value="" disabled selected>Tipo de tarefa</option>
+							{% if tipoTarefaSearched == 'Atividade' %}
+                            	<option value="Atividade" selected>Atividade</option>
+                            	<option value="Transporte">Transporte</option>
+							{% elif tipoTarefaSearched == 'Transporte'%}
+								<option value="Atividade" >Atividade</option>
+                            	<option value="Transporte" selected>Transporte</option>
+							{% else %}
+								<option value="Atividade">Atividade</option>
+                            	<option value="Transporte">Transporte</option>
+							{% endif %}
+                        </select>
+					</div>
+					<div class="form-group row">
+						<select id="id_estado" name="estado" class="form-control">
+                            <option value="" disabled selected>Estado</option>
+							{% if estadoTarefaSearched == 'True' %}
+                            	<option value="True" selected>Atribuida</option>
+                            	<option value="False">Não Atribuida</option>
+							{% elif estadoTarefaSearched == 'False' %}
+								<option value="True">Atribuida</option>
+                            	<option value="False" selected>Não Atribuida</option>
+							{% else %}
+								<option value="True">Atribuida</option>
+                            	<option value="False">Não Atribuida</option>
+							{% endif %}
+                        </select>
+					</div>
 					<hr>
 					<div class="form-group row">
 						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="fas fa-search"></i></span>
-						  </div>
-						  <input type="text" class="form-control" placeholder="Tarefa">
-						</div>
-					</div>
-                    <div class="form-group row">
-						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="fas fa-search"></i></span>
-						  </div>
-						  <input type="text" class="form-control" placeholder="Colaborador">
+						  	<div class="input-group-prepend">
+						    	<span class="input-group-text"><i class="fas fa-search"></i></span>
+						  	</div>
+							<input id="id_colaboradores__nome" name="colaboradores__nome" type="text" class="form-control" placeholder="Pesquisar por colaborador" {% if nomeColaboradorSearched %} value="{{nomeColaboradorSearched}}"{% endif %}>
 						</div>
 					</div>
 					<div class="form-group row">
 						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="fas fa-search"></i></span>
-						  </div>
-						    <select id="tipoTarefa" name="tipo" class="form-control">
-                                <option value="" disabled selected>Tipo</option>
-                                <option value="Atividade">Atividade</option>
-                                <option value="Transporte">Transporte</option>
-                            </select>
+						  	<div class="input-group-prepend">
+						    	<span class="input-group-text"><i class="fas fa-search"></i></span>
+						  	</div>
+							<input id="id_colaboradores__email" name="colaboradores__email" type="text" class="form-control" placeholder="Pesquisar por e-mail do colaborador" {% if emailColaboradorSearched %} value="{{emailColaboradorSearched}}"{% endif %}>
 						</div>
+					</div>
+					<hr>
+					<div class="form-group row">
+						<label class="text-muted">De:</label>						
+						  <input type="time" class="form-control" id="id_horario_gte" name="horario_gte" 
+						  	{% if horario_gte_Searched %} value="{{horario_gte_Searched}}"{% endif %}>
 					</div>
 					<div class="form-group row">
+						<label class="text-muted">Até:</label>
+						  <input type="time" class="form-control" id="id_horario_lte" name="horario_lte"
+						  	{% if horario_lte_Searched %} value="{{horario_lte_Searched}}"{% endif %}>
+					</div>
+					<hr>
+					<div class="form-group row">
 						<div class="input-group">
-						  <div class="input-group-prepend">
-						    <span class="input-group-text"><i class="fas fa-search"></i></span>
-						  </div>
-						    <select id="estado" name="estado" class="form-control">
-                                <option value="" disabled selected>Estado</option>
-                                <option value="Atribuida">Atribuida</option>
-                                <option value="NaoAtribuida">Nao Atribuidas</option>
-                            </select>
+						  	<div class="input-group-prepend">
+						    	<span class="input-group-text"><i class="far fa-calendar"></i></span>
+						  	</div>
+							<select id="id_data" name="data" class="form-control">
+                            	<option value="" disabled selected>Pesquisar por data</option>
+								{% for dia in datasDiaAberto%}				
+									{% if dia|date:"m/d/Y" == dataTarefaSearched %}				
+										<option selected value={{ dia | date:"m/d/Y"}}>{{dia |date:"d-m-Y"}}</option>
+									{% else %}
+										<option value={{ dia | date:"m/d/Y"}}>{{dia |date:"d-m-Y"}}</option>
+									{% endif %}								
+								{% endfor %}
+                        	</select>						
 						</div>
 					</div>
+					<hr>
+					<div class="form-group row float-right">
+						<button id="searchbtn"class="btn btn-outline-primary" type="submit"><i class="fas fa-search fa-sm"></i> Procurar</button>
+				</div>
 				</form>
+				
 			</div>
             <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
 				<nav aria-label="breadcrumb">
@@ -61,10 +182,10 @@
 					</ol>
 				</nav>
 
-				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'tarefas:createTarefa' %}"> + Adicionar Tarefa</a>
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'tarefas:createTarefa' %}"> + Adicionar tarefa</a>
                	<div class="table-responsive-sm">
-				<table class="table">
-                    <thead>
+				<table class="table" id="dataTable">                    
+					<thead>
                         <tr>
 							<th scope="col" style="width: 8%"></th>
 							{% if order_by == "nome" %}
@@ -90,7 +211,7 @@
 								<th scope="col" class="Sortable Tipo tableBorderH" style="width: 25%">Tipo</th>
 							{% endif %}
 							{% if order_by == "estado" %}
-								<th scope="col" class="Sortable Estado {{direction}} tableBorderH" style="width: 25%">Tipo
+								<th scope="col" class="Sortable Estado {{direction}} tableBorderH" style="width: 25%">Estado
 								{% if direction == 'asc'%} 
 									<i class="fas fa-caret-up fa-xs"></i>
 								{% elif direction == 'desc' %}
@@ -113,7 +234,7 @@
 								{% if tarefa.estado %}
 								<td style="width: 25%"><h5><span class="badge badge-success">Atribuída</span></h5></td>
 								{% else %}
-								<td style="width: 25%"><h5><span class="badge badge-warning">Não Atribuída</span></h5></td>
+								<td style="width: 25%"><h5><span class="badge badge-warning">Não atribuída</span></h5></td>
 								{% endif %}
                     		    <td style="width: 8%"><a class="btn btn-outline-success far fa-edit" href="{% url 'tarefas:updateTarefa' id=tarefa.id %}" ></a></td>
                     		    <td style="width: 8%"><button class="btn btn-outline-danger fas fa-trash-alt delete" data-toggle="modal" data-target="#Modal" data-id="{% url 'tarefas:deleteTarefa' id=tarefa.id %}"></button></td>									
@@ -124,24 +245,25 @@
 								<td ></td>                   	        
 								{% if tarefa.tipoTarefa == 'Atividade' %}
 									<td colspan="2">	
-                    	        	    <p><b>Data:</b> {{ tarefa.data|date:"d/m/Y"}}</p>
+                    	        	    <p><b>Data:</b> {{ tarefa.data|date:"d-m-Y"}}</p>
+										<p><b>Horário:</b> {{tarefa.horario|time:"H:i"}}</p>
                     	        	    <p><b>Descrição:</b> {{tarefa.descricao}}</p>								
                     	        	</td>
 									<td colspan="3">     
                     	        	    <p><b>Atividade:</b> {{tarefa.sessao_atividadeid.atividadeid.nome}}</p>
-										<p><b>Local:</b> {{tarefa.sessao_atividadeid.atividadeid.localid}}</p>
-                    	        	    <p><b>Sessão:</b> {{tarefa.sessao_atividadeid.sessaoid.hora_de_inicio|time:"H:i"}}</p>
+										<p><b>Sessão:</b> {{tarefa.sessao_atividadeid}}</p>
+										<p><b>Local:</b> {{tarefa.sessao_atividadeid.atividadeid.localid}}</p>                    	        	    
 									</td>
 								{% elif tarefa.tipoTarefa == 'Transporte' %}
 									<td>	
-                    	        	    <p><b>Data:</b> {{tarefa.data|date:"d/m/Y"}}</p>
+                    	        	    <p><b>Data:</b> {{tarefa.data|date:"d-m-Y"}}</p>
+										<p><b>Horário:</b> {{tarefa.horario|time:"H:i"}}</p>
                     	        	    <p><b>Descrição:</b> {{tarefa.descricao}}</p>								
                     	        	</td>
 									<td>     
-                    	        	    <p><b>Horário:</b> {{tarefa.horario|time:"H:i"}}</p>
-										<p><b>Atividade Origem:</b> {{tarefa.sessao_atividadeid_origem.atividadeid.nome}}</p>
+										<p><b>Atividade origem:</b> {{tarefa.sessao_atividadeid_origem.atividadeid.nome}}</p>
 										<p><b>Origem:</b> {{tarefa.origem}}</p>
-                    	        	    <p><b>Atividade Destino:</b> {{tarefa.sessao_atividadeid_destino.atividadeid.nome}}</p>
+                    	        	    <p><b>Atividade destino:</b> {{tarefa.sessao_atividadeid_destino.atividadeid.nome}}</p>
 										<p><b>Destino:</b> {{tarefa.destino}}</p>
 									</td>
 									<td colspan="3">
@@ -149,7 +271,7 @@
 											{% for  key, tarefaGrupos in allTarefaGrupos.items %}
 												{% if key == tarefa.id %}
 													{% for grupo in tarefaGrupos%}
-														<p>{{grupo.inscricaoid}}</p>
+														<p>&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;{{grupo.inscricaoid}}</p>
 													{% endfor%}
 												{% endif %}
 											{% endfor %}			
@@ -157,55 +279,56 @@
 								{% endif %}
                     	    </tr>
 							{% if not tarefa.estado %}
-							<tr>
-								<td></td>
-								<td colspan="5">
-                    	            <a type="button" class="btn btn-outline-success mb-2" href="{% url 'tarefas:atribuirTarefa' id=tarefa.id %}">Atribuir Colaborador</a><td>
-								</td>
-							</tr>
-							{% else %}
-							<tr>
-								<td></td>
-								<td colspan="5">
-									
-									<p><b>Colaborador Associado: </b>
+								<tr>
+									<td></td>
+									<td colspan="5">
+										<a type="button" class="btn btn-outline-success mb-2" href="{% url 'tarefas:atribuirTarefa' id=tarefa.id %}">Atribuir colaborador</a><td>
+									</td>
+								</tr>
+								{% else %}
+								<tr>
+									<td></td>
+									<td colspan="5">
+										
+										<b>Colaborador associado: </b>
 										{% for  key, tarefaColab in allTarefaColaboradores.items %}
 											{% if key == tarefa.id %}
 												{% for colab in tarefaColab%}
-													{{colab.utilizadorid.nome}}, {{colab.utilizadorid.email}}
+													<p>
+													&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;
+													{{colab.nome}}, {{colab.email}} 
+													<a type="button" class="fas fa-times ml-2 rmcolab" style="color:red"href="" data-toggle="modal" data-target="#RemoveColab" data-id="{% url 'tarefas:removeColaborador' id=tarefa.id colabid=colab.id%}"></a>
+													</p>
 												{% endfor%}
 											{% endif %}
-										{% endfor %}			
-									</p>
-								</td>
-							</tr>
+										{% endfor %}
+									</td>
+								</tr>
+								{% if tarefa.tipoTarefa == 'Atividade' %}
+									<tr>
+										<td></td>
+										<td colspan="5">
+											<a type="button" class="btn btn-outline-success mb-2" href="{% url 'tarefas:atribuirTarefa' id=tarefa.id %}"> + Colaborador extra</a><td>
+										</td>
+									</tr>
+								{% endif%}
 							{% endif %}
                     	</tbody>
 					{% endfor %}
                 </table>
 				</div>
-                <div class="pagination d-flex justify-content-end">
+            	<div class="pagination d-flex justify-content-end">
 				    <span class="step-links">
 				        {% if page_obj.has_previous %}
-							{% if order_by and direction %}
-				            	<a class="btn btn-outline-secondary  fas fa-angle-double-left " href="?page=1&order_by={{ order_by }}&direction={{ direction }}"></a>
-				            	<a class="btn btn-outline-secondary  fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}&order_by={{ order_by }}&direction={{ direction }}"></a>
-				        	{% else %}
-								<a class="btn btn-outline-secondary  fas fa-angle-double-left " href="?page=1"></a>
-				            	<a class="btn btn-outline-secondary  fas fa-angle-left" href="?page={{ page_obj.previous_page_number }}"></a>
-							{% endif %}
+				            <button class="btn btn-outline-secondary  fas fa-angle-double-left page" data-page="1"></button>
+				            <button class="btn btn-outline-secondary  fas fa-angle-left page" data-page="{{page_obj.previous_page_number}}"></button>
 						{% endif %}
 
 				        <span class="current">{{ page_obj.number }}</span>
 
 				        {% if page_obj.has_next %}
-							{% if order_by and direction %}
-				            	<a class="btn btn-outline-secondary  fas fa-angle-right" href="?page={{ page_obj.next_page_number }}&order_by={{ order_by }}&direction={{ direction }}"></a>
-				            	<a class="btn btn-outline-secondary  fas fa-angle-double-right" href="?page={{ page_obj.paginator.num_pages }}&order_by={{ order_by }}&direction={{ direction }}"></a>
-				        	{% else %}
-								<a class="btn btn-outline-secondary  fas fa-angle-right" href="?page={{ page_obj.next_page_number }}"></a>
-				            	<a class="btn btn-outline-secondary  fas fa-angle-double-right" href="?page={{ page_obj.paginator.num_pages }}"></a>
-							{% endif %}
+							<button class="btn btn-outline-secondary  fas fa-angle-right page" data-page="{{page_obj.next_page_number}}"></button>
+				            <button class="btn btn-outline-secondary  fas fa-angle-double-right page" data-page="{{page_obj.paginator.num_pages}}"></button>
 						{% endif %}
 				    </span>
 				</div> 
@@ -227,6 +350,30 @@
 					<!-- Modal footer -->
 					<div class="modal-footer">
 						<form id="deleteModal" action="" method="post">
+							{% csrf_token %}
+						<button type="submit" class="btn btn-success" >Sim</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Nao</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="RemoveColab">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title">Aviso</h4>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
+					<!-- Modal body -->
+					<div class="modal-body">
+						Tem a certeza que pretende remover este colaborador?
+					</div>
+					<!-- Modal footer -->
+					<div class="modal-footer">
+						<form id="removeColabModal" action="" method="post">
 							{% csrf_token %}
 						<button type="submit" class="btn btn-success" >Sim</button>
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Nao</button>
