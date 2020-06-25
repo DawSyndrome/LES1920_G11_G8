@@ -1,0 +1,130 @@
+
+{% extends 'diaAbertoConf/Home.html' %}
+
+
+{% block content %}
+<div class="container mb-5 mt-4 pb-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 ">
+                    <nav aria-label="breadcrumb">
+						<ol class="breadcrumb bg-white">
+							<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+							<li class="breadcrumb-item active">Almoços</li>
+						</ol>
+					</nav>
+    		    </div>
+            </div>
+			<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'diaAbertoConf:createEmenta' %}"> + Adicionar ementa</a>
+            <p></p>
+    	    <div class = "row">
+    		    <div class = "col-sm-12 ">
+    		    		<table class="table">
+                    	    <thead>
+                    	        <tr>
+									<th scope="col" style="width: 5%"></th>
+                    	            <th scope="col" style="width: 30%">Dia</th>
+                                    <th scope="col" style="width: 25%"></th>
+                    	            <th scope="col" style="width: 25%"></th>
+									<th scope="col" style="width: 5%"></th>
+                    	            <th scope="col" style="width: 5%"></th>
+                    	        </tr>
+                    	    </thead>
+                    	    <tbody>
+								{% for ementa in allEmentas %}
+								<tbody>
+                    	        	<tr>
+										<td><i class="fas fa-chevron-right"></i></td>
+                    	        	    <th scope="row">{{ ementa.dia|date:"l"}}, {{ ementa.dia|date:"d"}} de {{ ementa.dia|date:"F"}} de {{ ementa.dia|date:"Y"}}</th>
+										<th scope="row">Preço Aluno {{ diaAberto.preco_aluno }}€</th>
+										<th scope="row">Preço Professor {{ diaAberto.preco_professor }}€</th>
+                    	        	    <td><a class="btn btn-outline-success far fa-edit" href="{% url 'diaAbertoConf:EditarEmenta' id=ementa.id %}"  ></a></td>
+                    	        	   	<td><a class="btn btn-outline-danger fas fa-trash-alt delete" href="" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:deleteEmenta' id=ementa.id %}"></a></td>
+										<div class="modal" id="Modal">
+											<div class="modal-dialog">
+												<div class="modal-content">
+
+												<!-- Modal Header -->
+												<div class="modal-header">
+													<h4 class="modal-title">Aviso</h4>
+													<button type="button" class="close" data-dismiss="modal">×</button>
+												</div>
+
+												<!-- Modal body -->
+												<div class="modal-body">
+													Tem a certeza que pretende eliminar este item?
+												</div>
+
+												<!-- Modal footer -->
+												<div class="modal-footer">
+													<form id="deleteModal" action="" method="post">
+														{% csrf_token %}
+													<button type="submit" class="btn btn-success" >Sim</button>
+													<button type="button" class="btn btn-danger" data-dismiss="modal">Nao</button>
+												</div>
+
+											</div>
+										</div>
+									</tr>
+                    	    	</tbody>
+								<tbody class="hide">
+									<tr>
+										<td></td>
+										<td>
+											{% for prato in allPratos %}
+												{% if prato.ementaid.id == ementa.id %}
+													{% if prato.tipo == 'Sobremesa' %}
+														<p><b>Sobremesa: </b>{{prato.nome}}<p>
+														{% if prato.descricao != 'None'%}<p><b>Descrição: </b>{{prato.descricao}}<p>{% endif %}
+													{% else %}
+														{% for  type in pratosType %}
+															{% if prato.tipo == type %}
+																<p><b>Prato de {{type}}:</b> {{prato.nome}}<p>
+																{% if prato.descricao != 'None' %}<p><b>Descrição: </b>{{prato.descricao}}<p>{% endif %} 
+															{% endif %}
+														{% endfor %}
+													{% endif %}	
+												{% endif %}	
+											{% endfor %}
+										</td>	
+									</tr>
+								</tbody>
+							{% endfor %}
+                    	</table>
+    		    </div>
+    	    </div>
+    	</div>
+{% endblock content%}
+{% block js %}
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script type="text/javascript">
+            $(function () {
+                $('.delete').click(function (){
+                    var data_var = $(this).data('id');
+                    $("#deleteModal").attr("action", data_var);
+                })
+            });
+
+			$(".hide").hide();
+
+			$("table").click(function(event) {
+    			//event.stopPropagation();
+    			var target = $(event.target);
+				if(!target.is('a')){
+					if ( target.closest('tbody').find('i').hasClass('fas fa-chevron-right') ){
+						target.closest('tbody').next().show();
+        				target.closest('tbody').find('i').removeClass();
+						target.closest('tbody').find('i').addClass('fas fa-chevron-down');	
+
+					}else if( target.closest('tbody').find('i').hasClass('fas fa-chevron-down') ){
+						target.closest('tbody').next().hide();
+        				target.closest('tbody').find('i').removeClass();
+						target.closest('tbody').find('i').addClass('fas fa-chevron-right');	
+						
+					}    				
+				}
+			})
+    </script>
+{% endblock js %}
+
+

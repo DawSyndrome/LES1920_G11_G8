@@ -1,0 +1,251 @@
+{% extends 'diaAbertoConf/Home.html' %}
+
+{% block navContent %}
+    <ul class="navbar-nav mr-auto">
+		{% if user.is_authenticated %}
+			{% if perms.atividades.view_inscricao%}
+				<li class="nav-item">
+    				<a class="nav-link" href="#">Inscrições</a>
+    			</li>
+			{% endif %}
+			{% if perms.atividades.view_atividade%}
+				{% if  perms.atividades.view_edificio and perms.atividades.view_campus and perms.atividades.view_local and perms.atividades.view_unidadeorganica and  perms.atividades.view_departamento and perms.atividades.view_tematica and perms.atividades.view_material and perms.atividades.view_sessaoatividade %}
+    				<li class="nav-item dropdown">
+    					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Atividades
+    					</a>
+    					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+    						<a class="dropdown-item" href="{% url 'atividades:allAtividades'%}">Atividades</a>
+    						<a class="dropdown-item" href="{% url 'atividades:allEdificios'%}">Edifícios</a>
+    						<a class="dropdown-item" href="{% url 'atividades:allCampus'%}">Campus</a>
+    						<a class="dropdown-item" href="{% url 'atividades:allLocais'%}">Locais</a>
+    						<a class="dropdown-item" href="{% url 'atividades:allUnidadeOrganicas'%}">Unidade Orgânicas</a>
+    						<a class="dropdown-item" href="{% url 'atividades:allDepartamentos'%}">Departamentos</a>
+    						<a class="dropdown-item" href="{% url 'atividades:allTematicas'%}">Temáticas</a>
+    						<a class="dropdown-item" href="{% url 'atividades:allMateriais'%}">Materiais</a>
+    						<a class="dropdown-item" href="{% url 'atividades:allSessoes'%}">Horários de Sessões</a>
+						</div>
+    				</li>
+				{%else%}
+					<li class="nav-item">
+    					<a class="nav-link" href="{% url 'atividades:allAtividades' %}">Atividades</a>
+    				</li>  
+				{%endif%}
+			{% endif %}
+			{% if perms.diaAbertoConf.view_diaaberto%}
+				<li class="nav-item">
+    				<a class="nav-link active" href="{% url 'diaAbertoConf:editConfig' %}">Configuração do Dia Aberto</a>
+    			</li>
+			{% endif %}
+			{% if perms.diaAbertoConf.view_transporte %}        	      		
+    			<li class="nav-item dropdown">
+    				<a class="nav-link dropdown-toggle" href="#" id="DiaAbertoConfNavbar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    					Transportes
+    				</a>
+    				<div class="dropdown-menu" aria-labelledby="DiaAbertoConfNavbar">
+    					<a class="dropdown-item" href="{% url 'diaAbertoConf:allTransportes'%}">Gestão de Transportes</a>
+    				  	<a class="dropdown-item" href="{% url 'diaAbertoConf:allHorarios'%}">Horários de Transportes</a>
+    				</div>
+    			</li>
+			{% endif %}
+			{% if perms.diaAbertoConf.view_ementa %}  
+    			<li class="nav-item">
+    				<a class="nav-link" href="{% url 'diaAbertoConf:gestaoEmentas'%}">Almoços</a>
+    			</li>
+			{% endif %}
+			{% if perms.tarefas.view_tarefa %}
+				<li class="nav-item">
+    				<a class="nav-link" href="{% url 'tarefas:showTarefas' %}">Tarefas</a>
+    			</li>
+			{% endif %}
+		{% endif %}
+	</ul>
+{% endblock %}
+
+{% block content %}
+    <div class="mt-3 mx-2 pb-5">
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb bg-white">
+				<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+				<li class="breadcrumb-item active">Configuração do Dia Aberto</li>
+			</ol>
+		</nav>
+		<div class="row">
+			<div class = "col-sm-4 offset-sm-4">
+            	<h4 style="text-align:center;">Configuração do Dia Aberto</h4>
+    		</div>
+			<div class = "col-sm-4 offset-sm-4">
+    			{% for key, value in form.errors.items %}
+            		{% for error in value %}
+            	    	<div class="alert alert-danger" role="alert" style="text-align:center;">
+            	    	    {{ error }}
+            	    	</div>
+            		{% endfor%}
+            	{% endfor%}
+            </div>
+			<div class="col-sm-8 offset-sm-2 mt-3">
+            	<div class="progress" style="height: 35px;">
+  					<div class="progress-bar step1" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Informação do Dia Aberto</div>
+					<div class="progress-bar bg-secondary step2" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Período de atividades</div>
+					<div class="progress-bar bg-secondary step3" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Período de inscrições</div>
+					<div class="progress-bar bg-secondary step4" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Almoços</div>
+					<div class="progress-bar bg-secondary step5" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Contactos</div>
+				</div>
+    		</div>	
+		</div>
+        <hr class="mx-5">
+    	<div class = "row">
+    		<div class = "col-sm-6 offset-sm-3 mt-5">
+				<form action = "{% url 'diaAbertoConf:editConfig' %}" method="post">
+            		{% csrf_token %}
+					<div class="InfoDiaAberto">
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Título</label>
+							</div>
+    						<div class="col-sm-8">
+								<input id="titulo" type="text" name="titulo" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.titulo }}" {% endif %} required oninvalid="goToStep('1')">
+    						</div>
+  						</div>
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Descrição</label>
+							</div>
+    						<div class="col-sm-8">
+								<textarea name="descricao" class="form-control" rows="7" required oninvalid="goToStep('1')">{% if diaAberto_data %}{{ diaAberto_data.descricao }} {% endif %}</textarea>
+    						</div>
+  						</div>
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Data de início</label>
+							</div>
+    						<div class="col-sm-8">
+								<input id="data_inicio" type="date" name="data_inicio" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.data_inicio|date:"Y-m-d"}}" {% endif %} required oninvalid="goToStep('1')">
+    						</div>
+  						</div>
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Data de fim</label>
+							</div>
+    						<div class="col-sm-8">
+								<input id="data_fim" type="date" name="data_fim" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.data_fim|date:"Y-m-d"}}" {% endif %} required oninvalid="goToStep('1')">
+    						</div>
+  						</div>
+					</div>
+					<div class="InfoAtividades" style="display: none;">
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Início do período de proposta de atividades</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="data_inicio_propor_atividades" type="date" name="data_inicio_propor_atividades" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.data_inicio_propor_atividades|date:"Y-m-d"}}" {% endif %} required oninvalid="goToStep('2')">
+    						</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Fim do período de proposta de atividades</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="data_fim_propor_atividades" type="date" name="data_fim_propor_atividades" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.data_fim_propor_atividades|date:"Y-m-d"}}" {% endif %} required oninvalid="goToStep('2')">
+    						</div>
+						</div>
+					</div>
+					<div class="InfoInscricao" style="display: none;">
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Início do período de inscrição de participantes</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="data_inicio_inscricao" type="date" name="data_inicio_inscricao" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.data_inicio_inscricao|date:"Y-m-d"}}" {% endif %} required oninvalid="goToStep('3')">
+    						</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Fim do período de inscrição de participantes</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="data_fim_inscricao" type="date" name="data_fim_inscricao" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.data_fim_inscricao|date:"Y-m-d"}}" {% endif %} required oninvalid="goToStep('3')">
+    						</div>
+						</div>
+					</div>
+					<div class="InfoAlmoços" style="display: none;">
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Preço da refeição de aluno</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="preco_aluno" type="number" step="0.01" name="preco_aluno" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.preco_aluno}}" {% endif %} required oninvalid="goToStep('4')">
+    						</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Preço da refeição de professor</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="preco_professor" type="number" step="0.01" name="preco_professor" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.preco_professor }}" {% endif %} required oninvalid="goToStep('4')">
+    						</div>
+						</div>
+					</div>
+					<div class="InfoContactos" style="display: none;">
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>Contacto telefónico</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="contacto" type="text" name="contacto" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.contacto }}" {% endif %} required>
+    						</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label>E-mail</label>
+							</div>
+    						<div class="col-sm-8">
+      							<input id="email" type="text" name="email" class="form-control" {% if diaAberto_data %} value ="{{ diaAberto_data.email }}" {% endif %} required>
+    						</div>
+						</div>
+					</div>            
+					<div class="form-group row mt-5">
+						<div class="col-sm-10">
+							<a type="button" class="btn btn-secondary mr-3" href="{% url 'diaAbertoConf:index' %}">Cancelar</a>
+            		        <a href="" class="btn btn-primary save" data-toggle="modal" data-target="#Modal">Guardar</a>
+						</div>
+						<div class="col-sm-2 d-flex justify-content-end">
+							<button type="button" class="btn btn-outline-secondary  fas fa-angle-left previousStep mr-3"></a>
+							<button type="button" class="btn btn-outline-secondary  fas fa-angle-right nextStep"></a>						
+						</div>
+					</div>
+
+            		<div class="modal" id="Modal">
+						<div class="modal-dialog">
+							<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+								<h4 class="modal-title">Aviso</h4>
+								<button type="button" class="close" data-dismiss="modal">×</button>
+							</div>
+
+							<!-- Modal body -->
+							<div class="modal-body">
+								Tem a certeza que pretende guardar as alterações?
+							</div>
+
+							<!-- Modal footer -->
+							<div class="modal-footer">
+							<form id="deleteModal" action = "{% url 'diaAbertoConf:editConfig' %}" method="post">
+            		            {% csrf_token %}
+								<button type="submit" class="btn btn-success" >Sim</button>
+								<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+							</div>
+
+						</div>
+            		</div>
+        		</form>
+			</div>
+		</div>  
+    </div>     
+{% endblock%}
+{% block js %}
+	{% load static %}
+	<script src={% static "diaAbertoConf/editConfig.js" %}></script>
+{% endblock %}	

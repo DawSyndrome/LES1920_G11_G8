@@ -1,0 +1,285 @@
+{% extends "atividades/ShowAtividades.html" %}
+
+     {% block css %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static "atividades/showAtividades.css" %}">
+    {% endblock %}
+
+	{% block content %}
+    	<div class = "row mx-4 my-4">
+			<div class="col-xs-3 col-sm-3 col-md-3">
+				<p class="text-muted">Filtros locais</p>
+				<form id="formfilters" method="get">
+                    <input id="id_page" name="page" value="{{page_obj.number}}" type="hidden">
+                    <input id="id_order_by" name="order_by" {% if order_by %} value="{{order_by}}" {% endif %} type="hidden">
+                    <input id="id_direction" name="direction" {% if direction %} value="{{direction}}" {% endif %} type="hidden">
+					<hr>
+					<div class="form-group row">
+						<div class="col">
+							<div class="float-right">
+						  		<a href="{% url 'atividades:allLocais' %}">Limpar filtros</a>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input {% if edicifioid__nome_edificio %} value="{{edicifioid__nome_edificio}}" {% endif %} name="edicifioid__nome_edificio" id="id_edicifioid__nome_edificio" type="text" class="form-control" placeholder="Pesquisar por edifício">
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group">
+						  <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+						  </div>
+						  <input {% if campusid__nome %} value="{{campusid__nome}}" {% endif %} name="campusid__nome" id="id_campusid__nome" type="text" class="form-control" placeholder="Pesquisar por campus">
+						</div>
+					</div>
+                    <div class="form-group row">
+                      <select id="id_indoor" name="indoor" class="form-control">
+                        <option disabled selected>Pesquisar por tipo de local</option>
+                        {% if localTipoSearched == "false" %}
+                            <option value="false" selected>Exterior</option>
+                            <option value="true">Interior</option>                         
+                        {% elif  localTipoSearched == "true"%}
+                            <option value="false">Exterior</option>
+                            <option value="true" selected>Interior</option>
+                        {% else %}
+                            <option value="false">Exterior</option>
+                            <option value="true">Interior</option>
+                        {% endif %}
+                      </select>
+                    </div>
+                    <hr>
+                    <div class="form-group row float-right">
+                        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search fa-sm"></i> Procurar</button>
+                    </div>
+
+				</form>
+			</div>
+			<div class="col-xs-9 col-sm-9 col-md-9">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+						<li class="breadcrumb-item active">Locais</li>
+					</ol>
+				</nav>
+
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:addLocal' %}"> + Adicionar local</a>
+
+    	    	<table class="table">
+                    <thead>
+                        <tr>
+                        	<th style="width: 6%" scope="col"></th>
+                            {% if order_by == "campusid" %}
+                            <th style="width: 40%" class="Sortable Campus {{direction}} tableBorderH" scope="col">Campus
+                            {% if direction == 'asc'%} 
+                                <i class="fas fa-caret-up fa-xs"></i>
+                            {% elif direction == 'desc' %}
+                                <i class="fas fa-caret-down fa-xs"></i>
+                            {% endif %}
+                            </th>
+                            {% else %}
+                            <th scope="col" class="Sortable Campus tableBorderH" style="width: 40%"> Campus</th>
+                            {% endif  %}
+                            {% if order_by == "indoor" %}
+                            <th style="width: 40%" class="Sortable Indoor {{direction}} tableBorderH" scope="col">Tipo de local
+                            {% if direction == 'asc'%} 
+                                <i class="fas fa-caret-up fa-xs"></i>
+                            {% elif direction == 'desc' %}
+                                <i class="fas fa-caret-down fa-xs"></i>
+                            {% endif %}
+                            </th>
+                            {% else %}
+                            <th scope="col" class="Sortable Indoor tableBorderH" style="width: 40%">Tipo de local</th>
+                            {% endif  %}
+                            <th style="width: 6%" scope="col"></th>
+							<th style="width: 6%" scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	<tbody>
+						{% for local in page_obj %}
+                        	<tr>
+                        		<td><i class="fas fa-chevron-right"></i></td>
+                        	    <td>{{ local.campusid.nome}}</td>
+                                {% if local.indoor %}
+                                <td>Interior</td>
+                                {% else %}
+                                <td>Exterior</td>
+                                {% endif %}
+                        	    <td><a class="btn btn-outline-success far fa-edit" href="{% url 'atividades:updateLocal' id=local.id %}"></a></td>
+                        	    <td><a href="" class="delete btn btn-outline-danger fas fa-trash-alt" data-toggle="modal" data-target="#Modal" data-id="{% url 'atividades:deleteLocal' id=local.id %}"></a></td>
+                        	</tr>
+                        </tbody>
+                        <tbody class="hide">
+                        	<tr>
+                        		<td colspan="1"></td>
+                        	    <td colspan="1">
+                                    <div>
+                                        {% if local.indoor %}
+                                        <p><b>Edifício:</b> {{local.edicifioid.nome_edificio}}</p>
+                                        <p><b>Andar:</b> {{local.andar}}</p>
+                                        <p><b>Sala:</b> {{local.sala}}</p>
+                                        <p><b>Descrição:</b> {{local.descricao}}</p>
+                                        {% else %}
+                                        <p><b>Nome do local:</b> {{local.nome_local_exterior}}</p>
+                                        <p><b>Descrição:</b> {{local.descricao}}</p>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                {% if local.mapa_sala %}
+                                <td colspan="3">
+                                    <div>
+                                        <p style="text-align:right;"><b>Mapa: </b><a class="imageShow" href="" data-toggle="modal" data-target="#ImageModal" data-image="{{local.mapa_sala}}">Visualizar a imagem</a></p>
+                                    </div>
+                                </td>
+                        	    {% endif %}
+                          </tr>
+                            
+                        </tbody>
+						{% endfor %}
+                    </tbody>
+                </table>
+
+				<div class="pagination d-flex justify-content-end">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <button class="btn btn-outline-secondary  fas fa-angle-double-left page" data-page="1"></button>
+                            <button class="btn btn-outline-secondary  fas fa-angle-left page" data-page="{{page_obj.previous_page_number}}"></button>
+                        {% endif %}
+
+                        <span class="current">{{ page_obj.number }}</span>
+
+                        {% if page_obj.has_next %}
+                            <button class="btn btn-outline-secondary  fas fa-angle-right page" data-page="{{page_obj.next_page_number}}"></button>
+                            <button class="btn btn-outline-secondary  fas fa-angle-double-right page" data-page="{{page_obj.paginator.num_pages}}"></button>
+                        {% endif %}
+                    </span>
+                </div>
+
+			</div>
+        </div>
+
+        <div class="modal fade" id="Modal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <h4 class="modal-title">Aviso</h4>
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                  Tem a certeza que pretende remover?
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <form id="deleteModal" action="" method="post">
+                        {% csrf_token %}
+                  <button type=submit" class="btn btn-success" >Sim</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+              </form>
+                </div>        
+              </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="ImageModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Mapa do Local</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <img src=""  width="100%" height="100%">
+              </div>
+            </div>
+          </div>
+        </div>
+
+	{% endblock %}
+	
+	{% block js %}
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script type="text/javascript">
+
+        $(".hide").hide();
+        $("table").click(function(event) {
+            //event.stopPropagation();
+            var target = $(event.target);
+            if(!target.is('a')){
+                if ( target.closest('tbody').find('i').hasClass('fas fa-chevron-right') ){
+                    target.closest('tbody').next().show();
+                    target.closest('tbody').find('i').removeClass();
+                    target.closest('tbody').find('i').addClass('fas fa-chevron-down');
+				}else if( target.closest('tbody').find('i').hasClass('fas fa-chevron-down') ){
+                    target.closest('tbody').next().hide();
+                    target.closest('tbody').find('i').removeClass();
+                    target.closest('tbody').find('i').addClass('fas fa-chevron-right');
+                }
+            }
+        })
+
+        $('th.Sortable').click(function(){
+        
+            var form = $('#formfilters')
+
+            if($(this).hasClass('Campus')){
+                if($(this).hasClass('asc')){
+                    form.find("#id_order_by").val("campusid")
+                    form.find("#id_direction").val("desc")
+                }else{
+                    form.find("#id_order_by").val("campusid")
+                    form.find("#id_direction").val("asc")    
+                }
+            }
+            else if($(this).hasClass('Indoor')){
+                if($(this).hasClass('asc')){
+                    form.find("#id_order_by").val("indoor")
+                    form.find("#id_direction").val("desc")
+                }else{
+                    form.find("#id_order_by").val("indoor")
+                    form.find("#id_direction").val("asc")    
+                }
+            }
+            form.submit()
+        })
+
+        $('button.page').click(function(){
+            var page = $(this).data('page')
+            var form = $('#formfilters')
+            form.find("#id_page").val(page)
+            form.submit()
+        })
+    
+        $(document).ready( function(){
+            $('th.Sortable').each(function(){
+                $(this).has('i').addClass('tableBorder')
+            })
+        })
+
+        
+        $('.delete').click(function (){
+            var data_var = $(this).data('id');
+            $("#deleteModal").attr("action", data_var);
+        })
+
+        $('.imageShow').click(function (){
+            var data_var = "/media/" + $(this).data('image');
+            $("#ImageModal").find('img').attr("src", data_var);
+        })
+
+
+    </script>
+    {% endblock %}

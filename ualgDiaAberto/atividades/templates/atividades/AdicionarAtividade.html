@@ -1,0 +1,401 @@
+{% extends "atividades/ShowAtividades.html" %}
+
+	{% block content %}
+    	<div class="mt-3 mx-2 pb-5">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'atividades:allAtividades' %}">Atividades</a></li>
+					<li class="breadcrumb-item active">Adicionar atividade</li>
+				</ol>
+			</nav>
+    	    <div class = "row">
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Adicionar atividade</h4>
+    		    </div>
+    		    <div class = "col-sm-4 offset-sm-4">
+    		    {% if saved %}
+                    <div style="text-align:center;" class="alert alert-primary" role="alert">
+                        A atividade foi guardada com sucesso!
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-sm-8 offset-sm-2 mt-3">
+                <div class="progress" style="height: 35px;">
+                    <div class="progress-bar step1" role="progressbar" style="width: 25%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Informação da atividade</div>
+                    <div class="progress-bar bg-secondary step2" role="progressbar" style="width: 25%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Temática</div>
+                    <div class="progress-bar bg-secondary step3" role="progressbar" style="width: 25%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Materiais</div>
+                    <div class="progress-bar bg-secondary step4" role="progressbar" style="width: 25%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">Sessões</div>
+                </div>
+            </div>
+            </div>
+			<hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 offset-sm-3 mt-5">
+					<form action = "{% url 'atividades:createAtividade' %}" method="post">
+						{% csrf_token %}
+                        <div class="InfoAtividades">
+ 						    <div class="form-group row">
+						    	<div class="col-sm-4 col-form-label">
+    					    		{{form.nome.label}}
+						    	</div>
+                                <div class="col-sm-8">
+                                    {{form.nome}}
+                                </div>
+  						    </div>
+  						    <div class="form-group row">
+						    	<div class="col-sm-4 col-form-label">
+    					    		{{form.tipo_atividade.label}}
+						    	</div>
+    					    	<div class="col-sm-8">
+      					    		{{form.tipo_atividade}}
+    					    	</div>
+  						    </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4 col-form-label">
+                                    {{form.descricao.label}}
+                                </div>
+                                <div class="col-sm-8">
+                                    {{form.descricao}}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4 col-form-label">
+                                    {{form.public_alvo.label}}
+                                </div>
+                                <div class="col-sm-8">
+                                    {{form.public_alvo}}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4 col-form-label">
+                                    {{form.limite_de_participantes.label}}
+                                </div>
+                                <div class="col-sm-8">
+                                    {{form.limite_de_participantes}}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4 col-form-label">
+                                    {{form.num_colaboradores.label}}
+                                </div>
+                                <div class="col-sm-8">
+                                    {{form.num_colaboradores}}
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4 col-form-label">
+                                    {{form.duracao.label}}
+                                </div>
+                                <div class="col-sm-8">
+                                    {{form.duracao}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="InfoTematicas" style="display: none;">
+                            {{ AtividadeTematicaFormset.management_form }}
+                            {% for form in AtividadeTematicaFormset %}
+                            <div class = "tematica-form-comp">
+                                <div class="form-group row">
+                                    <div class="col-sm-4 col-form-label">
+                                        {{form.tematicaid.label}}
+                                    </div>
+                                    <div class="col-sm-8">
+                                        {{form.tematicaid}}
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-10">
+                                        <button class="btn btn-outline-danger remove-form-row mr-3">Remover temática</button>
+                                        <button class="btn btn-outline-success add-form-row">Adicionar temática</button>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="InfoMateriais" style="display: none;">
+                            {{ AtividadeMaterialFormset.management_form }}
+                            {% for form in AtividadeMaterialFormset %}
+                            <div class = "material-form-comp">
+                                <div class="form-group row">
+                                    <div class="col-sm-2 col-form-label">
+                                        {{form.materialid.label}}
+                                    </div>
+                                    <div class="col-sm-4">
+                                        {{form.materialid}}
+                                    </div>
+                                    <div class="col-sm-2 col-form-label">
+                                        {{form.quantidade.label}}
+                                    </div>
+                                    <div class="col-sm-4">
+                                        {{form.quantidade}}
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-10">
+                                        <button class="btn btn-outline-danger remove-form-row mr-3">Remover material</button>
+                                        <button class="btn btn-outline-success add-form-row">Adicionar material</button>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="InfoSessoes" style="display: none;">
+                            {{ AtividadeSessaoFormset.management_form }}
+                            {% for form in AtividadeSessaoFormset %}
+                            <div class = "sessao-form-comp">
+                                <div class="form-group row">
+                                    <div class="col-sm-2 col-form-label">
+                                        {{form.sessaoid.label}}
+                                    </div>
+                                    <div class="col-sm-4">
+                                        {{form.sessaoid}}
+                                    </div>
+                                    <div class="col-sm-2 col-form-label">
+                                        {{form.data.label}}
+                                    </div>
+                                    <div class="col-sm-4">
+                                        {{form.data}}
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-10">
+                                        <button class="btn btn-outline-danger remove-form-row mr-3">Remover sessão</button>
+                                        <button class="btn btn-outline-success add-form-row">Adicionar sessão</button>
+                                    </div>
+                                </div>
+                                <hr>                            
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group row mt-5">
+							<div class="col-sm-10">
+								<a type="button" class="btn btn-secondary mr-3" href="{% url 'atividades:allAtividades' %}">Cancelar</a>
+								<button type="submit" class="btn btn-primary save">Guardar</button>
+							</div>
+                            <div class="col-sm-2 d-flex justify-content-end">
+                                <button type="button" class="btn btn-outline-secondary  fas fa-angle-left previousStep mr-3"></a>
+                                <button type="button" class="btn btn-outline-secondary  fas fa-angle-right nextStep"></a>                       
+                            </div>
+						</div>
+					</form>
+    		    </div>
+    	    </div>
+    	</div>
+
+	{% endblock %}
+	{% block js %}
+
+        <script type='text/javascript'>
+
+            function updateElementIndex(el, prefix, ndx) {
+                var id_regex = new RegExp('(' + prefix + '-\\d+)');
+                var replacement = prefix + '-' + ndx;
+                if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+                if (el.id) el.id = el.id.replace(id_regex, replacement);
+                if (el.name) el.name = el.name.replace(id_regex, replacement);
+            }
+
+            function cloneMore(selector, prefix) {
+                var newElement = $(selector + ':last').clone(true);
+                var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+                newElement.find('input, select').each(function() {
+                
+                    var name = $(this).attr('name').replace('-' + (total-1) + '-', '-' + total + '-');
+                    var id = $(this).attr('id').replace('-' + (total-1) + '-', '-' + total + '-');
+
+                    $(this).attr({'name': name, 'id': id}).val('');
+
+                });
+                newElement.find('label').each(function() {
+                    var forValue = $(this).attr('for');
+                    if (forValue) {
+                      forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
+                      $(this).attr({'for': forValue});
+                    }
+                });
+                total++;
+                $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+                $(selector + ':last').after(newElement);
+                var conditionRow = $(selector + ':not(:last)');
+                conditionRow.find('.add-form-row').hide();
+                conditionRow.find('.remove-form-row').show();
+                return false;
+            }
+
+            function deleteForm(prefix, btn, selector) {
+                var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+                if (total > 1){
+                    btn.closest(selector).remove();
+                    var forms = $(selector);
+                    $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+                    for (var i=0, formCount=forms.length; i<formCount; i++) {
+                        $(forms.get(i)).find('input, select, label').each(function() {
+                            updateElementIndex(this, prefix, i);
+                        });
+
+                        if(i+1 == forms.length){
+                            //console.log("hi")
+                            $(forms.get(i)).find(".add-form-row").show();
+                        }
+                    }
+                }
+                return false;
+            }
+
+            $(document).on('click', '.add-form-row', function(e){
+                e.preventDefault();
+                if($(this).parents().hasClass('tematica-form-comp'))
+                {
+                    //console.log($(this).parents('.tematica-form-comp'));
+                    cloneMore('.tematica-form-comp', 'formTematica');
+                }
+                else if($(this).parents().hasClass('material-form-comp'))
+                {
+                    cloneMore('.material-form-comp', 'formMaterial');
+                }
+                else if($(this).parents().hasClass('sessao-form-comp'))
+                {
+                    cloneMore('.sessao-form-comp', 'formSessao');
+                }
+                return false;
+            });
+
+            $(document).on('click', '.remove-form-row', function(e){
+                e.preventDefault();
+                if($(this).parents().hasClass('tematica-form-comp'))
+                {
+                    deleteForm('formTematica', $(this), '.tematica-form-comp');
+                }
+                else if($(this).parents().hasClass('material-form-comp'))
+                {
+                    deleteForm('formMaterial', $(this), '.material-form-comp');
+                }
+                else if($(this).parents().hasClass('sessao-form-comp'))
+                {
+                    deleteForm('formSessao', $(this), '.sessao-form-comp');
+                }
+                return false;
+            });
+
+            $('.save').hide()
+            $('.previousStep').attr("disabled", true)
+
+            currentStep = 1
+
+            $('.nextStep').click(function(){
+                if( currentStep > 0 && currentStep < 5)
+                currentStep++
+                if(currentStep == 2){
+                    $('.InfoAtividades').hide()
+                    $('.InfoTematicas').show()
+                    $('.step1').addClass("bg-secondary") 
+                    $('.step2').removeClass("bg-secondary") 
+
+                    $('.previousStep').attr("disabled", false);
+                }else if(currentStep == 3){
+                    $('.InfoTematicas').hide()
+                    $('.InfoMateriais').show()
+                    $('.step2').addClass("bg-secondary") 
+                    $('.step3').removeClass("bg-secondary") 
+                }else if(currentStep == 4){
+                    $('.InfoMateriais').hide()
+                    $('.InfoSessoes').show()
+                    $('.step3').addClass("bg-secondary") 
+                    $('.step4').removeClass("bg-secondary") 
+
+                    $('.nextStep').attr("disabled", true);
+                    $('.save').show()
+                }
+            })
+
+            $('.previousStep').click(function(){
+                if( currentStep > 1 && currentStep < 6){
+                    currentStep--
+                    if(currentStep == 1){
+                        $('.previousStep').attr("disabled", true);
+
+                        $('.InfoTematicas').hide()
+                        $('.InfoAtividades').show()
+                        $('.step2').addClass("bg-secondary") 
+                        $('.step1').removeClass("bg-secondary") 
+                    }else if(currentStep == 2){
+                        $('.InfoMateriais').hide()
+                        $('.InfoTematicas').show()
+                        $('.step3').addClass("bg-secondary") 
+                        $('.step2').removeClass("bg-secondary") 
+                    }else if(currentStep == 3){
+                        $('.InfoSessoes').hide()
+                        $('.InfoMateriais').show()
+                        $('.step4').addClass("bg-secondary") 
+                        $('.step3').removeClass("bg-secondary") 
+
+                        $('.nextStep').attr("disabled", false);
+                        $('.save').hide()
+                    }
+                }
+            })
+
+
+            function goToStep(step){
+    
+                console.log(step)
+                $('.save').hide()
+                if(step == 1){
+                    currentStep = 1
+                    $('.previousStep').attr("disabled", true);
+                    $('.nextStep').attr("disabled", false);
+
+                    $('.InfoAtividades').show()
+                    $('.InfoTematicas').hide()
+                    $('.InfoMateriais').hide()
+                    $('.InfoSessoes').hide()
+
+                    $('.step4').addClass("bg-secondary") 
+                    $('.step3').addClass("bg-secondary") 
+                    $('.step2').addClass("bg-secondary")  
+
+
+                    $('.step1').removeClass("bg-secondary") 
+
+                }else if(step == 2){
+                    currentStep = 2
+                    $('.previousStep').attr("disabled", false);
+                    $('.nextStep').attr("disabled", false);
+
+                    $('.InfoAtividades').hide()
+                    $('.InfoTematicas').show()
+                    $('.InfoMateriais').hide()
+                    $('.InfoSessoes').hide()
+
+                    
+                    $('.step4').addClass("bg-secondary") 
+                    $('.step3').addClass("bg-secondary") 
+                    $('.step1').addClass("bg-secondary")
+
+                    $('.step2').removeClass("bg-secondary")
+
+                }else if(step == 3){
+                    currentStep = 3
+                    $('.previousStep').attr("disabled", false);
+                    $('.nextStep').attr("disabled", false);
+
+                    $('.InfoAtividades').hide()
+                    $('.InfoTematicas').hide()
+                    $('.InfoMateriais').show()
+                    $('.InfoSessoes').hide()
+
+                    
+                    $('.step4').addClass("bg-secondary") 
+                    $('.step2').addClass("bg-secondary") 
+                    $('.step1').addClass("bg-secondary")
+
+                    $('.step3').removeClass("bg-secondary")
+                }
+            }
+
+        </script>
+    
+    {% endblock %}

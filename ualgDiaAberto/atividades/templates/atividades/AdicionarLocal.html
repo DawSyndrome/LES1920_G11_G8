@@ -1,0 +1,159 @@
+{% extends "atividades/ShowAtividades.html" %}
+
+	{% block content %}
+    	<div class="mt-3 mx-2 pb-5">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb bg-white">
+					<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'atividades:allLocais' %}">Locais</a></li>
+					<li class="breadcrumb-item active">Adicionar local</li>
+				</ol>
+			</nav>
+    	    <div class = "row">
+    		    <div class = "col-sm-4 offset-sm-4">
+                    <h4 style="text-align:center;">Adicionar local</h4>
+    		    </div>
+    		    <div class = "col-sm-4 offset-sm-4">
+    		    {% if saved %}
+                    <div style="text-align:center;" class="alert alert-primary" role="alert" style="text-align:center;">
+                        O local foi guardado com sucesso!
+                    </div>
+                {% endif %}
+
+                {% for key, value in form.errors.items %}
+                    {% for error in value %}
+                        <div style="text-align:center;" class="alert alert-danger" style="text-align:center;">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                
+            </div>
+            </div>
+			<hr class="mx-5">
+    	    <div class = "row">
+    		    <div class = "col-sm-6 offset-sm-3 mt-5">
+					<form  role="form" enctype="multipart/form-data" action = "{% url 'atividades:addLocal' %}" method="post">
+						{% csrf_token %}
+ 						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label for="campusid">Campus</label>
+							</div>
+    						<div class="col-sm-8">
+                                <select name="campusid" id="campusid" class = "form-control" required>
+                                    {% for campus in allCampus %}
+                                    <option value="{{campus.id}}">{{campus.nome}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+  						</div>
+  						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label for="nome">Interior</label>
+							</div>
+    						<div class="col-sm-8">
+      							&nbsp;&nbsp;&nbsp;&nbsp;<input class="show-indoor form-check-input" type="radio" value="True" id="indoor" name="indoor">
+                                <label class="form-check-label" for="Sim">Sim</label>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input class="hide-indoor form-check-input" type="radio" value="False" id="indoor" name="indoor">
+                                <label class="form-check-label" for="Nao">Não</label>
+    						</div>
+  						</div>
+                        <div class="outdoor form-group row" style="display:none">
+                            <div class="col-sm-4 col-form-label">
+                                <label for="descricao">Nome do local</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input rows="5" cols="3"  id="nome_local_exterior" type="text" name="nome_local_exterior" class="form-control" required> 
+                            </div>
+                        </div>
+  						<div class="form-group row">
+							<div class="col-sm-4 col-form-label">
+    							<label for="descricao">Descrição</label>
+							</div>
+    						<div class="col-sm-8">
+                                <textarea rows="5" cols="3"  id="descricao" type="text" name="descricao" class="form-control"> </textarea required>
+                            </div>
+  						</div>
+                        <div class="indoor form-group row" style="display:none">
+                            <label for="edificio" class="col-sm-4 col-form-label">Edifício</label>
+                            <div class="col-sm-8">
+                                <select name="edicifioid" id = "edicifioid" class = "form-control">
+                                    {% for edificio in allEdificios %}
+                                    <option value="{{edificio.id}}">{{edificio.nome_edificio}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="indoor form-group row" style="display:none">
+                            <label for="andar" class="col-sm-4 col-form-label">Andar</label>
+                            <div class="col-sm-8">
+                                <input id="andar" type="number" name="andar" class="form-control">
+                            </div>
+                        </div>
+                        <div class="indoor form-group row" style="display:none">
+                            <label for="andar" class="col-sm-4 col-form-label">Sala</label>
+                            <div class="col-sm-8">
+                                <input id="sala" type="text" name="sala" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-4 col-form-label">
+                                <label for="mapa_sala">Mapa</label>
+                            </div>
+                            <div class="col-sm-8">
+                                <input type="file" id="mapa_sala" name="mapa_sala" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="form-group row mt-5">
+							<div class="col-sm-10">
+								<a type="button" class="btn btn-secondary mr-3" href="{% url 'atividades:allLocais' %}">Cancelar</a>
+								<button type="submit" class="btn btn-primary">Guardar</button>
+							</div>
+						</div>
+					</form>
+    		    </div>
+    	    </div>
+    	</div>
+
+	{% endblock %}
+	{% block js %}
+    	<!-- Optional JavaScript -->
+    	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    	
+		<script type="text/javascript">
+        $(document).on('click', '.show-indoor', function(){
+            $('.indoor').show();
+            $('.outdoor').hide();
+            $('.outdoor').find('input').prop('required', false);
+            $('.indoor').find('input, select').prop('required', true);
+
+        });
+        $(document).on('click', '.hide-indoor', function(){
+            $('.indoor').hide();
+            $('.outdoor').show();
+            $('.outdoor').find('input').prop('required', true);
+            $('.indoor').find('input, select').prop('required', false);
+        });
+
+        $('select[name=campusid]').change(function(){
+                $('select[name=edicifioid]').find('option').each(function(){
+                    $(this).remove();
+                })
+                campusid = $(this).val();
+                console.log(campusid);
+                request_url = '/GestaoAtividades/getEdificio/' + campusid;
+                $.ajax({
+                    url: request_url,
+                    dataType: "json",
+                    success: function(data){
+                        $.each(data, function(index, text){
+                            $('select[name=edicifioid]').append(
+                                $('<option></option>').val(index).html(text)
+                            )
+                        })
+                    },
+                });
+            })
+    </script>
+	{% endblock %}

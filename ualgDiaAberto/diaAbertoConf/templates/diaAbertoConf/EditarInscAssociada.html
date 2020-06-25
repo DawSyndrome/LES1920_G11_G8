@@ -1,0 +1,84 @@
+{% extends "diaAbertoConf/ShowTransportes.html"%}
+
+	{% block content %}
+    	<div class = "row mx-4 my-4 pb-5">
+			<div class="col-xs-3 col-sm-3 col-md-3">
+				<p class="text-muted">Dados do transporte</p>
+				<hr>
+                <p><b>Transporte:</b> {{ dados_rota.transporteid}}</p>
+                <p><b>Capacidade:</b> {{ dados_rota.transporteid.capacidade}}</p>
+				<p><b>Lugares disponiveis:</b> {{lugaresDisponiveis}}</p>
+                <p><b>Lugares ocupados:</b> {{lugaresOcupados}}</p>
+                <hr>
+                <p class="text-muted">Dados da rota</p>
+                <p><b>Origem:</b> {{ dados_rota.origem}}</p>
+                <p><b>Destino:</b> {{ dados_rota.destino}}</p>
+                <p><b>Data:</b> {{ dados_rota.data |date:"d-m-Y"}}</p>
+                <p><b>Horario</b>: {{ dados_rota.horarioid}}</p>	
+            </div>
+			<div class="col-xs-8 col-sm-8 col-md-8">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:allTransportes' %}">Transportes</a></li>
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:showInscAssociadas' id=dados_rota.id%}">Grupos associadas</a></li>
+                        <li class="breadcrumb-item active">Editar grupo associada</li>
+					</ol>
+				</nav>
+
+                <form action = "{% url 'diaAbertoConf:updateInscAssociadas' id=dados_rota.id idRota_Insc=dadosRota_Insc.id %}" method="post">
+                	{% csrf_token %}
+					{% if error %}
+					<div class="alert alert-danger" style="text-align:center;">
+               			{{ error }}
+            		</div>
+					{% endif %}
+                    <div class="rota-form-comp"> 
+                        <div class="form-group row mb-4">
+    				    	<div class="col-sm-3 col-form-label">
+                                {{form.inscricaoid.label}}
+                            </div>
+    				    	<div class="col-sm-8">
+                                <input class="form-control" type="text" value="{{grupo}}" disabled>
+    				    	</div>
+  					    </div>
+  					    <div class="form-group row mb-4">
+    				    	<div class="col-sm-3 col-form-label">
+                                {{form.num_passageiros.label}}
+                            </div>
+    				    	<div class="col-sm-8">
+                                {{form.num_passageiros}}
+    				    	</div>
+  					    </div>
+                        <hr>
+                    </div>
+					<div class="form-group row mt-5">
+						<div class="col-sm-10">
+							<a type="button" class="btn btn-secondary mr-3" href="{% url 'diaAbertoConf:showInscAssociadas' id=dados_rota.id %}">Cancelar</a>
+							<a class="btn btn-primary" href="" data-toggle="modal" data-target="#Modal">Editar</a>
+						</div>
+					</div>
+					<div class="modal" id="Modal">
+						<div class="modal-dialog">
+							<div class="modal-content">
+							    <!-- Modal Header -->
+									<div class="modal-header">
+										<h4 class="modal-title">Aviso</h4>
+										<button type="button" class="close" data-dismiss="modal">×</button>
+									</div>
+									<!-- Modal body -->
+									<div class="modal-body">
+										<p>Tem a certeza que pretende guardar as alteracões?</p>
+									</div>
+									<!-- Modal footer -->
+									<div class="modal-footer">
+										<button type="submit" class="btn btn-success" >Sim</button>
+										<button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+									</div>
+                            </div>   
+                        </div>     
+					</div>
+				</form>
+			</div>
+        </div>
+	{% endblock %}

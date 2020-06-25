@@ -1,0 +1,180 @@
+{% extends "atividades/ShowAtividades.html" %}
+    
+    {% block css %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static "atividades/showGestao.css" %}">
+    {% endblock %}
+
+	{% block content %}
+		<div class = "row mx-4 my-4" >
+			<div class="col-xs-3 col-sm-3 col-md-3">
+				<p class="text-muted">Filtros horários de sessões</p>
+				<form id="formfilters" method="get">
+                    <input id="id_page" name="page" value="{{page_obj.number}}" type="hidden">
+                    <input id="id_order_by" name="order_by" {% if order_by %} value="{{order_by}}" {% endif %} type="hidden">
+                    <input id="id_direction" name="direction" {% if direction %} value="{{direction}}" {% endif %} type="hidden">
+					<hr>
+					<div class="form-group row">
+                        <div class="col">
+                            <div class="float-right">
+                                <a href="{% url 'atividades:allSessoes' %}">Limpar filtros</a>
+                            </div>
+                        </div>
+                    </div>
+					<div class="form-group row">
+						<label class="text-muted">De:</label>
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-clock"></i></span>
+						  </div>
+						  <input {% if sessao_gte %} value="{{sessao_gte}}" {% endif %} name="sessao_gte" id="id_sessao_gte" type="time" class="form-control" placeholder="Pesquisar por sessão">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="text-muted">Até:</label>
+						<div class="input-group">
+						  <div class="input-group-prepend">
+						    <span class="input-group-text"><i class="far fa-clock"></i></span>
+						  </div>
+						  <input {% if sessao_lte %} value="{{sessao_lte}}" {% endif %} name="sessao_lte" id="id_sessao_lte" type="time" class="form-control" placeholder="Pesquisar por sessão">
+						</div>
+					</div>
+					<hr>
+                    <div class="form-group row float-right">
+                        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search fa-sm"></i> Procurar</button>
+                    </div>
+				</form>
+			</div>
+			<div class="col-xs-9 col-sm-9 col-md-9">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb bg-white">
+						<li class="breadcrumb-item"><a href="{% url 'diaAbertoConf:index' %}">Início</a></li>
+						<li class="breadcrumb-item active">Horários de sessões</li>
+					</ol>
+				</nav>
+
+				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:addSessao' %}"> + Adicionar horário</a>
+
+    		    <table class="table">
+                    <thead>
+                        <tr>
+                            {% if order_by == "hora_de_inicio" %}
+                            <th style="width: 25%" class="Sortable Hora {{direction}} tableBorderH" scope="col">Hora de início
+                            {% if direction == 'asc'%} 
+                            <i class="fas fa-caret-up fa-xs"></i>
+                            {% elif direction == 'desc' %}
+                            <i class="fas fa-caret-down fa-xs"></i>
+                            {% endif %}
+                            </th>
+                            {% else %}
+                            <th scope="col" class="Sortable Hora tableBorderH" style="width: 25%"> Hora de início</th>
+                            {% endif  %}
+                            <th style="width: 8%" scope="col"></th>
+                            <th style="width: 8%" scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if allSessoes %}
+						    {% for sessao in page_obj %}
+                        	    <tr>
+                        	        <td>{{ sessao.hora_de_inicio|time:"H:i" }}</td>
+                        	        <td><a class="btn btn-outline-success far fa-edit" href="{% url 'atividades:updateSessao'  id=sessao.id %}"></a></td>
+                        	        <td><a class="btn btn-outline-danger fas fa-trash-alt delete" href="" data-toggle="modal" data-target="#Modal" data-id="{% url 'atividades:deleteSessao' id=sessao.id %}"></a></td>
+                        	    </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                
+
+                <div class="pagination d-flex justify-content-end">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <button class="btn btn-outline-secondary  fas fa-angle-double-left page" data-page="1"></button>
+                            <button class="btn btn-outline-secondary  fas fa-angle-left page" data-page="{{page_obj.previous_page_number}}"></button>
+                        {% endif %}
+
+                        <span class="current">{{ page_obj.number }}</span>
+
+                        {% if page_obj.has_next %}
+                            <button class="btn btn-outline-secondary  fas fa-angle-right page" data-page="{{page_obj.next_page_number}}"></button>
+                            <button class="btn btn-outline-secondary  fas fa-angle-double-right page" data-page="{{page_obj.paginator.num_pages}}"></button>
+                        {% endif %}
+                    </span>
+                </div>
+                
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="Modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+              
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                      <h4 class="modal-title">Aviso</h4>
+                      <button type="button" class="close" data-dismiss="modal">×</button>
+                    </div>
+                
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                      Tem a certeza que pretende remover?
+                    </div>
+                
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <form id="deleteModal" action="" method="post">
+                            {% csrf_token %}
+                            <button type=submit" class="btn btn-success" >Sim</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Não</button>
+                        </form>
+                    </div>        
+                </div>
+            </div>
+        </div>
+
+	{% endblock %}
+
+
+	{% block js %}
+		<script type='text/javascript'>
+
+			$(function () {
+                $('.delete').click(function (){
+                    var data_var = $(this).data('id');
+                    $("#deleteModal").attr("action", data_var);
+                })
+            });
+
+            $('th.Sortable').click(function(){
+
+    var form = $('#formfilters')
+
+    if($(this).hasClass('Hora')){
+        if($(this).hasClass('asc')){
+            form.find("#id_order_by").val("hora_de_inicio")
+            form.find("#id_direction").val("desc")
+        }else{
+            form.find("#id_order_by").val("hora_de_inicio")
+            form.find("#id_direction").val("asc")    
+        }
+    }
+    form.submit()
+})
+
+$('button.page').click(function(){
+    var page = $(this).data('page')
+    var form = $('#formfilters')
+    form.find("#id_page").val(page)
+    form.submit()
+})
+
+$(document).ready( function(){
+    $('th.Sortable').each(function(){
+        $(this).has('i').addClass('tableBorder')
+    })
+})
+
+		</script>
+	{% endblock %}
