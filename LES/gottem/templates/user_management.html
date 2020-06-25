@@ -1,0 +1,110 @@
+
+<style type="text/css">
+	table {
+	  border-collapse: collapse;
+	  width: 100%;
+	  font-family: Arial, Helvetica, sans-serif; font-size: 11px; 
+	}
+
+	th, td {
+	  text-align: left;
+	  padding: 8px;
+	}
+
+	tr:nth-child(even){background-color: #f2f2f2}
+
+	th {
+	  background-color: #9193f6;
+	  color: white;
+	}
+
+	#centr{
+		margin-top: 200px;
+		margin-bottom: 200px;
+		margin-left: 100px;
+		margin-right: 100px;
+	}
+</style>
+
+
+
+{% extends "Home.html" %}
+
+{% load user_types %}
+
+{% block content %}
+
+	<center id="centr">
+	
+		<table>
+			<tr>
+				<th>
+					Tipo
+				</th>
+				<th>
+					ID
+				</th>
+				<th>
+					Nome
+				</th>
+				<th>
+					Email
+				</th>
+				<th>
+					Cartão Cidadão
+				</th>
+				<th>
+					Validado
+				</th>
+				<th>
+					Alterar
+				</th>
+				<th>
+					Apagar
+				</th>
+			</tr>
+			{% for utilizador in lista_de_utilizadores %}
+				<tr>
+					<td>
+						{% if utilizador.user_type|is_admin        %}Administrador<br>{% endif %}
+						{% if utilizador.user_type|is_participante %}Participante <br>{% endif %}
+						{% if utilizador.user_type|is_docente      %}Docente      <br>{% endif %}
+						{% if utilizador.user_type|is_colaborador  %}Colaborador  <br>{% endif %}
+						{% if utilizador.user_type|is_coordenador  %}Coordenador  <br>{% endif %}
+					</td>
+					<td>{{ utilizador.id }}</td>
+			    	<td>{{ utilizador.nome }}</td>
+			    	<td>{{ utilizador.email }}</td>
+			    	<td>{{ utilizador.cartão_cidadão }}</td>
+			    	<td>
+			    		{% if utilizador.validado == 1 %}
+			    			Sim
+			    		{% elif utilizador.validado == 0 and utilizador.user_type|is_admin and not me.user_type|is_admin %}
+			    			Não
+			    		{% else %}
+			    			<a href="{% url 'validate_user' utilizador.id %}">validar</a>
+			    		{% endif %}
+			    	</td>
+			    	<td><a href="{% url 'edit_user' utilizador.id %}">editar</a></td>
+			    	<td><a href="{% url 'delete_user' utilizador.id %}">apagar</a></td>
+			    </tr>
+			{% endfor %}
+		</table>
+
+		{% if not prev_page is None %}
+			{% if prev_page.param == 0 %}
+				<a href="{% url prev_page.path_name %}">Previous Page</a>
+			{% else %}
+				<a href="{% url prev_page.path_name prev_page.param %}">Previous Page</a>
+			{% endif %}
+		{% endif %}
+
+		 - {{curr_page}} - 
+		{% if not next_page is None %}
+			<a href="{% url next_page.path_name next_page.param %}">Next Page</a>
+		{% endif %}
+
+	</center>
+
+
+{% endblock %}

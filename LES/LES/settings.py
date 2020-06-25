@@ -28,16 +28,21 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'gottem.apps.GottemConfig',
+#    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
+#    'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+AUTH_USER_MODEL = 'gottem.Utilizador'
+AUTHENTICATION_BACKENDS = ['gottem.backends.AuthBackend']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -120,3 +125,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+#EMAIL_USE_TLS = False
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '157cef0768166c'
+EMAIL_HOST_PASSWORD = 'ac340e7be2913a'
+EMAIL_PORT = '2525'
