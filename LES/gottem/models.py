@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
+from django.utils import timezone
+from datetime import datetime
 
 # Create your models here.
 
@@ -207,18 +209,24 @@ class Material(models.Model):
         db_table = 'material'
 
 
-class Notificaes(models.Model):
+## Notificacao ##
+class Notificacao(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    utilizadorid_envia = models.ForeignKey('Utilizador', models.DO_NOTHING, db_column='UtilizadorID_Envia', related_name='+')  # Field name made lowercase.
-    utilizadorid_recebe = models.ForeignKey('Utilizador', models.DO_NOTHING, db_column='UtilizadorID_Recebe', related_name='+')  # Field name made lowercase.
-    conteudo = models.CharField(db_column='Conteudo', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    hora_envio = models.TimeField(db_column='Hora_envio', blank=True, null=True)  # Field name made lowercase.
-    data = models.DateField(db_column='Data', blank=True, null=True)  # Field name made lowercase.
+    utilizadorid_envia = models.ForeignKey('Utilizador', models.DO_NOTHING, db_column='UtilizadorID_Envia',
+                                           related_name='idEnvia')  # Field name made lowercase.
+    utilizadorid_recebe = models.ForeignKey('Utilizador', models.DO_NOTHING, db_column='UtilizadorID_Recebe',
+                                            related_name='idRecebe', blank=True, null=True)
+    conteudo = models.CharField(db_column='Conteudo', max_length=255, blank=True,
+                                null=True)  # Field name made lowercase.
+    hora_envio = models.TimeField(db_column='Hora_envio', default=datetime.now, blank=True,
+                                  null=True)  # Field name made lowercase.
+    data = models.DateField(db_column='Data', default=timezone.now, blank=True, null=True)  # Field name made lowercase.
     prioridade = models.IntegerField(db_column='Prioridade', blank=True, null=True)  # Field name made lowercase.
     assunto = models.CharField(db_column='Assunto', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    visto = models.BooleanField(db_column='Visto', default=0, null=False)
 
     class Meta:
-        #managed = False
+        managed = True
         db_table = 'notificações'
 
 
@@ -392,9 +400,9 @@ class Utilizador(AbstractBaseUser):
     permitir_localização = models.IntegerField(db_column='Permitir_localização', blank=True, null=True)  # Field name made lowercase.
     utilizar_dados_pessoais = models.IntegerField(db_column='Utilizar_dados_pessoais', blank=True, null=True)  # Field name made lowercase.
     tema_do_website = models.IntegerField(db_column='Tema_do_website', blank=True, null=True)  # Field name made lowercase.
-    
+
     user_type = models.IntegerField(db_column='User_type')  # Field name made lowercase.
-    
+
     daltonico = models.IntegerField(db_column='Daltonico', blank=True, null=True)  # Field name made lowercase.
     validado = models.IntegerField(db_column='Validado')  # Field name made lowercase.
     #check_in_state = models.IntegerField(db_column='Check_in_state')  # Field name made lowercase.

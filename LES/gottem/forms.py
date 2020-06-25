@@ -30,7 +30,7 @@ class LoginForm(forms.Form):
 	#	cleaned_data = super(LoginForm, self).clean()
 	#	password = cleaned_data.get("user_password")
 	#	confirm_password = cleaned_data.get("user_password_confirm")
-	#	
+	#
 	#	if password != confirm_password:
 	#		raise forms.ValidationError({
 	#			'user_password_confirm': "This password doesn't match with the other one."
@@ -89,7 +89,7 @@ class RegisterForm(forms.Form):
 		for val in checkboxes:
 			final_usertype_bitfield |= int(val)
 		self.cleaned_data['user_type'] = final_usertype_bitfield
- 
+
 class RegisterByEntity(forms.Form):
 	name = forms.CharField(label='User\'s name')
 	email = email = forms.EmailField(label='User\'s Email')
@@ -143,7 +143,7 @@ class NewPasswordForm(forms.Form):
 				'new_pw_confirm': "This password doesn't match with the other one."
 			})
 
- 
+
 
 class EditUser(ModelForm):
 	unidade_orgânicaid = CustomModelChoiceField(
@@ -173,10 +173,45 @@ class EditUser(ModelForm):
 			'validado',
 			'numero_telemovel',
 			'cartão_cidadão',
-			'data_de_nascimento', 
+			'data_de_nascimento',
 			'deficiencias',
 
-			'unidade_orgânicaid', 
-			'departamentoid', 
+			'unidade_orgânicaid',
+			'departamentoid',
 			'registo_horárioid',
 		]
+
+###################################################################
+############# Diogo Lobo - Notificacoes ###########################
+###################################################################
+
+class NotificationForm(forms.Form):
+
+    conteudo = forms.CharField(label='Conteúdo', widget=forms.Textarea, required=True)
+
+    utilizadorid_recebe = forms.ModelChoiceField(label='Enviar Para:',
+                                                 required=True,
+                                                 queryset=Utilizador.objects.all())
+
+    CHOICES1 = (
+        ('Alteração de Data', 'Alteração de Data'),
+        ('Novas Vagas', 'Novas Vagas'),
+        ('Cancelamento da Atividade', 'Cancelamento da Atividade'),
+        ('Outro', 'Outro'),
+    )
+
+    assunto = forms.ChoiceField(label='Assunto', widget=forms.Select, required=True, choices=CHOICES1)
+
+    CHOICES2 = (
+        ('1', '1 - Urgente'),
+        ('2', '2 - Aviso'),
+        ('3', '3 - Lembrete'),
+    )
+    prioridade = forms.ChoiceField(label='Prioridade', widget=forms.Select, required=True, choices=CHOICES2)
+
+    def __init__(self, *args, **kwargs):
+        iduser = kwargs.pop('uid')
+        super(NotificationForm, self).__init__(*args, **kwargs)
+        self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:',
+                                                                    required=True,
+                                                                    queryset=Utilizador.objects.exclude(id=iduser))

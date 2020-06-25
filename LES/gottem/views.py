@@ -31,7 +31,7 @@ from django.urls import reverse
 from django.forms.utils import ErrorList
 
 def login(request):
-	
+
 	if(request.user.is_authenticated):
 		return redirect("home")
 
@@ -80,8 +80,8 @@ def register(request):
 				return HttpResponse(template.render({'form': form, 'post_redirect': reverse('register')}, request))
 
 			newuser = Utilizador(
-				nome=form.cleaned_data['name'], 
-				email=form.cleaned_data['email'], 
+				nome=form.cleaned_data['name'],
+				email=form.cleaned_data['email'],
 				password=make_password(form.cleaned_data['password']),
 				user_type=0,
 				validado=0
@@ -129,7 +129,7 @@ def register(request):
 		form = RegisterForm()
 		template = loader.get_template("form.html")
 		return HttpResponse(template.render({'form': form, 'post_redirect': reverse('register')}, request))
- 
+
 
 ##	perfil = GestoDePerfil(validação=0)
 ##	perfil.save()
@@ -171,7 +171,7 @@ def changpw(request):
 	form = ChangePasswordForm()
 	template = loader.get_template("form.html")
 	return HttpResponse(template.render({'form': form, 'post_redirect': reverse('changpw')}, request))
-	
+
 
 from django.core.mail import send_mail
 from time import time
@@ -204,7 +204,7 @@ def resetpw(request, uid=0, token=None):
 
 
 	###se não houver token e o user não estiver logado, mostra-se o formulário
-	elif token is None and not request.user.is_authenticated:	
+	elif token is None and not request.user.is_authenticated:
 		form = ResetPasswordForm()
 		template = loader.get_template("form.html")
 		return HttpResponse(template.render({'form': form, 'post_redirect': reverse('resetpw')}, request))
@@ -213,7 +213,7 @@ def resetpw(request, uid=0, token=None):
 			user = request.user
 
 	###token é true e método é get : é obviamente um link de token (ou alguém a avacalhar)
-	else:										
+	else:
 
 		user = Utilizador.objects.get(id=uid)						##busca-se o user cujo id foi especificado
 		if check_password(unquote(token), user.password_reset_url):	##e se o token estiver bem, loga-se o user e redirecionamos para ir meter a pass nova
@@ -244,7 +244,7 @@ def resetpw(request, uid=0, token=None):
 
 	template = loader.get_template("message.html")
 	return HttpResponse(template.render({'err_msg': 'An email has been sent to yourself good sir, continue from there.'}, request))
-	#	user.password = 
+	#	user.password =
 
 
 #############################################################################################################################
@@ -275,10 +275,10 @@ def index(request, page=0):
 ##	utilizador.save()
 
 
-	amount_per_page = 10
+	amount_per_page = 2
 	paging_start = page*amount_per_page
 	paging_end = paging_start+amount_per_page
-	
+
 	total_users = Utilizador.objects.all().count()
 
 	query_set = Utilizador.objects.order_by('nome')[paging_start:paging_end]
@@ -302,11 +302,11 @@ def index(request, page=0):
 
 		'curr_page': page,
 		'prev_page': None if page == 0 else {
-			'path_name': "index" if (page == 1) else "index_paged", 
+			'path_name': "index" if (page == 1) else "index_paged",
 			'param': page-1
 		},
 		'next_page': None if paging_end >= total_users else {
-			'path_name': "index_paged", 
+			'path_name': "index_paged",
 			'param': page+1
 		},
 	}
@@ -346,7 +346,7 @@ def edit_user(request, id):
 	if request.method == 'POST':
 		#if form.user_type & Utilizador.USER_TYPES.Administrador != 0 and not request.user
 
-		form = EditUser(request.POST, instance=user);	
+		form = EditUser(request.POST, instance=user);
 		form.save()
 		return redirect("index");
 
@@ -430,12 +430,12 @@ def delete_user(request, id):
 		'loc': reverse('delete_user_confirm', args=[id]),
 		'err_msg': 'Do you really want to delete ' + Utilizador.objects.get(id=id).nome + '?'
 	}, request))
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 
 
 
@@ -446,3 +446,75 @@ def delete_user(request, id):
 def home(request):
 	template = loader.get_template("Home.html")
 	return HttpResponse(template.render({}, request))
+
+
+###################################################################
+############# Diogo Lobo - Notificacoes ###########################
+###################################################################
+
+def notificacoes(request):
+	if not request.user.is_authenticated:
+		return redirect("home")
+	return render(request,
+                  "main/notificacoes.html")
+
+
+def notificacoesRecebidas(request):
+	if not (request.user.is_authenticated):
+		return redirect("home")
+
+	notf = Notificacao.objects.all()
+	info = list(Notificacao.objects.filter(utilizadorid_recebe=request.user))
+
+	return render(request,
+                  "main/notificacoesRcb.html",
+                  {"notificacoes": notf, "info": info})
+
+def notificacoesEnviadas(request):
+	if not (request.user.is_authenticated):
+		return redirect("home")
+
+	notf = Notificacao.objects.all()
+	info = list(Notificacao.objects.filter(utilizadorid_envia=request.user))
+
+	return render(request,
+                  "main/notificacoesEnv.html",
+                  {"notificacoes": notf, "info": info})
+
+
+
+def createNotf(request):
+	if not (request.user.is_authenticated):
+		return redirect("home")
+	if request.method == 'POST':
+		form = NotificationForm(request.POST, uid=request.user.id)
+		if form.is_valid():
+			notificacao = Notificacao(
+				utilizadorid_envia=Utilizador.objects.get(id=request.user.id),
+				utilizadorid_recebe=form.cleaned_data['utilizadorid_recebe'],
+				assunto=form.cleaned_data['assunto'],
+				conteudo=form.cleaned_data['conteudo'],
+				prioridade=form.cleaned_data['prioridade'],
+			)
+			notificacao.save()
+
+			return redirect("home")
+		else:
+			return render(request,
+							"main/enviarnotf.html",
+							messages.error(request, f"Necessário Preencher Todos Os Campos"))
+	else:
+		form = NotificationForm(uid=request.user.id)
+		return render(request,
+						"main/enviarnotf.html",
+    					{'form': form.as_ul})
+
+
+def deleteNotfRecebida(request, pk):
+    Notificacao.objects.filter(id=pk).delete()
+    return redirect("notificacoesRcb")
+
+
+def deleteNotfEnviada(request, pk):
+    Notificacao.objects.filter(id=pk).delete()
+    return redirect("notificacoesEnv")

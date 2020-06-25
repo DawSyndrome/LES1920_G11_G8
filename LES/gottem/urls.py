@@ -10,7 +10,7 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('register/', views.register, name='register'),
 
-    
+
     path('change_password/', views.changpw, name='changpw'),
 
     path('reset_password/', views.resetpw, name='resetpw'),
@@ -28,5 +28,12 @@ urlpatterns = [
 
     path('validar/<int:id>', views.validate_user, name='validate_user'),
 
-    path('editar/<int:id>', views.edit_user, name='edit_user')
+    path('editar/<int:id>', views.edit_user, name='edit_user'),
+
+    path("notificacoes/", views.notificacoes, name="notificacoes"),
+    path("notificacoesEnv/", views.notificacoesEnviadas, name="notificacoesEnv"),
+    path("notificacoesRcb/", views.notificacoesRecebidas, name="notificacoesRcb"),
+    path("enviarnotf/", views.createNotf, name="createNotf"),
+    path("notificacoesEnv/<int:pk>", views.deleteNotfEnviada, name="deleteNotfEnv"),
+    path("notificacoesRcb/<int:pk>", views.deleteNotfRecebida, name="deleteNotfRcb"),
 ]
