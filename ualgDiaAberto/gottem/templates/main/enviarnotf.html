@@ -1,0 +1,158 @@
+<style type="text/css">
+	.form-style-7{
+		max-width:400px !important;
+		margin:50px auto !important;
+		background:#fff !important;
+		border-radius:2px !important;
+		padding:20px !important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+	}
+	.form-style-7 h1{
+		display: block !important;
+		text-align: center !important;
+		padding: 0 !important;
+		margin: 0px 0px 20px 0px !important;
+		color: #5C5C5C !important;
+		font-size:x-large !important;
+	}
+	.form-style-7 ul{
+		list-style:none !important;
+		padding:0 !important;
+		margin:0 !important;
+	}
+	.form-style-7 li{
+		display: block !important;
+		padding: 9px !important;
+		border:1px solid #DDDDDD !important;
+		margin-bottom: 30px !important;
+		border-radius: 3px !important;
+	}
+	.form-style-7 li:last-child{
+		border:none !important;
+		margin-bottom: 0px !important;
+		text-align: center !important;
+	}
+	.form-style-7 li > label{
+		display: block !important;
+		float: left !important;
+		margin-top: -19px !important;
+		background: #FFFFFF !important;
+		height: 17px !important;
+		padding: 2px 5px 2px 5px !important;
+		color: #B9B9B9 !important;
+		font-size: 14px !important;
+		overflow: hidden !important;
+		font-family: Arial, Helvetica, sans-serif !important;
+	}
+	.form-style-7 input[type="text"],
+	.form-style-7 input[type="date"],
+	.form-style-7 input[type="datetime"],
+	.form-style-7 input[type="email"],
+	.form-style-7 input[type="number"],
+	.form-style-7 input[type="search"],
+	.form-style-7 input[type="time"],
+	.form-style-7 input[type="url"],
+	.form-style-7 input[type="password"],
+	.form-style-7 textarea,
+	.form-style-7 select
+	{
+		box-sizing: border-box !important;
+		-webkit-box-sizing: border-box !important;
+		-moz-box-sizing: border-box !important;
+		width: 100% !important;
+		display: block !important;
+		outline: none !important;
+		border: none !important;
+		height: 25px ;
+		line-height: 25px !important;
+		font-size: 16px !important;
+		padding: 0 !important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+	}
+	.form-style-7 input[type="text"]:focus,
+	.form-style-7 input[type="date"]:focus,
+	.form-style-7 input[type="datetime"]:focus,
+	.form-style-7 input[type="email"]:focus,
+	.form-style-7 input[type="number"]:focus,
+	.form-style-7 input[type="search"]:focus,
+	.form-style-7 input[type="time"]:focus,
+	.form-style-7 input[type="url"]:focus,
+	.form-style-7 input[type="password"]:focus,
+	.form-style-7 textarea:focus,
+	.form-style-7 select:focus
+	{
+	}
+	.form-style-7 li > span{
+		background: #fcbdbd !important;
+		display: block !important;
+		padding: 3px !important;
+		margin: 0 -9px -9px -9px !important;
+		text-align: center !important;
+		color: #4b4b4b !important;
+		font-family: Arial, Helvetica, sans-serif !important;
+		font-size: 11px !important;
+	}
+	.form-style-7 textarea{
+    resize:none;
+    overflow: auto;
+    height: auto;
+	}
+	.form-style-7 input[type="submit"],
+	.form-style-7 input[type="button"]{
+		background: #2471FF !important;
+		border: none !important;
+		padding: 10px 20px 10px 20px !important;
+		border-bottom: 3px solid #5994FF !important;
+		border-radius: 3px !important;
+		color: #D2E2FF !important;
+	}
+	.form-style-7 input[type="submit"]:hover,
+	.form-style-7 input[type="button"]:hover{
+		background: #6B9FFF !important;
+		color:#fff !important;
+	}
+
+  .submitbutton{
+    background: #2471FF;
+    border: none;
+    padding: 10px 20px 10px 20px;
+    border-bottom: 3px solid #5994FF;
+    border-radius: 3px;
+    color: #D2E2FF;
+  }
+  .submitbutton:hover{
+    background: #6B9FFF;
+    color:#fff;
+  }
+
+  .back{
+    background: #e95353;
+    border-bottom-color: #c75151;
+  }
+  .back:hover{
+    background: #f57676
+
+  }
+</style>
+
+{% extends "diaAbertoConf/Home.html" %}
+
+{% block content %}
+<center>
+<h2 style="margin-top:20px; color: #2971e6">Enviar Notificação</h2>
+</center>
+<form class="form-style-7" style="margin-bottom:0px !important" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <center>
+      <input type="submit" value="Enviar Notificação"></input>
+    </center>
+</form>
+<center>
+<div>
+    <form action="/home">
+        <button class="submitbutton" >Voltar à Página Principal</button>
+    </form>
+</div>
+</center>
+{% endblock %}

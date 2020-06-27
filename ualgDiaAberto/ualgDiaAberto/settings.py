@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'atividades.apps.AtividadesConfig',
     'tarefas.apps.TarefasConfig',
     'utilizadores.apps.UtilizadoresConfig',
+    'gottem.apps.GottemConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

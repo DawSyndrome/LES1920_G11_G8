@@ -1,11 +1,10 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
 
 app_name =  'diaAbertoConf'
 urlpatterns = [
-    path('', views.index, name='index'),
     path('DiaAbertoConf/', views.editConfDiaAberto, name='editConfig'),
     
     path('Transportes/', views.showTransportes, name='allTransportes'),
@@ -29,5 +28,6 @@ urlpatterns = [
     path('GestaoEmentas/create',views.createEmenta, name='createEmenta'),
     path('GestaoEmentas/update/<int:id>', views.EditarEmenta, name='EditarEmenta'),
     
+    path('', views.index, name='index'),
 
 ]   

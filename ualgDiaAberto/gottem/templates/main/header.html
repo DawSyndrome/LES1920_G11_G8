@@ -1,0 +1,57 @@
+<head>
+
+{% load static %}
+
+<style lang="scss" scoped>
+$top-hero-body-height: 45vh;
+$top-hero-body-margin: 8vh;
+$page-lateral-margin: 5vw;
+$page-bottom-margin: 5rem;
+
+app {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: $page-bottom-margin;
+}
+
+.has-background-image {
+  background: url(assets/img/hero-background.jpg) center center;
+  background-size: cover;
+}
+
+top-hero-body {
+  height: $top-hero-body-height;
+}
+
+page-content {
+  margin: -$top-hero-body-height + $top-hero-body-margin $page-lateral-margin 0;
+}
+
+page-content .card {
+  min-height: 70vh;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+</style>
+
+</head>
+
+
+<body>
+
+  {% include "main/includes/navbar.html" %}
+  {% include "main/includes/messages.html" %}
+
+  <div class="container">
+    <br>
+    {% block content %}
+    {% endblock %}
+  </div>
+
+</body>
+
+<script src="{% static 'tinymce/js/prism.js' %}"></script>

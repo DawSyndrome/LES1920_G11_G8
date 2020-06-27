@@ -1,0 +1,53 @@
+<style type="text/css">
+	.submitbutton{
+		background: #2471FF;
+		border: none;
+		padding: 10px 20px 10px 20px;
+		border-bottom: 3px solid #5994FF;
+		border-radius: 3px;
+		color: #D2E2FF;
+	}
+	.submitbutton:hover{
+		background: #6B9FFF;
+		color:#fff;
+	}
+
+	.back{
+		background: #e95353;
+		border-bottom-color: #c75151;
+	}
+	.back:hover{
+		background: #f57676
+
+	}
+</style>
+
+{% extends "diaAbertoConf/Home.html" %}
+
+{% block content %}
+
+	<center style="
+		font-family: Arial, Helvetica, sans-serif; font-size: 40px; 
+		color: #696969; 
+		margin-bottom: 300px; 
+		margin-top: 400px;"
+	>
+
+		{{ err_msg }}
+
+		{% if loc or back %}
+		<hr>
+		{% endif %}
+
+		{% if back %}
+		<a href="{{back}}"><input type="submit" class="submitbutton back" value="Cancel"></a>
+		{% endif %}
+
+		{% if loc %}
+		<a href="{{loc}}"><input type="submit" class="submitbutton" value="Continue"></a>
+		{% endif %}
+		
+
+	</center>
+
+{% endblock %}
