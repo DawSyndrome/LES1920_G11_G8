@@ -1,6 +1,67 @@
 
 {% extends 'diaAbertoConf/Home.html' %}
 
+					{% block navContent %}
+        		    	<ul class="navbar-nav mr-auto">
+							{% if user.is_authenticated %}
+								{% if perms.utilizadores.view_inscricao%}
+									<li class="nav-item">
+        		        				<a class="nav-link" href="#">Inscrições</a>
+        		      				</li>
+								{% endif %}
+								{% if perms.utilizadores.view_atividade%}
+									{% if  perms.utilizadores.view_edificio and perms.utilizadores.view_campus and perms.utilizadores.view_local and perms.utilizadores.view_unidadeorganica and  perms.utilizadores.view_departamento and perms.utilizadores.view_tematica and perms.utilizadores.view_material and perms.utilizadores.view_sessaoatividade %}
+        		      					<li class="nav-item dropdown">
+        									<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												Atividades
+        									</a>
+        									<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          										<a class="dropdown-item" href="{% url 'atividades:allAtividades'%}">Atividades</a>
+          										<a class="dropdown-item" href="{% url 'atividades:allEdificios'%}">Edifícios</a>
+          										<a class="dropdown-item" href="{% url 'atividades:allCampus'%}">Campus</a>
+          										<a class="dropdown-item" href="{% url 'atividades:allLocais'%}">Locais</a>
+          										<a class="dropdown-item" href="{% url 'atividades:allUnidadeOrganicas'%}">Unidade Orgânicas</a>
+          										<a class="dropdown-item" href="{% url 'atividades:allDepartamentos'%}">Departamentos</a>
+          										<a class="dropdown-item" href="{% url 'atividades:allTematicas'%}">Temáticas</a>
+          										<a class="dropdown-item" href="{% url 'atividades:allMateriais'%}">Materiais</a>
+          										<a class="dropdown-item" href="{% url 'atividades:allSessoes'%}">Horários de Sessões</a>
+											</div>
+     									</li>
+									{%else%}
+										<li class="nav-item">
+        		        					<a class="nav-link" href="{% url 'atividades:allAtividades' %}">Atividades</a>
+        		      					</li>  
+									{%endif%}
+								{% endif %}
+								{% if perms.utilizadores.view_diaaberto%}
+									<li class="nav-item">
+        		        				<a class="nav-link" href="{% url 'diaAbertoConf:editConfig' %}">Configuração do Dia Aberto</a>
+        		      				</li>
+								{% endif %}
+								{% if perms.utilizadores.view_transporte %}        	      		
+        		      				<li class="nav-item dropdown">
+        								<a class="nav-link dropdown-toggle" href="#" id="DiaAbertoConfNavbar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          									Transportes
+        								</a>
+        								<div class="dropdown-menu" aria-labelledby="DiaAbertoConfNavbar">
+        									<a class="dropdown-item" href="{% url 'diaAbertoConf:allTransportes'%}">Gestão de Transportes</a>
+        								  	<a class="dropdown-item" href="{% url 'diaAbertoConf:allHorarios'%}">Horários de Transportes</a>
+        								</div>
+      								</li>
+								{% endif %}
+								{% if perms.utilizadores.view_ementa %}  
+        		      				<li class="nav-item">
+        		        				<a class="nav-link active" href="{% url 'diaAbertoConf:gestaoEmentas'%}">Almoços</a>
+        		      				</li>
+								{% endif %}
+								{% if perms.utilizadores.view_tarefa %}
+									<li class="nav-item">
+        		        				<a class="nav-link" href="{% url 'tarefas:showTarefas' %}">Tarefas</a>
+        		      				</li>
+								{% endif %}
+							{% endif %}
+						</ul>
+					{% endblock %}
 
 {% block content %}
 <div class="container mb-5 mt-4 pb-5">
@@ -23,8 +84,8 @@
                     	        <tr>
 									<th scope="col" style="width: 5%"></th>
                     	            <th scope="col" style="width: 30%">Dia</th>
-                                    <th scope="col" style="width: 25%"></th>
-                    	            <th scope="col" style="width: 25%"></th>
+                                    <th scope="col" style="width: 25%">Preço Aluno </th>
+                    	            <th scope="col" style="width: 25%">Preço Professor </th>
 									<th scope="col" style="width: 5%"></th>
                     	            <th scope="col" style="width: 5%"></th>
                     	        </tr>
@@ -34,9 +95,9 @@
 								<tbody>
                     	        	<tr>
 										<td><i class="fas fa-chevron-right"></i></td>
-                    	        	    <th scope="row">{{ ementa.dia|date:"l"}}, {{ ementa.dia|date:"d"}} de {{ ementa.dia|date:"F"}} de {{ ementa.dia|date:"Y"}}</th>
-										<th scope="row">Preço Aluno {{ diaAberto.preco_aluno }}€</th>
-										<th scope="row">Preço Professor {{ diaAberto.preco_professor }}€</th>
+                    	        	    <td scope="row">{{ ementa.dia|date:"l"}}, {{ ementa.dia|date:"d"}} de {{ ementa.dia|date:"F"}} de {{ ementa.dia|date:"Y"}}</td>
+										<td scope="row">{{ diaAberto.preco_aluno }}€</td>
+										<td scope="row">{{ diaAberto.preco_professor }}€</td>
                     	        	    <td><a class="btn btn-outline-success far fa-edit" href="{% url 'diaAbertoConf:EditarEmenta' id=ementa.id %}"  ></a></td>
                     	        	   	<td><a class="btn btn-outline-danger fas fa-trash-alt delete" href="" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:deleteEmenta' id=ementa.id %}"></a></td>
 										<div class="modal" id="Modal">

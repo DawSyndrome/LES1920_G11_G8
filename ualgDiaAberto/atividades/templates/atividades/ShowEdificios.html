@@ -68,7 +68,7 @@
                             <th scope="col" class="Sortable Campus tableBorderH" style="width: 25%"> Campus</th>
                             {% endif  %}
                             {% if order_by == "nome_edificio" %}
-                            <th style="width: 25%" class="Sortable Nome {{direction}} tableBorderH" scope="col">Nome
+                            <th style="width: 35%" class="Sortable Nome {{direction}} tableBorderH" scope="col">Nome
                             {% if direction == 'asc'%} 
                                 <i class="fas fa-caret-up fa-xs"></i>
                             {% elif direction == 'desc' %}
@@ -76,10 +76,10 @@
                             {% endif %}
                             </th>
                             {% else %}
-                            <th scope="col" class="Sortable Nome tableBorderH" style="width: 25%"> Nome</th>
+                            <th scope="col" class="Sortable Nome tableBorderH" style="width: 35%"> Nome</th>
                             {% endif  %}
                             {% if order_by == "num_edificio" %}
-                            <th style="width: 25%" class="Sortable Numero {{direction}} tableBorderH" scope="col">Número
+                            <th style="width: 15%" class="Sortable Numero {{direction}} tableBorderH" scope="col">Número
                             {% if direction == 'asc'%} 
                                 <i class="fas fa-caret-up fa-xs"></i>
                             {% elif direction == 'desc' %}
@@ -87,7 +87,7 @@
                             {% endif %}
                             </th>
                             {% else %}
-                            <th scope="col" class="Sortable Numero tableBorderH" style="width: 25%"> Número</th>
+                            <th scope="col" class="Sortable Numero tableBorderH" style="width: 15%"> Número</th>
                             {% endif  %}
                             <th scope="col"></th>
 							<th scope="col"></th>

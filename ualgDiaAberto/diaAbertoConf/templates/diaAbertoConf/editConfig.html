@@ -3,13 +3,13 @@
 {% block navContent %}
     <ul class="navbar-nav mr-auto">
 		{% if user.is_authenticated %}
-			{% if perms.atividades.view_inscricao%}
+			{% if perms.utilizadores.view_inscricao%}
 				<li class="nav-item">
     				<a class="nav-link" href="#">Inscrições</a>
     			</li>
 			{% endif %}
-			{% if perms.atividades.view_atividade%}
-				{% if  perms.atividades.view_edificio and perms.atividades.view_campus and perms.atividades.view_local and perms.atividades.view_unidadeorganica and  perms.atividades.view_departamento and perms.atividades.view_tematica and perms.atividades.view_material and perms.atividades.view_sessaoatividade %}
+			{% if perms.utilizadores.view_atividade%}
+				{% if  perms.utilizadores.view_edificio and perms.utilizadores.view_campus and perms.utilizadores.view_local and perms.utilizadores.view_unidadeorganica and  perms.utilizadores.view_departamento and perms.utilizadores.view_tematica and perms.utilizadores.view_material and perms.utilizadores.view_sessaoatividade %}
     				<li class="nav-item dropdown">
     					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							Atividades
@@ -32,12 +32,12 @@
     				</li>  
 				{%endif%}
 			{% endif %}
-			{% if perms.diaAbertoConf.view_diaaberto%}
+			{% if perms.utilizadores.view_diaaberto%}
 				<li class="nav-item">
     				<a class="nav-link active" href="{% url 'diaAbertoConf:editConfig' %}">Configuração do Dia Aberto</a>
     			</li>
 			{% endif %}
-			{% if perms.diaAbertoConf.view_transporte %}        	      		
+			{% if perms.utilizadores.view_transporte %}        	      		
     			<li class="nav-item dropdown">
     				<a class="nav-link dropdown-toggle" href="#" id="DiaAbertoConfNavbar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     					Transportes
@@ -48,12 +48,12 @@
     				</div>
     			</li>
 			{% endif %}
-			{% if perms.diaAbertoConf.view_ementa %}  
+			{% if perms.utilizadores.view_ementa %}  
     			<li class="nav-item">
     				<a class="nav-link" href="{% url 'diaAbertoConf:gestaoEmentas'%}">Almoços</a>
     			</li>
 			{% endif %}
-			{% if perms.tarefas.view_tarefa %}
+			{% if perms.utilizadores.view_tarefa %}
 				<li class="nav-item">
     				<a class="nav-link" href="{% url 'tarefas:showTarefas' %}">Tarefas</a>
     			</li>

@@ -34,7 +34,7 @@ function deleteForm(prefix, btn) {
         var forms = $('.prato-form-comp');
         $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
         for (var i=0, formCount=forms.length; i<formCount; i++) {
-            $(forms.get(i)).find('select').each(function() {
+            $(forms.get(i)).find('select, input').each(function() {
                 updateElementIndex(this, prefix, i);
             })
             

@@ -21,7 +21,7 @@ from diaAbertoConf.models import DiaAberto
 
 #Creates new edificio
 @login_required()
-@permission_required('atividades.add_edificio', raise_exception=True)
+@permission_required('utilizadores.add_edificio', raise_exception=True)
 def createEdificio(request):
     allCampus = Campus.objects.all()
     form = EdificioForm(request.POST or None)
@@ -36,7 +36,7 @@ def createEdificio(request):
 
 #show all edificios
 @login_required()
-@permission_required('atividades.view_edificio', raise_exception=True)
+@permission_required('utilizadores.view_edificio', raise_exception=True)
 def showEdificios(request):
     allEdificios = Edificio.objects.all()
     allCampus = Campus.objects.all()
@@ -70,7 +70,7 @@ def showEdificios(request):
 
 #upadates the fields of a spcific edificio
 @login_required()
-@permission_required('atividades.change_edificio', raise_exception=True)
+@permission_required('utilizadores.change_edificio', raise_exception=True)
 def updateEdificio(request, id):
     dados_Edificio = Edificio.objects.get(id = id)
     allCampus = Campus.objects.all()
@@ -86,7 +86,7 @@ def updateEdificio(request, id):
 
 #deletes a edificio
 @login_required()
-@permission_required('atividades.delete_edificio', raise_exception=True)
+@permission_required('utilizadores.delete_edificio', raise_exception=True)
 def deleteEdificio(request, id):
     dados_edificio = Edificio.objects.get(id = id)
     dados_edificio.delete()
@@ -94,7 +94,7 @@ def deleteEdificio(request, id):
 
 #Creates new campus
 @login_required()
-@permission_required('atividades.add_campus', raise_exception=True)
+@permission_required('utilizadores.add_campus', raise_exception=True)
 def createCampus(request):
     form = CampusForm()
     saved = False
@@ -109,7 +109,7 @@ def createCampus(request):
 
 #show all campus
 @login_required()
-@permission_required('atividades.view_campus', raise_exception=True)
+@permission_required('utilizadores.view_campus', raise_exception=True)
 def showCampus(request):#, ordena):
     allCampus = Campus.objects.all()
     myFilter = CampusFilter(request.GET, queryset=allCampus)
@@ -137,7 +137,7 @@ def showCampus(request):#, ordena):
 
 #upadates the fields of a spcific campus
 @login_required()
-@permission_required('atividades.change_campus', raise_exception=True)
+@permission_required('utilizadores.change_campus', raise_exception=True)
 def updateCampus(request, id):
     dados_Campus = Campus.objects.get(id = id)
     form = CampusForm(request.POST or None, instance = dados_Campus)
@@ -151,7 +151,7 @@ def updateCampus(request, id):
 
 #deletes a campus
 @login_required()
-@permission_required('atividades.delete_campus', raise_exception=True)
+@permission_required('utilizadores.delete_campus', raise_exception=True)
 def deleteCampus(request, id):
     dados_campus = Campus.objects.get(id = id)
     dados_campus.delete()
@@ -159,7 +159,7 @@ def deleteCampus(request, id):
 
 #Creates new unidade
 @login_required()
-@permission_required('atividades.add_unidadeorganica', raise_exception=True)
+@permission_required('utilizadores.add_unidadeorganica', raise_exception=True)
 def createUnidadeOrganica(request):
     form = UnidadeOrganicaForm(request.POST or None)
     saved = False
@@ -174,7 +174,7 @@ def createUnidadeOrganica(request):
 
 #show all unidade
 @login_required()
-@permission_required('atividades.view_unidadeorganica', raise_exception=True)
+@permission_required('utilizadores.view_unidadeorganica', raise_exception=True)
 def showUnidadeOrganicas(request):
     allUnidadeOrganicas = UnidadeOrganica.objects.all()
     myFilter = UnidadeOrganicaFilter(request.GET, queryset=allUnidadeOrganicas)
@@ -204,7 +204,7 @@ def showUnidadeOrganicas(request):
     return render(request, 'atividades/ShowUO.html', context)
 
 @login_required()
-@permission_required('atividades.change_unidadeorganica', raise_exception=True)
+@permission_required('utilizadores.change_unidadeorganica', raise_exception=True)
 #upadates the fields of a spcific unidade
 def updateUnidadeOrganica(request, id):
     dados_UnidadeOrganica = UnidadeOrganica.objects.get(id = id)
@@ -221,7 +221,7 @@ def updateUnidadeOrganica(request, id):
 
 #deletes a unidade
 @login_required()
-@permission_required('atividades.delete_unidadeorganica', raise_exception=True)
+@permission_required('utilizadores.delete_unidadeorganica', raise_exception=True)
 def deleteUnidadeOrganica(request, id):
     dados_unidadeorganica = UnidadeOrganica.objects.get(id = id)
     dados_unidadeorganica.delete()
@@ -229,7 +229,7 @@ def deleteUnidadeOrganica(request, id):
 
 #Creates new departamento
 @login_required()
-@permission_required('atividades.add_departamento', raise_exception=True)
+@permission_required('utilizadores.add_departamento', raise_exception=True)
 def createDepartamento(request):
     allUnidadeOrganicas = UnidadeOrganica.objects.all()
     form = DepartamentoForm()
@@ -247,7 +247,7 @@ def createDepartamento(request):
 
 #show all departamntos
 @login_required()
-@permission_required('atividades.view_departamento', raise_exception=True)
+@permission_required('utilizadores.view_departamento', raise_exception=True)
 def showDepartamentos(request):
     allDepartamentos = Departamento.objects.all()
     myFilter = DepartamentoFilter(request.GET, queryset=allDepartamentos)
@@ -280,7 +280,7 @@ def showDepartamentos(request):
 
 #upadates the fields of a spcific departamento
 @login_required()
-@permission_required('atividades.change_departamento', raise_exception=True)
+@permission_required('utilizadores.change_departamento', raise_exception=True)
 def updateDepartamento(request, id):
     dados_Departamento = Departamento.objects.get(id = id)
     allUnidadeOrganicas = UnidadeOrganica.objects.all()
@@ -295,7 +295,7 @@ def updateDepartamento(request, id):
 
 #deletes a departamento
 @login_required()
-@permission_required('atividades.delete_departamento', raise_exception=True)
+@permission_required('utilizadores.delete_departamento', raise_exception=True)
 def deleteDepartamento(request, id):
     dados_departamento = Departamento.objects.get(id = id)
     dados_departamento.delete()
@@ -303,7 +303,7 @@ def deleteDepartamento(request, id):
 
 #Creates new local
 @login_required()
-@permission_required('atividades.add_local', raise_exception=True)
+@permission_required('utilizadores.add_local', raise_exception=True)
 def createLocal(request):
     form = LocalForm()
     saved = False
@@ -342,7 +342,7 @@ def createLocal(request):
 
 #show all local
 @login_required()
-@permission_required('atividades.view_local', raise_exception=True)
+@permission_required('utilizadores.view_local', raise_exception=True)
 def showLocais(request):
     allLocais = Local.objects.all()
     allCampus = Campus.objects.all()
@@ -377,7 +377,7 @@ def showLocais(request):
 
 #upadates the fields of a spcific local
 @login_required()
-@permission_required('atividades.change_local', raise_exception=True)
+@permission_required('utilizadores.change_local', raise_exception=True)
 def updateLocal(request, id):
     dados_Local = Local.objects.get(id = id)
 
@@ -399,7 +399,7 @@ def updateLocal(request, id):
 
 #deletes a local
 @login_required()
-@permission_required('atividades.delete_local', raise_exception=True)
+@permission_required('utilizadores.delete_local', raise_exception=True)
 def deleteLocal(request, id):
     dados_local = Local.objects.get(id = id)
     atividades = Atividade.objects.filter(localid= dados_local.id)
@@ -412,7 +412,7 @@ def deleteLocal(request, id):
 
 #Creates new atvidade
 @login_required()
-@permission_required('atividades.add_atividade', raise_exception=True)
+@permission_required('utilizadores.add_atividade', raise_exception=True)
 def createAtividade(request):
 
     try: 
@@ -422,7 +422,7 @@ def createAtividade(request):
 
     data_atual = datetime.datetime.today().strftime('%Y-%m-%d')
 
-    if diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
+    if diaAberto is not None and diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
         saved = False
 
         form = AtividadeForm(request.GET or None)
@@ -441,7 +441,7 @@ def createAtividade(request):
                 utilizador = request.user
                 atividade = form.save(commit=False)
                 atividade.utilizadorid = utilizador
-                atividade.unidadeorganicaid = utilizador.unidade_organicaid
+                atividade.unidadeorganicaid = utilizador.unidade_orgânicaid
                 atividade.validada = -1
                 atividade.editavel = True
                 atividade.save()
@@ -487,12 +487,12 @@ def createAtividade(request):
 
 #show all atividade
 @login_required()
-@permission_required('atividades.view_atividade', raise_exception=True)
+@permission_required('utilizadores.view_atividade', raise_exception=True)
 def showAtividades(request):
     if request.user.user_type == 0b10000:
         allAtividades = Atividade.objects.all()
     elif request.user.user_type == 0b00001:
-        allAtividades = Atividade.objects.filter(unidadeorganicaid = request.user.unidade_organicaid)
+        allAtividades = Atividade.objects.filter(unidadeorganicaid = request.user.unidade_orgânicaid)
     else:
         allAtividades = Atividade.objects.filter(utilizadorid=request.user)
 
@@ -516,8 +516,12 @@ def showAtividades(request):
 
     data_atual = datetime.date.today()
 
-    if diaAberto.data_inicio_propor_atividades <= data_atual and diaAberto.data_fim_propor_atividades >= data_atual:
-        inDate = True
+    if diaAberto is not None:
+        if diaAberto.data_inicio_propor_atividades <= data_atual and diaAberto.data_fim_propor_atividades >= data_atual:
+            inDate = True
+        else:
+            inDate = False
+
     else:
         inDate = False
 
@@ -562,8 +566,6 @@ def showAtividades(request):
     except TypeError:
         localedificioSearched = None
 
-    print(diaAberto.data_inicio_propor_atividades)
-
     context = {
         'page_obj': page_obj, 
         'allCampus' : allCampus, 
@@ -606,7 +608,7 @@ def showDetailsAtividade(request, id):
 
 #upadates the fields of a spcific atividade
 @login_required()
-@permission_required('atividades.change_atividade', raise_exception=True)
+@permission_required('utilizadores.change_atividade', raise_exception=True)
 def updateAtividade(request, id):
 
     try: 
@@ -616,7 +618,7 @@ def updateAtividade(request, id):
 
     data_atual = datetime.datetime.today().strftime('%Y-%m-%d')
 
-    if diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
+    if diaAberto is not None and diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
 
         dados_Atividade = Atividade.objects.get(id = id)
         tematica = AtividadeTematica.objects.filter(atividadeid = id)
@@ -744,7 +746,7 @@ def updateAtividade(request, id):
     
 #deletes a atividade
 @login_required()
-@permission_required('atividades.delete_atividade', raise_exception=True)
+@permission_required('utilizadores.delete_atividade', raise_exception=True)
 def deleteAtividade(request, id):
 
     try: 
@@ -754,7 +756,7 @@ def deleteAtividade(request, id):
 
     data_atual = datetime.datetime.today().strftime('%Y-%m-%d')
 
-    if diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:   
+    if diaAberto is not None and diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:   
         dados_atividade = Atividade.objects.get(id = id)
         dados_atividade.delete()
         return HttpResponseRedirect(reverse('atividades:allAtividades'))
@@ -769,7 +771,7 @@ def requestAtividade(request):
 	return 0
 
 @login_required()
-@permission_required('atividades.validates_atividade', raise_exception=True)
+@permission_required('utilizadores.validates_atividade', raise_exception=True)
 def recuseAtividade(request, id):
 
     try: 
@@ -779,7 +781,7 @@ def recuseAtividade(request, id):
 
     data_atual = datetime.datetime.today().strftime('%Y-%m-%d')
 
-    if diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
+    if diaAberto is not None and diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
         dados_atividade = Atividade.objects.get(id = id)
         dados_atividade.validada = 0 
         dados_atividade.save()
@@ -788,7 +790,7 @@ def recuseAtividade(request, id):
         return redirect(reverse('atividades:allAtividades'))
 
 @login_required()
-@permission_required('atividades.atribuir_local', raise_exception=True)
+@permission_required('utilizadores.atribuir_local', raise_exception=True)
 def atribuirLocal(request, id):
 
     try: 
@@ -798,7 +800,7 @@ def atribuirLocal(request, id):
 
     data_atual = datetime.datetime.today().strftime('%Y-%m-%d')
 
-    if diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
+    if diaAberto is not None and diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
         dados_atividade = Atividade.objects.get(id = id)
         allCampus = Campus.objects.all()
         allTematicaAtividade = AtividadeTematica.objects.all()
@@ -842,7 +844,7 @@ def atribuirLocal(request, id):
         return redirect(reverse('atividades:allAtividades'))
 
 @login_required()
-@permission_required('atividades.alterar_local', raise_exception=True)
+@permission_required('utilizadores.alterar_local', raise_exception=True)
 def updateAtribuirLocal(request, id):
 
     try: 
@@ -852,7 +854,7 @@ def updateAtribuirLocal(request, id):
 
     data_atual = datetime.datetime.today().strftime('%Y-%m-%d')
 
-    if diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
+    if diaAberto is not None and diaAberto.data_inicio_propor_atividades.strftime('%Y-%m-%d') <= data_atual and diaAberto.data_fim_propor_atividades.strftime('%Y-%m-%d') >= data_atual:
         dados_atividade = Atividade.objects.get(id = id)
         local = dados_atividade.localid
         allCampus = Campus.objects.all()
@@ -913,7 +915,7 @@ def getLocalImage(request, localid):
 #----------------------------------------------------------------
 #showAll
 @login_required()
-@permission_required('atividades.view_tematica', raise_exception=True)
+@permission_required('utilizadores.view_tematica', raise_exception=True)
 def showTematicas(request):
     allTematicas = Tematica.objects.all()
     myFilter = TematicaFilter(request.GET, queryset=allTematicas)
@@ -943,7 +945,7 @@ def showTematicas(request):
     return render(request, 'atividades/ShowTematicas.html', context)
 
 @login_required()
-@permission_required('atividades.add_tematica', raise_exception=True)
+@permission_required('utilizadores.add_tematica', raise_exception=True)
 def addTematica(request):
     form = TematicaForm()
     saved = False
@@ -956,7 +958,7 @@ def addTematica(request):
     return render(request, 'atividades/AdicionarTematica.html', context)
 
 @login_required()
-@permission_required('atividades.change_tematica', raise_exception=True)
+@permission_required('utilizadores.change_tematica', raise_exception=True)
 def updateTematica(request, id):
     dados = Tematica.objects.get(id = id)
     form = TematicaForm(request.POST or None, instance=dados)
@@ -970,7 +972,7 @@ def updateTematica(request, id):
     return render(request, 'atividades/EditarTematica.html', context)
 
 @login_required()
-@permission_required('atividades.delete_tematica', raise_exception=True)
+@permission_required('utilizadores.delete_tematica', raise_exception=True)
 def deleteTematica(request, id):
     dados = Tematica.objects.get(id = id)
     dados.delete()
@@ -980,7 +982,7 @@ def deleteTematica(request, id):
 # Material CRUD- Create Read Update Delete
 #----------------------------------------------------------------
 @login_required()
-@permission_required('atividades.add_material', raise_exception=True)
+@permission_required('utilizadores.add_material', raise_exception=True)
 def createMaterial(request):
     form = MaterialForm()
     saved = False
@@ -994,7 +996,7 @@ def createMaterial(request):
     return render(request, 'atividades/AdicionarMaterial.html', context)
 
 @login_required()
-@permission_required('atividades.view_material', raise_exception=True)
+@permission_required('utilizadores.view_material', raise_exception=True)
 def showMateriais(request):
     allMateriais = Material.objects.all()
     myFilter = MaterialFilter(request.GET, queryset=allMateriais)
@@ -1018,7 +1020,7 @@ def showMateriais(request):
     return render(request, 'atividades/ShowMateriais.html', context)
 
 @login_required()
-@permission_required('atividades.change_material', raise_exception=True)
+@permission_required('utilizadores.change_material', raise_exception=True)
 def updateMaterial(request, id):
     dados_Material = Material.objects.get(id = id)
     form = MaterialForm(request.POST or None, instance = dados_Material)
@@ -1030,7 +1032,7 @@ def updateMaterial(request, id):
     return render(request, 'atividades/EditarMaterial.html', {'form' : form, 'material' : dados_Material})
 
 @login_required()
-@permission_required('atividades.delete_material', raise_exception=True)
+@permission_required('utilizadores.delete_material', raise_exception=True)
 def deleteMaterial(request, id):
     dados_Material = Material.objects.get(id = id)
     dados_Material.delete()
@@ -1042,7 +1044,7 @@ def deleteMaterial(request, id):
 #-------------------------------------------------------------------------
 
 @login_required()
-@permission_required('atividades.view_sessao', raise_exception=True)
+@permission_required('utilizadores.view_sessao', raise_exception=True)
 def showSessoes(request):
     allSessoes = Sessao.objects.all()
     myFilter = SessaoFilter(request.GET, queryset=allSessoes)
@@ -1074,7 +1076,7 @@ def showSessoes(request):
     return render(request, 'atividades/ShowHorarioSessao.html', context)
 
 @login_required()
-@permission_required('atividades.add_sessao', raise_exception=True)
+@permission_required('utilizadores.add_sessao', raise_exception=True)
 def addSessao(request):
     form = SessaoForm()
     saved = False
@@ -1088,7 +1090,7 @@ def addSessao(request):
     return render(request, 'atividades/AdicionarHorarioSessao.html', context)
 
 @login_required()
-@permission_required('atividades.change_sessao', raise_exception=True)
+@permission_required('utilizadores.change_sessao', raise_exception=True)
 def updateSessao(request, id):
     dados = Sessao.objects.get(id=id)
     form = SessaoForm(request.POST or None, instance=dados)
@@ -1101,7 +1103,7 @@ def updateSessao(request, id):
     return render(request,'atividades/EditarHorarioSessao.html' , {'form' : form, 'sessao':dados})
 
 @login_required()
-@permission_required('atividades.delete_sessao', raise_exception=True)
+@permission_required('utilizadores.delete_sessao', raise_exception=True)
 def deleteSessao(request, id):
     dados = Sessao.objects.get(id=id)
     dados.delete()
