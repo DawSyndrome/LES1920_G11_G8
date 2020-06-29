@@ -2,7 +2,7 @@ from django import forms
 
 from .models import *
 
-
+from django.db.models import Q
 
 from django.forms import ModelForm
 
@@ -185,6 +185,13 @@ class EditUser(ModelForm):
 ############# Diogo Lobo - Notificacoes ###########################
 ###################################################################
 
+## CABULA DE FILTROS ##
+## Admin - Envia a Toda a Gente ##
+## Coordenador - Envia a Toda a Gente Menos Participantes ##
+## Docente - Só envia a colaboradores ##
+## Colaborador - Só envia a coordenadores ##
+## Participante - Só recebe ##
+
 class NotificationForm(forms.Form):
 
     conteudo = forms.CharField(label='Conteúdo', widget=forms.Textarea, required=True)
@@ -209,9 +216,20 @@ class NotificationForm(forms.Form):
     )
     prioridade = forms.ChoiceField(label='Prioridade', widget=forms.Select, required=True, choices=CHOICES2)
 
+
     def __init__(self, *args, **kwargs):
         iduser = kwargs.pop('uid')
+        typeuser = kwargs.pop('utype')
         super(NotificationForm, self).__init__(*args, **kwargs)
-        self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:',
-                                                                    required=True,
-                                                                    queryset=Utilizador.objects.exclude(id=iduser))
+        if (typeuser == 16):#Admin
+        	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
+				queryset=Utilizador.objects.exclude(id=iduser))
+        if (typeuser == 4): #Docente
+        	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
+				queryset=Utilizador.objects.filter(user_type=2))
+        if (typeuser == 1): #Coordenador
+        	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
+				queryset=Utilizador.objects.filter(Q(user_type=1) | Q(user_type=2) | Q(user_type=4) | Q(user_type=16)).exclude(id=iduser))
+        if (typeuser == 2): #Colaborador
+        	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
+				queryset=Utilizador.objects.filter(user_type=1))

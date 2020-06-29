@@ -489,7 +489,6 @@ def notificacoes(request):
 
 
 def notificacoesRecebidas(request):
-	#print("---------------------------------------------------------------------------------" + request.user.email)
 	if not (request.user.is_authenticated):
 		return redirect('home')
 
@@ -504,10 +503,11 @@ def notificacoesEnviadas(request):
 	if not (request.user.is_authenticated):
 		return redirect('home')
 
-	notf = Notificacao.objects.all()
-	info = list(Notificacao.objects.filter(utilizadorid_envia=request.user.id))
+	if (request.user.is_admin() or request.user.is_coordenador() or request.user.is_docente() or request.user.user_type == 2 ):
+		notf = Notificacao.objects.all()
+		info = list(Notificacao.objects.filter(utilizadorid_envia=request.user.id))
 
-	return render(request,
+		return render(request,
                   "main/notificacoesEnv.html",
                   {"notificacoes": notf, "info": info})
 
@@ -517,7 +517,7 @@ def createNotf(request):
 	if not (request.user.is_authenticated):
 		return redirect('home')
 	if request.method == 'POST':
-		form = NotificationForm(request.POST, uid=request.user.id)
+		form = NotificationForm(request.POST, uid=request.user.id, utype=request.user.user_type)
 		if form.is_valid():
 			notificacao = Notificacao(
 				utilizadorid_envia=Utilizador.objects.get(id=request.user.id),
@@ -534,7 +534,7 @@ def createNotf(request):
 							"main/enviarnotf.html",
 							messages.error(request, f"Necessário Preencher Todos Os Campos"))
 	else:
-		form = NotificationForm(uid=request.user.id)
+		form = NotificationForm(uid=request.user.id, utype=request.user.user_type)
 		return render(request,
 						"main/enviarnotf.html",
     					{'form': form.as_ul})
@@ -546,5 +546,6 @@ def deleteNotfRecebida(request, pk):
 
 
 def deleteNotfEnviada(request, pk):
-    Notificacao.objects.filter(id=pk).delete()
-    return redirect("notificacoesEnv")
+	if (request.user.is_admin() or request.user.is_coordenador() or request.user.is_docente()):
+		Notificacao.objects.filter(id=pk).delete()
+		return redirect("notificacoesEnv")
