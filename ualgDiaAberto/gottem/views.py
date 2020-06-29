@@ -40,7 +40,7 @@ def login(request):
 		if form.is_valid():
 			user = authenticate(request, email_p=form.cleaned_data['user_email'], password_p=form.cleaned_data['user_password'])
 			if user is not None:
-				django_login(request, user)
+				django_login(request, user, backend='utilizadores.backends.AuthBackend')
 				return redirect('home')
 			form.add_error("user_email", "Bad email-password combination.")
 
@@ -220,7 +220,7 @@ def resetpw(request, uid=0, token=None):
 			if form.is_valid():							#se estiver válido metemos-lhe a password nova
 				request.user.password = make_password(form.cleaned_data['new_pw'])
 				request.user.save()
-				django_login(request, request.user)
+				django_login(request, request.user, backend='utilizadores.backends.AuthBackend')
 				template = loader.get_template("message.html")
 				return HttpResponse(template.render({'loc': reverse('home'), 'err_msg': 'New password set successfully!'}, request))
 
@@ -249,7 +249,7 @@ def resetpw(request, uid=0, token=None):
 
 		user = Utilizador.objects.get(id=uid)						##busca-se o user cujo id foi especificado
 		if check_password(unquote(token), user.password_reset_url):	##e se o token estiver bem, loga-se o user e redirecionamos para ir meter a pass nova
-			django_login(request, user)
+			django_login(request, user, backend='utilizadores.backends.AuthBackend')
 			form = NewPasswordForm()
 			template = loader.get_template("form.html")
 			return HttpResponse(template.render({'form': form, 'post_redirect': reverse('resetpw')}, request))
