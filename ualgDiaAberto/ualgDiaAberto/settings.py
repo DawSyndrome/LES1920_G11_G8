@@ -93,7 +93,7 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'utilizadores.Utilizador'
 AUTHENTICATION_BACKENDS = [
-    'utilizadores.backends.AuthBackend', 'django.contrib.auth.backends.ModelBackend'
+    'utilizadores.backends.AuthBackend'#, 'django.contrib.auth.backends.ModelBackend'
 ]
 
 # Password validation
@@ -138,3 +138,13 @@ MEDIA_ROOT= os.path.join(BASE_DIR, 'media/')
 MEDIA_URL= "/media/"
 
 LOGIN_URL= "/Utilizador/login"
+
+
+
+
+
+#EMAIL_USE_TLS = False
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '65fd12c1a7a934'
+EMAIL_HOST_PASSWORD = 'b2c68f8cef6e93'
+EMAIL_PORT = '2525'

@@ -211,7 +211,7 @@ from urllib.parse import quote, unquote
 import random
 import string
 def resetpw(request, uid=0, token=None):
-	user = None
+	user = None 
 
 	###se o método é post temos 2 opções
 	if request.method == 'POST':
