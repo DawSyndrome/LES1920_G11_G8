@@ -101,10 +101,8 @@
 									<li><p class="dropdown-divider"></p></li>
 									<ul id="nav-mobile" class="right hide-on-med-and-down">
                               <li><a href="/notificacoesRcb">Notificações Recebidas</a></li>
-                              {% if user.is_admin or user.is_coordenador or user.is_docente or user.user_type == 2 %}
 					                    <li><a href="/notificacoesEnv">Notificações Enviadas</a></li>
 					                    <li><a href="/enviarnotf">Enviar Notificação</a></li>
-                              {% endif %}
 					                </ul>
       							</ul>
 							</li>

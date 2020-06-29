@@ -177,7 +177,6 @@
 </div>
 </div>
 <br>
-{% if user.is_admin or user.is_coordenador or user.is_docente or user.user_type == 2 %}
 <div class="w3-container">
 <form action="/notificacoesEnv">
   <center>
@@ -192,5 +191,4 @@
   </center>
 </form>
 </div>
-{% endif %}
 {% endblock %}

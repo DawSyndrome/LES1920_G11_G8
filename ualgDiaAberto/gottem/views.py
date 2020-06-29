@@ -211,7 +211,7 @@ from urllib.parse import quote, unquote
 import random
 import string
 def resetpw(request, uid=0, token=None):
-	user = None 
+	user = None
 
 	###se o método é post temos 2 opções
 	if request.method == 'POST':
@@ -290,7 +290,7 @@ def index(request, page=0):
 		return redirect('home')
 
 
-	
+
 	filter_form = IndexForm(request.POST) if request.method == 'POST' else IndexForm()
 
 	amount_per_page = 10
@@ -501,11 +501,11 @@ def notificacoesEnviadas(request):
 	if not (request.user.is_authenticated):
 		return redirect('home')
 
-	if (request.user.is_admin() or request.user.is_coordenador() or request.user.is_docente() or request.user.user_type == 2 ):
-		notf = Notificacao.objects.all()
-		info = list(Notificacao.objects.filter(utilizadorid_envia=request.user.id))
+	#if (request.user.is_admin() or request.user.is_coordenador() or request.user.is_docente() or request.user.user_type == 2 ):
+	notf = Notificacao.objects.all()
+	info = list(Notificacao.objects.filter(utilizadorid_envia=request.user.id))
 
-		return render(request,
+	return render(request,
                   "main/notificacoesEnv.html",
                   {"notificacoes": notf, "info": info})
 
@@ -515,7 +515,7 @@ def createNotf(request):
 	if not (request.user.is_authenticated):
 		return redirect('home')
 	if request.method == 'POST':
-		form = NotificationForm(request.POST, uid=request.user.id, utype=request.user.user_type)
+		form = NotificationForm(request.POST, uid=request.user.id, utype=request.user.user_type, uniorg=request.user.unidade_orgânicaid)
 		if form.is_valid():
 			notificacao = Notificacao(
 				utilizadorid_envia=Utilizador.objects.get(id=request.user.id),
@@ -532,7 +532,7 @@ def createNotf(request):
 							"main/enviarnotf.html",
 							messages.error(request, f"Necessário Preencher Todos Os Campos"))
 	else:
-		form = NotificationForm(uid=request.user.id, utype=request.user.user_type)
+		form = NotificationForm(uid=request.user.id, utype=request.user.user_type, uniorg=request.user.unidade_orgânicaid)
 		return render(request,
 						"main/enviarnotf.html",
     					{'form': form.as_ul})
@@ -544,6 +544,5 @@ def deleteNotfRecebida(request, pk):
 
 
 def deleteNotfEnviada(request, pk):
-	if (request.user.is_admin() or request.user.is_coordenador() or request.user.is_docente()):
-		Notificacao.objects.filter(id=pk).delete()
-		return redirect("notificacoesEnv")
+	Notificacao.objects.filter(id=pk).delete()
+	return redirect("notificacoesEnv")

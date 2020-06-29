@@ -33,7 +33,7 @@ class IndexForm(forms.Form):
 		docente 	 = Utilizador.USER_TYPES.Docente 		if cleaned_data.get("docente")	 	else 0
 		colaborador  = Utilizador.USER_TYPES.Colaborador 	if cleaned_data.get("colaborador") 	else 0
 		coordenador  = Utilizador.USER_TYPES.Coordenador 	if cleaned_data.get("coordenador") 	else 0
-		
+
 		self.cleaned_data['flag'] = admin | participante | docente | colaborador | coordenador
 
 
@@ -239,20 +239,23 @@ class NotificationForm(forms.Form):
     )
     prioridade = forms.ChoiceField(label='Prioridade', widget=forms.Select, required=True, choices=CHOICES2)
 
-
     def __init__(self, *args, **kwargs):
         iduser = kwargs.pop('uid')
         typeuser = kwargs.pop('utype')
+        uni_org = kwargs.pop('uniorg')
         super(NotificationForm, self).__init__(*args, **kwargs)
         if (typeuser == 16):#Admin
         	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
 				queryset=Utilizador.objects.exclude(id=iduser))
         if (typeuser == 4): #Docente
         	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
-				queryset=Utilizador.objects.filter(user_type=2))
+				queryset=Utilizador.objects.filter((Q(user_type=1) & Q(unidade_orgânicaid=uni_org)) | Q(user_type=2)))
         if (typeuser == 1): #Coordenador
         	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
-				queryset=Utilizador.objects.filter(Q(user_type=1) | Q(user_type=2) | Q(user_type=4) | Q(user_type=16)).exclude(id=iduser))
+				queryset=Utilizador.objects.filter(Q(user_type=1) | Q(user_type=2) | (Q(user_type=4) & Q(unidade_orgânicaid=uni_org)) | Q(user_type=16)).exclude(id=iduser))
         if (typeuser == 2): #Colaborador
         	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
-				queryset=Utilizador.objects.filter(user_type=1))
+				queryset=Utilizador.objects.filter(user_type=1).filter(unidade_orgânicaid=uni_org))
+        if (typeuser == 8): #Participante
+        	self.fields['utilizadorid_recebe'] = forms.ModelChoiceField(label='Enviar Para:', required=True,
+				queryset=Utilizador.objects.filter(user_type=16))
