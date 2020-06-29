@@ -18,6 +18,23 @@ class CustomModelChoiceField(forms.ModelChoiceField):
 
 
 
+class IndexForm(forms.Form):
+	admin = forms.BooleanField(			label='Administrador', 	initial=True, required=False)
+	participante = forms.BooleanField(	label='Participante', 	initial=True, required=False)
+	docente = forms.BooleanField(		label='Docente', 		initial=True, required=False)
+	colaborador = forms.BooleanField(	label='Colaborador', 	initial=True, required=False)
+	coordenador = forms.BooleanField(	label='Coordenador', 	initial=True, required=False)
+
+	def clean(self):
+		cleaned_data = super(IndexForm, self).clean()
+
+		admin 		 = Utilizador.USER_TYPES.Administrador 	if cleaned_data.get("admin")	 	else 0
+		participante = Utilizador.USER_TYPES.Participante 	if cleaned_data.get("participante") else 0
+		docente 	 = Utilizador.USER_TYPES.Docente 		if cleaned_data.get("docente")	 	else 0
+		colaborador  = Utilizador.USER_TYPES.Colaborador 	if cleaned_data.get("colaborador") 	else 0
+		coordenador  = Utilizador.USER_TYPES.Coordenador 	if cleaned_data.get("coordenador") 	else 0
+		
+		self.cleaned_data['flag'] = admin | participante | docente | colaborador | coordenador
 
 
 class LoginForm(forms.Form):
@@ -53,6 +70,12 @@ class RegisterForm(forms.Form):
 	date_of_birth = forms.DateField(label='Your Date Of Birth', widget=forms.DateInput)
 
 	cellphone_number = forms.IntegerField(label='Your Phone Number')
+
+	departamento = CustomModelChoiceField(
+		lambda obj: obj.unidade_organicaid.nome + ", Departamento de " + obj.nome,
+		required=True,
+		queryset=Departamento.objects.all().order_by("unidade_organicaid__nome"),
+	)
 
 	deficiencias = forms.CharField(label='Deficiências ou Problemas de Saude')
 
@@ -125,7 +148,7 @@ class ResetPasswordForm(forms.Form):
 		cleaned_data = super(ResetPasswordForm, self).clean()
 		if not self.user_objects.filter(email=cleaned_data.get('email')).exists():
 			raise forms.ValidationError({
-				'old_pw': "This email doesn't exist."
+				'email': "This email doesn't exist."
 			})
 
 class NewPasswordForm(forms.Form):

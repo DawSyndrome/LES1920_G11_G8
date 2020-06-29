@@ -113,12 +113,9 @@
 									<i class="fas fa-user-circle"></i>	{{user.nome}}
 								</button>
 								<ul class="dropdown-menu dropdown-menu-right dropdown-width">
-      							 	<li><a class="ml-3 nav-link text-sizing" href="#">Participante Individual</a></li>
-									<li><a class="ml-3 nav-link text-sizing" href="#">Professor Secundário</a></li>
-									<li><a class="ml-3 nav-link text-sizing" href="#">Colaborador</a></li>
-									<li><a class="ml-3 nav-link text-sizing" href="#">Professor Universitário</a></li>
-									<li><a class="ml-3 nav-link text-sizing" href="#">Coordenador</a></li>
-									<li><a class="ml-3 nav-link text-sizing" href="#">Administrador</a></li>
+      							 	{% if user.is_admin %}<li><a class="ml-3 nav-link text-sizing" href="{% url 'index' %}">Lista de utilizadores</a></li>{% endif %}
+									<li><a class="ml-3 nav-link text-sizing" href="{% url 'changpw' %}">Mudar Password</a></li>
+									<li><a class="ml-3 nav-link text-sizing" href="{% url 'resetpw' %}">Recuperar Password</a></li>
       							</ul>
 							</li>
 							<li class="nav-item  mx-1">

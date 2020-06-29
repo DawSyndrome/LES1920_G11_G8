@@ -34,9 +34,20 @@
 
 {% block content %}
 
-	<center id="centr">
+	<form class="form-style-7" action="{{post_redirect}}" method="post" style="margin-left: 100px; margin-top: 40px;">
+		{% csrf_token %}
+    	{% for field in form %}
+
+		    {{ field.label_tag }}
+		    {{ field }}
+		    <br>
+		{% endfor %}
+    	<input type="submit" value="Aplicar Filtro">
+	</form>
+
+	<center id="centr" style="margin-top: 20px">
 	
-		<table>
+		<table style="margin-bottom: 20px;">
 			<tr>
 				<th>
 					Tipo
@@ -93,15 +104,37 @@
 
 		{% if not prev_page is None %}
 			{% if prev_page.param == 0 %}
-				<a href="{% url prev_page.path_name %}">Previous Page</a>
+				<form class="form-style-7" action="{% url prev_page.path_name %}" method="post">
+					{% csrf_token %}
+					{% for field in form %}
+					    <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+					{% endfor %}
+	    			<input type="submit" value="Previous Page">
+				</form>
+				<!--<a href="{% url prev_page.path_name %}">Previous Page</a>-->
 			{% else %}
-				<a href="{% url prev_page.path_name prev_page.param %}">Previous Page</a>
+				<form class="form-style-7" action="{% url prev_page.path_name prev_page.param %}" method="post">
+					{% csrf_token %}
+					{% for field in form %}
+					    <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+					{% endfor %}
+	    			<input type="submit" value="Previous Page">
+				</form>
+				<!--<a href="{% url prev_page.path_name prev_page.param %}">Previous Page</a>-->
 			{% endif %}
 		{% endif %}
 
 		 - {{curr_page}} - 
 		{% if not next_page is None %}
-			<a href="{% url next_page.path_name next_page.param %}">Next Page</a>
+			<form class="form-style-7" action="{% url next_page.path_name next_page.param %}" method="post">
+				{% csrf_token %}
+				{% for field in form %}
+				    <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+				{% endfor %}
+    			<input type="submit" value="Next Page">
+			</form>
+
+			<!--<a href="{% url next_page.path_name next_page.param %}">Next Page</a>-->
 		{% endif %}
 
 	</center>

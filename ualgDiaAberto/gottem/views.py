@@ -44,15 +44,15 @@ def login(request):
 				return redirect('home')
 			form.add_error("user_email", "Bad email-password combination.")
 
-			template = loader.get_template("form.html")
+			template = loader.get_template("login_form.html")
 			return HttpResponse(template.render({'form': form, 'post_redirect': reverse('login')}, request))
 		else:
-			template = loader.get_template("form.html")
+			template = loader.get_template("login_form.html")
 			return HttpResponse(template.render({'form': form, 'post_redirect': reverse('login')}, request))
 			#return HttpResponse("bade ting frend")
 	else:
 		form = LoginForm()
-		template = loader.get_template("form.html")
+		template = loader.get_template("login_form.html")
 		return HttpResponse(template.render({'form': form, 'post_redirect': reverse('login')}, request))
 
 
@@ -113,6 +113,8 @@ def register(request):
 				data_de_nascimento=form.cleaned_data['date_of_birth'],
 				numero_telemovel=form.cleaned_data['cellphone_number'],
 				deficiencias=form.cleaned_data['deficiencias'],
+				departamentoid=form.cleaned_data['departamento'],
+				unidade_orgânicaid=form.cleaned_data['departamento'].unidade_organicaid,
 				user_type=form.cleaned_data['user_type'],
 				validado=0,
 				#check_in_state=0,
@@ -124,28 +126,29 @@ def register(request):
 			if utilizador.is_admin():
 				utilizador.user_permissions.set(Permission.objects.all())
 			elif utilizador.is_coordenador():
-				utilizador.user_permissions.set([
-					Permission.objects.get(name='Can add atividade'),
-					Permission.objects.get(name='Can view atividade'),
-					Permission.objects.get(name='Can change atividade'),
-					Permission.objects.get(name='Can delete atividade'),
-					Permission.objects.get(codename='validates_atividade'),
-					Permission.objects.get(codename='atribuir_local'),
-					Permission.objects.get(codename='alterar_local'),
-					Permission.objects.get(name='Can add tarefa'),
-					Permission.objects.get(name='Can view tarefa'),
-					Permission.objects.get(name='Can change tarefa'),
-					Permission.objects.get(name='Can delete tarefa'),
-					Permission.objects.get(codename='assign_tarefa'),
-					Permission.objects.get(codename='remove_colab_from_tarefa')
-				])
+				permission_list  = []
+				permission_list.append(Permission.objects.get(name='Can add atividade'))
+				permission_list.append(Permission.objects.get(name='Can view atividade'))
+				permission_list.append(Permission.objects.get(name='Can change atividade'))
+				permission_list.append(Permission.objects.get(name='Can delete atividade'))
+				permission_list.append(Permission.objects.get(codename='validates_atividade'))
+				permission_list.append(Permission.objects.get(codename='atribuir_local'))
+				permission_list.append(Permission.objects.get(codename='alterar_local'))
+
+				permission_list.append(Permission.objects.get(name='Can add tarefa'))
+				permission_list.append(Permission.objects.get(name='Can view tarefa'))
+				permission_list.append(Permission.objects.get(name='Can change tarefa'))
+				permission_list.append(Permission.objects.get(name='Can delete tarefa'))
+				permission_list.append(Permission.objects.get(codename='assign_tarefa'))
+				permission_list.append(Permission.objects.get(codename='remove_colab_from_tarefa'))
+				utilizador.user_permissions.set(permission_list)
 			elif utilizador.is_docente():
-				utilizador.user_permissions.set([
-					Permission.objects.get(name='Can add atividade'),
-					Permission.objects.get(name='Can view atividade'),
-					Permission.objects.get(name='Can change atividade'),
-					Permission.objects.get(name='Can delete atividade')
-				])
+				permission_list  = []
+				permission_list.append(Permission.objects.get(name='Can add atividade'))
+				permission_list.append(Permission.objects.get(name='Can view atividade'))
+				permission_list.append(Permission.objects.get(name='Can change atividade'))
+				permission_list.append(Permission.objects.get(name='Can delete atividade'))
+				utilizador.user_permissions.set(permission_list)
 
 
 			#return HttpResponse("registed this new user!")
@@ -283,36 +286,30 @@ def resetpw(request, uid=0, token=None):
 
 def index(request, page=0):
 
-	if not request.user.is_authenticated or not request.user.is_admin() or not request.user.is_coordenador() or not request.user.validado == 1:
-		redirect('home')
-
-	print("user: " + str(request.user))
-##	perfil = GestoDePerfil(validação=0)
-##	perfil.save()
-##
-##	utilizador = Utilizador(
-##		email="hemayl@gai.come37",
-##		nome="joseca37",
-##		data_de_nascimento=timezone.now(),
-##		numero_telemovel=919191919,
-##		deficiencias="precisa de uma ajudinha para fazer algumas coisas pfv",
-##		user_type=0,
-##		validado=1,
-##		check_in_state=0,
-##		gestão_de_perfilid=perfil
-##	)
-##	utilizador.save()
+	if not ( request.user.is_authenticated and ( request.user.is_admin() or request.user.is_coordenador() ) and request.user.validado == 1 ):
+		return redirect('home')
 
 
-	amount_per_page = 2
+	
+	filter_form = IndexForm(request.POST) if request.method == 'POST' else IndexForm()
+
+	amount_per_page = 10
 	paging_start = page*amount_per_page
 	paging_end = paging_start+amount_per_page
 
-	total_users = Utilizador.objects.all().count()
+	total_users = 0#Utilizador.objects.all().count()
 
-	query_set = Utilizador.objects.order_by('nome')[paging_start:paging_end]
+	query_set = None
+	if request.method == 'POST':
+		filter_form.is_valid()
+		query_set = Utilizador.objects.extra(where=['user_type & ' + str(filter_form.cleaned_data['flag']) + ' <> 0']).order_by('nome')
+		total_users = query_set.count()
+		query_set = query_set[paging_start:paging_end]
+	else:
+		query_set = Utilizador.objects.order_by('nome')
+		total_users = query_set.count()
+		query_set = query_set[paging_start:paging_end]
 	query_result = list(query_set)
-
 
 ###	html = ""
 ###
@@ -326,7 +323,8 @@ def index(request, page=0):
 
 		'lista_de_utilizadores': query_result,
 
-
+		'post_redirect': reverse("index"),
+		'form': filter_form,
 
 
 		'curr_page': page,
@@ -348,8 +346,8 @@ def index(request, page=0):
 
 def edit_user(request, id):
 	#return HttpResponse("hue" + str(id));
-	if not request.user.is_authenticated or not request.user.is_admin() or not request.user.is_coordenador() or not request.user.validado == 1:
-		redirect('home')
+	if not request.user.is_authenticated or not ( request.user.is_admin() or request.user.is_coordenador() ) or not request.user.validado == 1:
+		return redirect('home')
 
 	user = Utilizador.objects.filter(id=id).first()
 
@@ -387,8 +385,8 @@ def edit_user(request, id):
 
 
 def validate_user(request, id):
-	if not request.user.is_authenticated or not request.user.is_admin() or not request.user.is_coordenador() or not request.user.validado == 1:
-		redirect('home')
+	if not request.user.is_authenticated or not ( request.user.is_admin() or request.user.is_coordenador() ) or not request.user.validado == 1:
+		return redirect('home')
 
 	user = Utilizador.objects.filter(id=id).first()
 
@@ -418,8 +416,8 @@ def validate_user(request, id):
 
 
 def delete_user(request, id):
-	if not request.user.is_authenticated or not request.user.is_admin() or not request.user.is_coordenador() or not request.user.validado == 1:
-		redirect('home')
+	if not request.user.is_authenticated or not ( request.user.is_admin() or request.user.is_coordenador() ) or not request.user.validado == 1:
+		return redirect('home')
 
 
 	user = Utilizador.objects.filter(id=id).first()
