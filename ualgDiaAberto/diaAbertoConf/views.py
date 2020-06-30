@@ -203,7 +203,7 @@ def updateTransporte(request, id):
         rotaformset = RotaFormSet(request.POST)
         #print(rotaformset)
         if transporteform.is_valid() and rotaformset.is_valid():
-            transporteform.save()
+            trans = transporteform.save()
 
             totalHorarios  = getTotalHorarios(rotaformset)
 
@@ -249,6 +249,9 @@ def updateTransporte(request, id):
                                 data= rotaform.cleaned_data['data']
                             )
                             newRota.save()
+            
+            rota_insc = Rota_Inscricao.objects.filter(rotaid__transporteid = trans)
+            rota_insc.delete()
 
             return  redirect('diaAbertoConf:allTransportes')
     
@@ -319,7 +322,9 @@ def updateHorario_Transporte(request, id):
     if request.method == "POST":
         form = HorarioTransporteForm(request.POST, instance = dados_Horario_Transporte)
         if form.is_valid():
-            form.save()
+            horario = form.save()
+            rota_insc = Rota_Inscricao.objects.filter(rotaid__horarioid=horario)
+            rota_insc.delete()
             return redirect('diaAbertoConf:allHorarios')
     
     context = { 'horario' : dados_Horario_Transporte,
@@ -375,29 +380,7 @@ def createInscAssociada(request, id):
     saved = False
     dados_rota = Rota.objects.get(id=id)
     dados_rotaInsc = Rota_Inscricao.objects.filter(rotaid = dados_rota.id)
-    allInsc = Inscricao.objects.filter(dia = dados_rota.data)
-
-    inscFiltered = InscRotaFilter(request.GET, queryset=allInsc)
-
-    numGrupoSearched = request.GET.get("num_grupo")
-    escolaSearched = request.GET.get("nome_escola")
-
-    #Ordering Results
-    order_by = request.GET.get('order_by')
-    direction = request.GET.get('direction')
-    if order_by:
-        ordering = order_by
-        if direction == 'desc':
-            ordering = '-{}'.format(order_by)
-
-        insc = inscFiltered.qs.order_by(ordering)
-    else:
-        insc = inscFiltered.qs
-
-    #Pagination
-    paginator = Paginator(insc, 5) 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    allInsc = Inscricao.objects.filter(dia = dados_rota.data).filter(hora_chegada__lte = dados_rota.horarioid.hora_de_partida)
 
     error = ""
 
@@ -420,6 +403,34 @@ def createInscAssociada(request, id):
                 saved = True
                 form = RotaInscForm(None) 
                 lugaresOcupados += num_passageiros 
+
+    inscFiltered = InscRotaFilter(request.GET, queryset=allInsc)
+
+    numGrupoSearched = request.GET.get("num_grupo")
+    escolaSearched = request.GET.get("nome_escola")
+
+    #Ordering Results
+    order_by = request.GET.get('order_by')
+    direction = request.GET.get('direction')
+    if order_by:
+        ordering = order_by
+        if direction == 'desc':
+            ordering = '-{}'.format(order_by)
+
+        insc = inscFiltered.qs.order_by(ordering)
+    else:
+        insc = inscFiltered.qs
+
+    showInsc = []
+
+    for i in insc:
+        if not Rota_Inscricao.objects.filter(rotaid__horarioid__hora_de_partida = dados_rota.horarioid.hora_de_partida).filter(inscricaoid = i).exists():
+            showInsc.append(i)
+
+    #Pagination
+    paginator = Paginator(showInsc, 5) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = { 'dados_rota': dados_rota,
                 'page_obj': page_obj,
@@ -486,7 +497,6 @@ def deleteInscAssociada(reques,id, idRota_Insc):
 #---------------------------------------------------------------------------------------
 #Gestao de Ementas
 #--------------------------------------------------------------------------------------
-
 @login_required()
 @permission_required('utilizadores.view_ementa', raise_exception=True)
 def gestaoEmentas(request):
@@ -508,6 +518,7 @@ def deleteEmenta(request, id):
 @permission_required('utilizadores.add_ementa', raise_exception=True)
 def createEmenta(request):
     saved=False
+    
     if request.method == "GET":
         ementaForm = EmentaForm(request.GET or None)
         pratoFormSet=PratoFormset(request.GET or None)
@@ -520,10 +531,12 @@ def createEmenta(request):
                newPrato = prato.save(commit=False)
                newPrato.ementaid = ementa
                newPrato.save()
-            saved=True  
-            ementaForm = EmentaForm() 
-            pratoFormSet = PratoFormset()
-            
+            saved=True 
+            #diaUsed.append(ementa.dia)
+    
+    diaUsed = []       
+    for e in Ementa.objects.all():
+        diaUsed.append(e.dia)
 
     #Gets all the dates of the diaAberto
     daysDiaAberto = []
@@ -532,12 +545,14 @@ def createEmenta(request):
         start_date = diaAberto.data_inicio
         end_date = diaAberto.data_fim
         current_date = start_date
-        daysDiaAberto.append(start_date)
-        while current_date <  end_date:
-            current_date += datetime.timedelta(days=1)
-            daysDiaAberto.append(current_date)
+        #daysDiaAberto.append(start_date)
+        while current_date <=  end_date:
+            if current_date not in diaUsed:
+                daysDiaAberto.append(current_date)
+            current_date += datetime.timedelta(days=1) 
     except IndexError:
         pass
+
 
     context={
         'ementaform' : ementaForm,
@@ -551,6 +566,11 @@ def createEmenta(request):
 @login_required()
 @permission_required('utilizadores.change_ementa', raise_exception=True)
 def EditarEmenta(request,id):
+    diaUsed = []
+    for e in Ementa.objects.all():
+        if not e.id == id:
+            diaUsed.append(e.dia)
+
     dados_Ementa = Ementa.objects.get(id = id)
     pratos = Prato.objects.filter(ementaid = id)
 
@@ -564,7 +584,7 @@ def EditarEmenta(request,id):
     elif request.method == "POST":
         
         form = EmentaForm(request.POST,instance=dados_Ementa)
-        pratoformset= PratoFormset(request.POST)
+        pratoformset= PratoFormset(request.POST, initial = [{'pratoid':p.id, 'nome': p.nome, 'tipo' : p.tipo, 'descricao':p.descricao } for p in pratos])
         
         if form.is_valid() and pratoformset.is_valid():
             ementaform=form.save()
@@ -597,18 +617,21 @@ def EditarEmenta(request,id):
 
         return redirect('diaAbertoConf:gestaoEmentas')                 
     
+    #Gets all the dates of the diaAberto
     daysDiaAberto = []
     try:
         diaAberto = DiaAberto.objects.all()[0]
         start_date = diaAberto.data_inicio
         end_date = diaAberto.data_fim
         current_date = start_date
-        daysDiaAberto.append(start_date)
-        while current_date <  end_date:
-            current_date += datetime.timedelta(days=1)
-            daysDiaAberto.append(current_date)
+        #daysDiaAberto.append(start_date)
+        while current_date <=  end_date:
+            if current_date not in diaUsed:
+                daysDiaAberto.append(current_date)
+            current_date += datetime.timedelta(days=1) 
     except IndexError:
         pass
+
 
     context= { 'ementa' : dados_Ementa,
                'datasDiaAberto': daysDiaAberto,

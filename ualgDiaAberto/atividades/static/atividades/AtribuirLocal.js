@@ -86,12 +86,14 @@ function getLocalImage(){
 }
 
 function getLocalExterior(){
+    var patharray = window.location.pathname.split("/")
+    var atividadeid = patharray[patharray.length - 1]
     $('select[name=localid_exterior]').find('option').each(function(){
         $(this).remove();
     })
     $('textarea[name=descricao]').html('')
     campusid = $('select[name=campusid]').val();
-    request_url = '/GestaoAtividades/getLocalExterior/' + campusid;
+    request_url = '/GestaoAtividades/getLocalExterior/' + campusid + '/' + atividadeid;
     $.ajax({
             url: request_url,
             dataType: "json",
@@ -108,8 +110,10 @@ function getLocalExterior(){
 }
 
 function getLocais(){
+    var patharray = window.location.pathname.split("/")
+    var atividadeid = patharray[patharray.length - 1]
     edificioid = $('select[name=edicifioid]').val();
-    request_url = '/GestaoAtividades/getLocal/' + edificioid;
+    request_url = '/GestaoAtividades/getLocal/' + edificioid + '/' + atividadeid;
     $.ajax({
         url: request_url,
         dataType: "json",

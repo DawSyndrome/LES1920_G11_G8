@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from .filters import UnidadeOrganicaFilter, DepartamentoFilter, LocalFilter, CampusFilter, EdificioFilter, TematicaFilter, MaterialFilter, AtividadeFilter, SessaoFilter
 
 from atividades.models import Edificio, Campus, Departamento, Local, Atividade, UnidadeOrganica, Tematica, AtividadeTematica, AtividadeMaterial, Sessao, SessaoAtividade, Material
-from utilizadores.models import Utilizador
+from utilizadores.models import Utilizador, Tarefa
 
 from atividades.forms import EdificioForm, CampusForm, DepartamentoForm, LocalForm, AtividadeForm, UnidadeOrganicaForm, TematicaForm, AtividadeTematicaFormset, AtividadeMaterialFormset, AtividadeTematicaForm, AtividadeMaterialForm, AtividadeSessaoForm, AtividadeSessaoFormset, SessaoForm, MaterialForm
 
@@ -89,6 +89,18 @@ def updateEdificio(request, id):
 @permission_required('utilizadores.delete_edificio', raise_exception=True)
 def deleteEdificio(request, id):
     dados_edificio = Edificio.objects.get(id = id)
+    for dados_local in Local.objects.filter(edicifioid = dados_edificio):
+        atividades = Atividade.objects.filter(localid= dados_local.id)
+        for a in atividades:
+            a.localid = None
+            a.validada = -1
+            a.save()
+            tarefaTransporteOrigen = Tarefa.objects.filter(sessao_atividadeid_origem__atividadeid = a)
+            tarefaTransporteOrigen.delete()
+            tarefaTransporteDestino = Tarefa.objects.filter(sessao_atividadeid_destino__atividadeid = a)
+            tarefaTransporteDestino.delete()
+            tarefaAtividade = Tarefa.objects.filter(sessao_atividadeid__atividadeid = a)
+            tarefaAtividade.delete()
     dados_edificio.delete()
     return HttpResponseRedirect(reverse('atividades:allEdificios'))
 
@@ -154,6 +166,18 @@ def updateCampus(request, id):
 @permission_required('utilizadores.delete_campus', raise_exception=True)
 def deleteCampus(request, id):
     dados_campus = Campus.objects.get(id = id)
+    for dados_local in Local.objects.filter(campusid = dados_campus):
+        atividades = Atividade.objects.filter(localid= dados_local.id)
+        for a in atividades:
+            a.localid = None
+            a.validada = -1
+            a.save()
+            tarefaTransporteOrigen = Tarefa.objects.filter(sessao_atividadeid_origem__atividadeid = a)
+            tarefaTransporteOrigen.delete()
+            tarefaTransporteDestino = Tarefa.objects.filter(sessao_atividadeid_destino__atividadeid = a)
+            tarefaTransporteDestino.delete()
+            tarefaAtividade = Tarefa.objects.filter(sessao_atividadeid__atividadeid = a)
+            tarefaAtividade.delete()
     dados_campus.delete()
     return HttpResponseRedirect(reverse('atividades:allCampus'))
 
@@ -407,6 +431,12 @@ def deleteLocal(request, id):
         a.localid = None
         a.validada = -1
         a.save()
+        tarefaTransporteOrigen = Tarefa.objects.filter(sessao_atividadeid_origem__atividadeid = a)
+        tarefaTransporteOrigen.delete()
+        tarefaTransporteDestino = Tarefa.objects.filter(sessao_atividadeid_destino__atividadeid = a)
+        tarefaTransporteDestino.delete()
+        tarefaAtividade = Tarefa.objects.filter(sessao_atividadeid__atividadeid = a)
+        tarefaAtividade.delete()
     dados_local.delete()
     return redirect('atividades:allLocais')
 
@@ -498,6 +528,7 @@ def showAtividades(request):
 
     allCampus = Campus.objects.all()
     allEdificios = Edificio.objects.all()
+    allUnidadeOrganicas = UnidadeOrganica.objects.all()
     allTematicaAtividade = AtividadeTematica.objects.all()
     allSessaoAtividade = SessaoAtividade.objects.all()
 
@@ -555,6 +586,11 @@ def showAtividades(request):
     sessao_gte = request.GET.get('sessao_gte')
     sessao_lte = request.GET.get('sessao_lte')
     data = request.GET.get('data')
+
+    try:
+        uoSearched =  int(request.GET.get('uo'))
+    except TypeError:
+        uoSearched = None
     
     try:
         localcampusSearched =  int(request.GET.get('localcampus'))
@@ -570,12 +606,14 @@ def showAtividades(request):
         'page_obj': page_obj, 
         'allCampus' : allCampus, 
         'allEdificios' : allEdificios,
+        'allUnidadeOrganicas' : allUnidadeOrganicas,
         'listTematica' : allTematicaAtividade, 
         'listMaterial' : allMateriais,
         'listSessao' : allSessaoAtividade, 
         'nome' : nome, 
         'tipo_atividade' : tipo_atividade,
         'validada' : validada, 
+        'uoSearched' : uoSearched,
         'localcampusSearched' : localcampusSearched,
         'localedificioSearched': localedificioSearched,
         'daysDiaAberto' : daysDiaAberto, 
@@ -730,6 +768,13 @@ def updateAtividade(request, id):
                             s.save()
                         else:
                             s.delete()
+
+                tarefaTransporteOrigen = Tarefa.objects.filter(sessao_atividadeid_origem__atividadeid = f)
+                tarefaTransporteOrigen.delete()
+                tarefaTransporteDestino = Tarefa.objects.filter(sessao_atividadeid_destino__atividadeid = f)
+                tarefaTransporteDestino.delete()
+                tarefaAtividade = Tarefa.objects.filter(sessao_atividadeid__atividadeid = f)
+                tarefaAtividade.delete()
 
                 return  redirect('atividades:allAtividades')
 
@@ -893,12 +938,44 @@ def getEdificioCampus(request, campusid):
     dados_edificio = [(e.id, e.nome_edificio + ", " + str(e.campusid))for e in Edificio.objects.filter(campusid = campusid)]
     return JsonResponse(dict(dados_edificio))
 
-def getLocal(request, edificioid):
-    dados_local = [(l.id, "Andar " + str(l.andar) + ", " + "Sala " + str(l.sala))for l in Local.objects.filter(edicifioid = edificioid)]
+def getLocal(request, edificioid, atividadeid):
+    list_locais = []
+    atividade = Atividade.objects.get(id=atividadeid)
+    for l in Local.objects.filter(edicifioid = edificioid):
+        free = True
+        for sessao_a in SessaoAtividade.objects.filter(atividadeid = atividadeid):
+            hora_inicio = datetime.datetime.combine(sessao_a.data, sessao_a.sessaoid.hora_de_inicio)
+            hora_fim = hora_inicio + datetime.timedelta(minutes=atividade.duracao)
+            
+            allSessoes = SessaoAtividade.objects.filter(sessaoid__hora_de_inicio__lte = hora_fim.time())
+            for sessao in allSessoes:
+                atividade_2 = sessao.atividadeid
+                duracao = atividade_2.duracao
+                fim = datetime.datetime.combine(sessao.data, sessao.sessaoid.hora_de_inicio) + datetime.timedelta(minutes=duracao)
+                if sessao.sessaoid.hora_de_inicio <= sessao_a.sessaoid.hora_de_inicio and fim.time() >= sessao_a.sessaoid.hora_de_inicio:
+                    if sessao.atividadeid.localid == l:
+                        free = False
+                        break
+
+            # if SessaoAtividade.objects.filter(sessaoid__hora_de_inicio__gte=sessao_a.sessaoid.hora_de_inicio).filter(sessaoid__hora_de_inicio__lt=hora_fim.time()).filter(data=sessao_a.data).filter(atividadeid__localid=l).exists():
+            #     free = False
+            #     break
+        if free:
+            list_locais.append(l)
+    dados_local = [(l.id, "Andar " + str(l.andar) + ", " + "Sala " + str(l.sala)) for l in list_locais]
     return JsonResponse(dict(dados_local))
 
-def getLocalExterior(request, campusid):
-    dados_local = [(l.id, str(l.nome_local_exterior)) for l in Local.objects.filter(campusid = campusid).filter(indoor=False)]
+def getLocalExterior(request, campusid, atividadeid):
+    list_locais = []
+    for l in Local.objects.filter(campusid = campusid).filter(indoor=False):
+        free = True
+        for sessao_a in SessaoAtividade.objects.filter(atividadeid = atividadeid):
+            if SessaoAtividade.objects.filter(sessaoid=sessao_a.sessaoid).filter(data=sessao_a.data).filter(atividadeid__localid=l).exists():
+                free = False
+                break
+        if free:
+            list_locais.append(l)
+    dados_local = [(l.id, str(l.nome_local_exterior)) for l in list_locais]
     return JsonResponse(dict(dados_local))
 
 def getDescricaoLocal(request, localid):

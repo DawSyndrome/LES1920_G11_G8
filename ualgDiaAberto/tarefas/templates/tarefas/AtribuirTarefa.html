@@ -36,6 +36,8 @@
                     <p>{{ dadosTarefa.sessao_atividadeid.atividadeid.nome}}</p>
                     <b>Sessao:</b> 
                     <p>{{ dadosTarefa.sessao_atividadeid}}</p>
+                    <p><b>Colaboradores necessários:</b> {{dadosTarefa.sessao_atividadeid.atividadeid.num_colaboradores}}</p>
+                    <p><b>Colaboradores atribuidos:</b> {{dadosTarefa.colaboradores.count}}
                 {% endif %}	
             </div>
 			<div class="col-xs-8 col-sm-8 col-md-8">

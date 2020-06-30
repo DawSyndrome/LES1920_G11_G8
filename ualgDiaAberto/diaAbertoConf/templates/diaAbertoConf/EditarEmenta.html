@@ -31,7 +31,7 @@
 								<label>Dia</label>
 							</div>
     						<div class="col-sm-8">
-      							<select id="id_dia" name="dia" class="form-control">
+      							<select id="id_dia" name="dia" class="form-control" required>
                                     {% for dia in datasDiaAberto%}
                                     	{% if dia  == ementa.dia %}
                                         	<option value={{ dia |date:"Y-m-d"}} selected>{{dia|date:"d-m-Y"}}</option>
@@ -51,7 +51,7 @@
 										<label>Tipo</label>
 									</div>
     								<div class="col-sm-8">
-										<select id="id_form-{{ forloop.counter0 }}-tipo" name="form-{{ forloop.counter0 }}-tipo" class="form-control">
+										<select id="id_form-{{ forloop.counter0 }}-tipo" name="form-{{ forloop.counter0 }}-tipo" class="form-control" required>
                                             {% if prato.tipo.value == 'Sopa' %} 
 												<option value="Sopa" selected>Sopa</option>
 											{% else %}	
@@ -109,7 +109,7 @@
 						<div class="form-group row mt-5">
 							<div class="col-sm-10">
 								<a type="button" class="btn btn-secondary mr-3" href="{% url 'diaAbertoConf:gestaoEmentas' %}">Cancelar</a>
-								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:EditarEmenta' id=ementa.id %}">Guardar</button>
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Modal" data-id="{% url 'diaAbertoConf:EditarEmenta' id=ementa.id %}">Alterar</button>
 							</div>
 
 							<div class="modal" id="Modal">

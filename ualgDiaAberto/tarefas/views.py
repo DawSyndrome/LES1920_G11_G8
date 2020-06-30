@@ -170,7 +170,12 @@ def atribuirTarefa(request, id):
     if request.method == 'POST':
         colabid = request.POST.get('utilizadorid')
         tarefa.colaboradores.add(Utilizador.objects.get(id= colabid))
-        tarefa.estado = True
+        if tarefa.tipoTarefa == 'Transporte':
+            tarefa.estado = True
+        elif tarefa.tipoTarefa == 'Atividade':
+            num_colab = tarefa.colaboradores.all().count()
+            if num_colab == tarefa.sessao_atividadeid.atividadeid.num_colaboradores:
+                tarefa.estado = True
         tarefa.save()
         return redirect('tarefas:showTarefas')
 
@@ -226,8 +231,9 @@ def atribuirTarefa(request, id):
 def removeColab(request, id, colabid):
     tarefa = Tarefa.objects.get(id=id)
     tarefa.colaboradores.remove(Utilizador.objects.get(id=colabid))
+    num_colab = tarefa.colaboradores.all().count()
 
-    if not tarefa.colaboradores.all():
+    if not tarefa.colaboradores.all() or num_colab < tarefa.sessao_atividadeid.atividadeid.num_colaboradores:
         tarefa.estado = False
         tarefa.save()
     

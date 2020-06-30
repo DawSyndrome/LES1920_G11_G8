@@ -207,6 +207,9 @@
                     var id = $(this).attr('id').replace('-' + (total-1) + '-', '-' + total + '-');
 
                     $(this).attr({'name': name, 'id': id}).val('');
+                    if ($(this).is('select[name$=sessaoid]')){
+                        $(this).prop('disabled', 'disabled')
+                    }
 
                 });
                 newElement.find('label').each(function() {
@@ -260,6 +263,9 @@
                 {
                     cloneMore('.sessao-form-comp', 'formSessao');
                 }
+                manageOptions_Tematica()
+                manageOptions_Material()
+                manageOptions_Sessao()
                 return false;
             });
 
@@ -277,6 +283,9 @@
                 {
                     deleteForm('formSessao', $(this), '.sessao-form-comp');
                 }
+                manageOptions_Tematica()
+                manageOptions_Material()
+                manageOptions_Sessao()
                 return false;
             });
 
@@ -395,6 +404,93 @@
                     $('.step3').removeClass("bg-secondary")
                 }
             }
+
+    function manageOptions_Tematica(){
+    var selected = []
+    $('select[name$=tematicaid]').each(function(){
+        selected.push(this)
+    })
+
+    $('select[name$=tematicaid]').each(function(){
+        var select = this
+        $(this).find('option').each(function(){
+            for(var i = 0; i < selected.length; i++){
+                if($(this).val() == $(selected[i]).val() && $(select).attr('id') != $(selected[i]).attr('id')){
+                    $(this).hide()
+                    break
+                }else 
+                    $(this).show()
+            }
+        })
+        
+    })
+}
+
+    function manageOptions_Material(){
+    var selected = []
+    $('select[name$=materialid]').each(function(){
+        selected.push(this)
+    })
+
+    $('select[name$=materialid]').each(function(){
+        var select = this
+        $(this).find('option').each(function(){
+            for(var i = 0; i < selected.length; i++){
+                if($(this).val() == $(selected[i]).val() && $(select).attr('id') != $(selected[i]).attr('id')){
+                    $(this).hide()
+                    break
+                }else 
+                    $(this).show()
+            }
+        })
+        
+    })
+}
+
+    function manageOptions_Sessao(){
+    var selected = []
+    $('select[name$=sessaoid]').each(function(){
+        selected.push(this)
+    })
+
+    $('select[name$=sessaoid]').each(function(){
+        var select = this
+        console.log($(this).parents(".form-group").find('select[name$=data]').val())
+        $(this).find('option').each(function(){
+            for(var i = 0; i < selected.length; i++){
+                if($(this).val() == $(selected[i]).val() && $(select).attr('id') != $(selected[i]).attr('id') && $(this).parents(".form-group").find('select[name$=data]').val() == $(selected[i]).parents(".form-group").find('select[name$=data]').val()){
+                    $(this).hide()
+                    break
+                }else 
+                    $(this).show()
+            }
+        })
+        
+    })
+}
+
+$('select[name$=tematicaid]').change(function(){ 
+    manageOptions_Tematica()
+})
+
+$('select[name$=materialid]').change(function(){ 
+    manageOptions_Material()
+})
+
+$('select[name$=sessaoid]').change(function(){ 
+    manageOptions_Sessao()
+})
+
+$('select[name$=data]').change(function(){ 
+    manageOptions_Sessao()
+    $(this).parents(".form-group").find('select[name$=sessaoid]').removeAttr("disabled")
+})
+
+$(document).ready(function(){
+    manageOptions_Tematica()
+    manageOptions_Material()
+    manageOptions_Sessao()
+})
 
         </script>
     

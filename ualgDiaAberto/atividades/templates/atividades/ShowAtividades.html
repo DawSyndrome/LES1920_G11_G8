@@ -33,7 +33,7 @@
     					</li>
 					{%else%}
 						<li class="nav-item">
-            					<a class="nav-link" href="{% url 'atividades:allAtividades' %}">Atividades</a>
+            					<a class="nav-link active" href="{% url 'atividades:allAtividades' %}">Atividades</a>
           					</li>  
 					{%endif%}
 				{% endif %}
@@ -135,6 +135,20 @@
                 {% endif %}
               </select>
             </div>
+            {% if user.user_type == 16 %}
+            <div class="form-group row">                          
+              <select id="id_uo" name="uo" class="form-control">
+                <option disabled selected>Pesquisar por unidade orgânica</option>
+                {% for uo in allUnidadeOrganicas %}
+                  {% if uo.id == uoSearched %}
+                    <option value="{{uo.id}}" selected>{{uo.nome}}</option>
+                  {% else %}
+                    <option value="{{uo.id}}">{{uo.nome}}</option>
+                  {% endif %} 
+                {% endfor %}
+              </select>
+            </div>
+            {% endif %}
             <div class="form-group row">                          
               <select id="id_localcampus" name="localcampus" class="form-control">
                 <option disabled selected>Pesquisar por campus</option>
@@ -204,7 +218,7 @@
 					</ol>
 				</nav>
 
-        {% if inDate %}
+        {% if inDate and perms.utilizadores.add_atividade %}
 				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'atividades:createAtividade' %}"> + Adicionar atividade</a>
         {% endif %}
 
@@ -253,7 +267,7 @@
                 {% elif atividade.validada == -1 %}
                   <td><h5><span class="badge badge-warning ">Pendente</span></h5></td>
                 {% endif %}
-                {% if inDate %}
+                {% if inDate and perms.utilizadores.delete_atividade and perms.utilizadores.change_atividade %}
                 <td><a class="btn btn-outline-success far fa-edit" href="{% url 'atividades:updateAtividade' id=atividade.id %}"></a></td>
                 <td><a href="" class="delete btn btn-outline-danger fas fa-trash-alt" data-toggle="modal" data-target="#Modal" data-id="{% url 'atividades:deleteAtividade' id=atividade.id %}"></a></td>
                 {% else %}
@@ -282,7 +296,7 @@
 											<td colspan="3">
 												<div>
                           <p><b>Local:</b> {% if atividade.localid %} {{atividade.localid}} {% else %} Não atribuído {% endif %}</p>
-                          {% if atividade.localid %}
+                          {% if atividade.localid.mapa_sala %}
                             <p><b>Mapa do Local: </b><a class="imageShow" href="" data-toggle="modal" data-target="#ImageModal" data-image="{{atividade.localid.mapa_sala}}">Visualizar a imagem</a></p>
                           {% endif %}
                                                     <p><b>Colaboradores:</b> {{ atividade.num_colaboradores }}

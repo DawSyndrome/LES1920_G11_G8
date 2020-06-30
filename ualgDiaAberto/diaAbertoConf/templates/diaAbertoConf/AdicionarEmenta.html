@@ -37,7 +37,7 @@
 								<label>Dia</label>
 							</div>
     						<div class="col-sm-8">
-      							<select id="id_dia" name="dia" class="form-control">
+      							<select id="id_dia" name="dia" class="form-control" required>
                                     {% for dia in datasDiaAberto%}
                                         <option value="{{dia|date:"Y-m-d"}}">{{dia|date:"d-m-Y"}}</option>
                                 	{% endfor %}
@@ -53,7 +53,7 @@
 										<label>Tipo</label>
 									</div>
     								<div class="col-sm-8">
-										<select id="id_form-{{ forloop.counter0 }}-tipo" name="form-{{ forloop.counter0 }}-tipo" class="form-control">
+										<select id="id_form-{{ forloop.counter0 }}-tipo" name="form-{{ forloop.counter0 }}-tipo" class="form-control" required>
                                             <option value="Sopa">Sopa</option>
                                             <option value="Carne">Carne</option>
                                             <option value="Peixe">Peixe</option>

@@ -125,12 +125,21 @@ def register(request):
 
 			if utilizador.is_admin():
 				utilizador.user_permissions.set(Permission.objects.all())
+				utilizador.user_permissions.remove(Permission.objects.get(name='Can add atividade'))
+				utilizador.user_permissions.remove(Permission.objects.get(name='Can change atividade'))
+				utilizador.user_permissions.remove(Permission.objects.get(name='Can delete atividade'))
+				utilizador.user_permissions.remove(Permission.objects.get(codename='validates_atividade'))
+				utilizador.user_permissions.remove(Permission.objects.get(codename='atribuir_local'))
+				utilizador.user_permissions.remove(Permission.objects.get(codename='alterar_local'))
+				utilizador.user_permissions.remove(Permission.objects.get(name='Can add tarefa'))
+				utilizador.user_permissions.remove(Permission.objects.get(name='Can change tarefa'))
+				utilizador.user_permissions.remove(Permission.objects.get(name='Can delete tarefa'))
+				utilizador.user_permissions.remove(Permission.objects.get(codename='assign_tarefa'))
+				utilizador.user_permissions.remove(Permission.objects.get(codename='remove_colab_from_tarefa'))
+
 			elif utilizador.is_coordenador():
 				permission_list  = []
-				permission_list.append(Permission.objects.get(name='Can add atividade'))
 				permission_list.append(Permission.objects.get(name='Can view atividade'))
-				permission_list.append(Permission.objects.get(name='Can change atividade'))
-				permission_list.append(Permission.objects.get(name='Can delete atividade'))
 				permission_list.append(Permission.objects.get(codename='validates_atividade'))
 				permission_list.append(Permission.objects.get(codename='atribuir_local'))
 				permission_list.append(Permission.objects.get(codename='alterar_local'))

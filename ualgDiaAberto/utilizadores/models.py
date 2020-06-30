@@ -209,6 +209,7 @@ class Inscricao(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     escolaid = models.ForeignKey(Escola, models.DO_NOTHING, db_column='EscolaID', blank=True, null=True)  # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)  # Field name made lowercase.
+    hora_chegada = models.TimeField(db_column='Hora_chegada', blank=True, null=True)  # Field name made lowercase.
 
     def __str__(self):
         if self.escolaid:

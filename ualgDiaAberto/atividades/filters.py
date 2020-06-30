@@ -53,6 +53,7 @@ class MaterialFilter(django_filters.FilterSet):
 
 class AtividadeFilter(django_filters.FilterSet):
 	nome = CharFilter(field_name='nome', lookup_expr='icontains')
+	uo = CharFilter(field_name='unidadeorganicaid__id', lookup_expr='icontains')
 	tipo_atividade = CharFilter(field_name='tipo_atividade')
 	validada = NumberFilter(field_name='validada')
 	localcampus = CharFilter(field_name='localid__campusid')

@@ -48,55 +48,51 @@ function deleteForm(prefix, btn) {
 
 $(document).on('click', '.add-form-row', function(e){
     e.preventDefault();
-	cloneMore('.tarefaGrupo-form-comp:last', 'form');
+    cloneMore('.tarefaGrupo-form-comp:last', 'form');
+    manageOptions()
 	return false;
 })
 
 $(document).on('click', '.remove-form-row', function(e){
     e.preventDefault();
     deleteForm('form', $(this));
+    manageOptions()
     return false;
 })
 
 //-----------------------------------------------------------
 //----------------------------------------------------------
 //-----------------------------------------------------------
-/*
-function removeInsc(select){
 
-    var value
-    $(select).find('option').each(function(){
-        console.log("aa")
-    })
+function manageOptions(){
+    var selected = []
     $('select[name$=inscricao]').each(function(){
-        if($(this).attr('id') != $(select).attr('id') && $(this).val()){
-            value = $(this).val()
-            $(select).find('option').each(function(){
-                if ($(this).val == value)
-                    $(this).hide()
-            })
-        }
+        selected.push(this)
+    })
 
+    $('select[name$=inscricao]').each(function(){
+        var select = this
+        $(this).find('option').each(function(){
+            for(var i = 0; i < selected.length; i++){
+                if($(this).val() == $(selected[i]).val() && $(select).attr('id') != $(selected[i]).attr('id')){
+                    $(this).hide()
+                    break
+                }else 
+                    $(this).show()
+            }
+        })
+        
     })
 }
 
 $('select[name$=inscricao]').change(function(){ 
-    $('select[name$=inscricao]').each(function(){
-        select = $(this)
-        var value
-        $('select[name$=inscricao]').each(function(){
-            if($(this).attr('id') != select.attr('id') && $(this).val()){
-                value = $(this).val()
-                select.find('option').each(function(){
-                    if ($(this).val == value)
-                        $(this).hide()
-                })
-            }
-    
-        })
-    })
+    manageOptions()
 })
-*/
+
+$(document).ready(function(){
+    manageOptions()
+})
+
 //----------------------------------------------------
 //                  AJAX 
 //----------------------------------------------------

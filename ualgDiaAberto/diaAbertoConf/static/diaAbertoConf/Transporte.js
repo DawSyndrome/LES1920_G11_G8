@@ -57,7 +57,7 @@ function deleteForm(prefix, btn) {
         var forms = $('.rota-form-comp');
         $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
         for (var i=0, formCount=forms.length; i<formCount; i++) {
-            $(forms.get(i)).find('input, ul, label').each(function() {
+            $(forms.get(i)).find('input, ul, label, select').each(function() {
                 updateElementIndex(this, prefix, i);
             })
             

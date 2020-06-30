@@ -181,8 +181,9 @@
 						<li class="breadcrumb-item active">Tarefas</li>
 					</ol>
 				</nav>
-
-				<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'tarefas:createTarefa' %}"> + Adicionar tarefa</a>
+				{% if perms.utilizadores.add_tarefa%}
+					<a type="button" class="btn btn-outline-success mr-2 mb-4" href="{% url 'tarefas:createTarefa' %}"> + Adicionar tarefa</a>
+				{% endif %}
                	<div class="table-responsive-sm">
 				<table class="table" id="dataTable">                    
 					<thead>
@@ -236,8 +237,13 @@
 								{% else %}
 								<td style="width: 25%"><h5><span class="badge badge-warning">Não atribuída</span></h5></td>
 								{% endif %}
-                    		    <td style="width: 8%"><a class="btn btn-outline-success far fa-edit" href="{% url 'tarefas:updateTarefa' id=tarefa.id %}" ></a></td>
-                    		    <td style="width: 8%"><button class="btn btn-outline-danger fas fa-trash-alt delete" data-toggle="modal" data-target="#Modal" data-id="{% url 'tarefas:deleteTarefa' id=tarefa.id %}"></button></td>									
+								{%if perms.utilizadores.change_tarefa and perms.utilizadores.delete_tarefa %}
+                    		    	<td style="width: 8%"><a class="btn btn-outline-success far fa-edit" href="{% url 'tarefas:updateTarefa' id=tarefa.id %}" ></a></td>
+                    		    	<td style="width: 8%"><button class="btn btn-outline-danger fas fa-trash-alt delete" data-toggle="modal" data-target="#Modal" data-id="{% url 'tarefas:deleteTarefa' id=tarefa.id %}"></button></td>									
+								{% else %}
+									<td></td>
+									<td></td>
+								{% endif %}
 							</tr>
 						</tbody>
 						<tbody class="expand">
@@ -278,18 +284,20 @@
 									</td>
 								{% endif %}
                     	    </tr>
-							{% if not tarefa.estado %}
+							{% if not tarefa.estado and  tarefa.colaboradores.count == 0 %}
+								{% if perms.utilizadores.assign_tarefa %}
 								<tr>
 									<td></td>
 									<td colspan="5">
 										<a type="button" class="btn btn-outline-success mb-2" href="{% url 'tarefas:atribuirTarefa' id=tarefa.id %}">Atribuir colaborador</a><td>
 									</td>
 								</tr>
-								{% else %}
+								{% endif %}
+							{% else %}
 								<tr>
 									<td></td>
 									<td colspan="5">
-										
+										{% if tarefa.tipoTarefa == 'Atividade'%}<p><b>Colaboradores necessários:</b> {{tarefa.sessao_atividadeid.atividadeid.num_colaboradores}}</p>{%endif%}
 										<b>Colaborador associado: </b>
 										{% for  key, tarefaColab in allTarefaColaboradores.items %}
 											{% if key == tarefa.id %}
@@ -297,18 +305,20 @@
 													<p>
 													&nbsp; <i class="fas fa-arrow-right fa-xs"></i> &nbsp;
 													{{colab.nome}}, {{colab.email}} 
-													<a type="button" class="fas fa-times ml-2 rmcolab" style="color:red"href="" data-toggle="modal" data-target="#RemoveColab" data-id="{% url 'tarefas:removeColaborador' id=tarefa.id colabid=colab.id%}"></a>
+													{% if perms.utilizadores.remove_colab_from_tarefa %}
+														<a type="button" class="fas fa-times ml-2 rmcolab" style="color:red"href="" data-toggle="modal" data-target="#RemoveColab" data-id="{% url 'tarefas:removeColaborador' id=tarefa.id colabid=colab.id%}"></a>
+													{% endif %}
 													</p>
 												{% endfor%}
 											{% endif %}
 										{% endfor %}
 									</td>
 								</tr>
-								{% if tarefa.tipoTarefa == 'Atividade' %}
+								{% if tarefa.tipoTarefa == 'Atividade' and tarefa.colaboradores.count < tarefa.sessao_atividadeid.atividadeid.num_colaboradores and perms.utilizadores.assign_tarefa %}
 									<tr>
 										<td></td>
 										<td colspan="5">
-											<a type="button" class="btn btn-outline-success mb-2" href="{% url 'tarefas:atribuirTarefa' id=tarefa.id %}"> + Colaborador extra</a><td>
+											<a type="button" class="btn btn-outline-success mb-2" href="{% url 'tarefas:atribuirTarefa' id=tarefa.id %}"> Atribuir colaborador</a><td>
 										</td>
 									</tr>
 								{% endif%}
