@@ -500,7 +500,11 @@ def deleteInscAssociada(reques,id, idRota_Insc):
 @login_required()
 @permission_required('utilizadores.view_ementa', raise_exception=True)
 def gestaoEmentas(request):
-    diaAberto_data = DiaAberto.objects.get(id=1)
+    try:
+        diaAberto_data = DiaAberto.objects.all()[0]
+    except IndexError:
+         diaAberto_data = None
+            
     allEmentas = Ementa.objects.all()
     allPratos = Prato.objects.all()
     pratosType = ['Sopa','Carne','Peixe','Vegetariano','Sobremesa']
