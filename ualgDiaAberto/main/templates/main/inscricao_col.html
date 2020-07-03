@@ -1,0 +1,94 @@
+{% extends "diaAbertoConf/Home.html" %}
+
+{% block content %}
+<!-- caixas blog -->
+<head>
+	{% load static %}
+	<!--link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+  <link href="{% static '/main/js/inscricao.js' %}" rel="stylesheet"-->
+    
+     <!--Compiled and minified CSS   -->
+    <link href="{% static 'main/css/materialize.css' %}" rel="stylesheet">
+
+     <!--Compiled and minified JavaScript  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+  
+  
+  <div class="row" style="margin-left: 100px; width: 130%;">
+		<div class="col-md-7" style="margin-left: 100px; width: 130%;">
+			
+	      	<div class="card card-body" >
+	      		<a class="btn btn-primary btn-sm btn-block">Inscrições Coletivas</a>
+	      		<table class="table table-sm">
+	      			<tr>
+	      				
+	      			</tr>
+
+	      			
+	      				{% for usr in user %}
+			      				{% if usr.user_type == 8 %} 
+			      				<!-- participante <th><center>{{usr.user_type}}</center></th>-->
+			      					<th><center>Ano</center></th>
+	      							<th><center>Turma</center></th>
+	      							<th><center>Área</center></th>
+				        			<tr>
+				        				{% for info in part %}
+					        				<td><center>{{info.ano_escolar}}</center></td>
+					        				<td><center>{{info.turma|capfirst}}</center></td>
+					        				<td><center>{{info.area|capfirst}}</center></td>
+					        				<td><a class="btn btn-sm btn-info btn-block" href="{% url 'main:ver_col' pk=info.pk %}">Visualizar</a></td>
+					        				<td><a class="btn btn-sm btn-info btn-block" href="{% url 'main:update_col' pk=info.pk %}">Editar</a></td>
+					        				<td><a class="btn btn-sm btn-info btn-block" href="{% url 'main:apagar_col' pk=info.pk %}">Eliminar</a></td>
+					        		<tr>
+					        			{% endfor %}
+				        		{% elif usr.user_type == 1 %} 
+				        		<!-- docente -->
+				        			<th><center>Id</center></th>
+	      							<th><center>Check In</center></th>
+
+				        			<tr>
+				        				{% for info in dados %}	
+					        				<td><center>{{info.participanteinfoid}}</center></td>
+					        				<td><center>{{info.checkin_state}}</center></td>
+					        				<td><a class="btn btn-sm btn-info btn-block" href="{% url 'main:ver_col' pk=info.pk %}">Visualizar</a></td>
+					        			{% endfor %}
+				        		{% elif usr.user_type == 16 or usr.user_type == 6 %} 
+				        		<!-- admin and usr.user_type == 6  and info.utilizadorid|stringformat:"s" == usr.email|stringformat:"s" -->
+				        			<th><center>Id</center></th>
+				        			<th><center>Escola</center></th>
+				        			<th><center>Ano</center></th>
+				        			<th><center>Turma</center></th>
+				        			<th><center>Participantes</center></th>
+	      							</tr>
+											{% for part in part %}
+										        <tr>
+										        <td><center>{{part.utilizadorid.inscriçãoid.id}}</center></td>
+										        <td><center>{{part.utilizadorid.inscriçãoid.escolaid.nome|capfirst}}</center></td>
+										        <td><center>{{part.ano_escolar}}</center></td>
+										        <td><center>{{part.turma|capfirst}}</center></td>
+										        <td><center>{{part.total_de_participantes}}</center></td> 
+
+										        <td><a class="btn btn-sm btn-info btn-block" href="{% url 'main:ver_col' pk=part.pk %}">Visualizar</a></td>	
+								        		<td><a class="btn btn-sm btn-info btn-block" href="{% url 'main:apagar_col' pk=part.pk %}">Eliminar</a></td>
+								        		<tr>
+										    {% endfor %}
+	
+									    	
+							    {% else %}
+
+				        		{% endif %}
+
+		        		{% endfor %}
+
+
+	        			</tr>
+	        			
+	        		</table>
+	        	</div>
+	        </div>
+	    </div>
+
+
+
+{% endblock %}

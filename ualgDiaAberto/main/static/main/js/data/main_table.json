@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "name": "aaaa",
+      "kind": "a",
+      "campus": "gambelas",
+      "eo": "fct",
+      "dep": "fct",
+      "desc": null,
+      "resp": "rafa",
+      "hour": "13:02",
+      "end_hour": "13:32",
+      "duration": 30,
+      "vacancies": 20,
+      "schedule": "13:02 - 13:32",
+      "place": "Ed.9 Sala 1.1",
+      "session_id": 1,
+      "activity_id": 1
+    }
+  ]
+}

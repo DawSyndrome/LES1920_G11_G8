@@ -1,0 +1,358 @@
+{% extends "main/header.html" %}
+
+{% load static %}
+  
+
+    
+  
+{% block content %}
+<!-- caixas blog -->
+  <h1><center>Inscrição Coletiva</center> </h1>
+<br>
+
+  
+<p> </p>
+<p> </p>
+
+
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f1f1f1;
+}
+
+#regForm {
+  background-color: #ffffff;
+  margin: 10px auto;
+  font-family: Raleway;
+  padding: 40px;
+  width: 100%;
+  min-width: 300px;
+  text-align: left;  
+}
+
+h1 {
+  text-align: left;  
+}
+
+input {
+  padding: 5px;
+  width: 30%;
+  font-size: 17px;
+  font-family: Raleway;
+  border: 1px solid #aaaaaa;
+
+}
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+  background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+.tab {
+  display: none;
+}
+
+button {
+  background-color: #4CAF50;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 17px;
+  font-family: Raleway;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+#prevBtn {
+  background-color: #bbbbbb;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4rem;
+  height: 4rem;
+  font-size: 1rem;
+  color: #777;
+  border: 2px solid #777777;
+  border-radius: 50%;
+  padding: 1rem;
+  background: #F9F9F9;
+  box-shadow: 0 0 0 0.5em #F9F9F9;
+
+}
+
+.step.active {
+  background-color: white;
+  border-color: #23d160;
+  color: #23d160;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+  background-color: #23d160;
+  border-color: #23d160;
+  color: white;
+}
+
+.content-wrap {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+  overflow: hidden;
+}
+
+.content-wrap::before { /* linhas entre os passos */
+  position: absolute;
+  top: calc(50% - 1px);
+  right: 10;
+  left: 10;
+  Content: "";
+  Background-color: #c9c1c1;
+  height: 2px;
+}
+
+.button.is-danger {
+    background-color: #ff3860;
+    border-color: transparent;
+    color: #fff;
+}
+
+
+input {
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: -internal-light-dark-color(black, white);
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    -webkit-appearance: textfield;
+    background-color: -internal-light-dark-color(rgb(255, 255, 255), rgb(59, 59, 59));
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    margin: 0em;
+    font: 400 13.3333px Arial;
+    padding: 1px 2px;
+    border-width: 2px;
+    border-style: inset;
+    border-color: -internal-light-dark-color(rgb(118, 118, 118), rgb(195, 195, 195));
+    border-image: initial;
+}
+
+
+</style>
+<body>
+<form id="regForm" action="" method="POST">
+
+  <!-- Circles which indicates the steps of the form: -->
+
+  <div class="content-wrap" style="text-align:center;margin-top:40px;">
+
+
+    <span class="step"> <i class="far fa-2x fa-calendar-alt"> </i> </span>
+
+    <span class="step"> <i class="fas fa-2x fa-user"> </i> </span>
+    <span class="step"> <i class="fas fa-2x fa-graduation-cap"> </i> </span>
+    <span class="step"> <i class="fas fa-2x fa-bus-alt"> </i> </span>
+    <span class="step"> <i class="fas fa-2x fa-apple-alt"> </i> </span>
+    <span class="step"> <i class="fas fa-2x fa-check"> </i></span>
+  </div>
+<p></p>
+
+  {% csrf_token %}
+  <!-- One "tab" for each step in the form:   {{form4.atividades}}    -->
+  
+
+  <div class="tab"><p><h3>Informação de Atividades</h3></p>
+
+    <p>Work here</p>
+    <p>Work here</p>
+    <p>Work here</p>
+
+
+  </div>
+
+
+  <div class="tab"><p><h3>Docentes Responsáveis</h3></p> <p></p> <br>
+
+
+  </div>
+
+  <div class="tab"><p><h3>Informação da Escola</h3></p> <p></p> <br>
+    Nome: {{form1.nome}}
+    Local: {{form1.localidade}} 
+    <hr>
+    <h3>Informação da Turma</h3>
+    <p>Ano: {{form.ano_escolar}} Turma {{form.turma}} </p>
+    
+    <p>Area: {{form.area}}</p>
+    <p>Número de Alunos: {{form.total_de_participantes}}</p>
+    <p>Número de professores: {{form.total_de_professores}}</p>
+  </div>
+
+  <div class="tab"><p><h3>Informação de Transporte</h3></p><p></p>
+
+    <p>Meio de Transporte: {{form2.tipo_de_transporte}}</p>
+    <p>Hora de Chegada: {{form2.hora_de_chegada}}   </p>
+    <p>Hora de Partida: {{form2.hora_de_partida}} </p>
+  </div>
+
+  <div class="tab"><p><h3>Informação de Almoços</h3></p>
+    <p></p>
+    Em que Campus pretende almoçar? {{form3.campus}}<p></p> <p></p>
+    Quantas senhas de Aluno? <br>
+   (Preço Normal: 2,80€) {{form3.preço_normal_aluno}}<br> <br>
+   (Preço Economico: 2,00€) {{form3.preço_economico_aluno}} <br>
+    <p></p>
+    Quantas senhas de Professor/Acompanhante? <br>
+    (Preço Normal: 4,25€) {{form3.preço_outro}} <br> <br> 
+    (Preço Economico: 3,50€) {{form3.preço_economico_outro}}  <br> <br>
+    <p></p>
+    <p></p>
+    <a href="/ementa" target="_blank"><h3>Ver Ementa</h3></a>
+  </div>
+
+  <div class="tab"><p><h3>Submissão</h3></p>
+    <p></p>
+    RESUMO DA INSCRIÇÃO<br>
+    Dados Pessoais, Dados da escola, Sessões escolhidas, etc...<br>
+    <p></p>
+    {% csrf_token %}
+    Um e-mail de confirmação será enviado para {{userid.email}}
+    <p></p>
+
+    <button type="button" class="button is-danger">
+      <span class="icon is-small">
+        <i class="fas fa-download"></i>
+      </span> 
+      <span> Obter PDF </span> <!---->
+    </button>
+    
+  </div>
+  <p></p> <p></p> <p></p>
+  <div style="float:left;">
+    <a href="/inscricao" class="btn btn-primary">Cancelar</a>
+  </div>
+  <div style="overflow:auto;">
+    <div style="float:right;">
+      <button type="button" class="btn btn-success" id="prevBtn" onclick="nextPrev(-1)">Anterior</button>
+      <button type="button" class="btn btn-success" id="nextBtn" onclick="nextPrev(1)">Próximo</button>
+    </div>
+  </div>
+  
+</form>
+
+<script>
+var currentTab = 0; // Current tab is set to be the first tab (0)
+showTab(currentTab); // Display the current tab
+
+function showTab(n) {
+  // This function will display the specified tab of the form...
+  var x = document.getElementsByClassName("tab");
+  x[n].style.display = "block";
+  //... and fix the Previous/Next buttons:
+  if (n == 0) {
+    document.getElementById("prevBtn").style.display = "none";
+  } else {
+    document.getElementById("prevBtn").style.display = "inline";
+  }
+  if (n == (x.length - 1)) {
+    document.getElementById("nextBtn").innerHTML = "Submeter";
+  } else {
+    document.getElementById("nextBtn").innerHTML = "Próximo";
+  }
+  //... and run a function that will display the correct step indicator:
+  fixStepIndicator(n)
+}
+
+function nextPrev(n) {
+  // This function will figure out which tab to display
+  var x = document.getElementsByClassName("tab");
+  // Exit the function if any field in the current tab is invalid:
+  if (n == 1 && !validateForm()) return false;
+  // Hide the current tab:
+  x[currentTab].style.display = "none";
+  // Increase or decrease the current tab by 1:
+  currentTab = currentTab + n;
+  // if you have reached the end of the form...
+  if (currentTab >= x.length) {
+    // ... the form gets submitted:
+    document.getElementById("regForm").submit();
+    return false;
+  }
+  // Otherwise, display the correct tab:
+  showTab(currentTab);
+}
+
+function validateForm() {
+  // This function deals with validation of the form fields
+  var x, y, i, valid = true;
+  x = document.getElementsByClassName("tab");
+  y = x[currentTab].getElementsByTagName("input");
+  // A loop that checks every input field in the current tab:
+  for (i = 0; i < y.length; i++) {
+    // If a field is empty...
+    if (y[i].value == "") {
+      // add an "invalid" class to the field:
+      y[i].className += " invalid";
+      // and set the current valid status to false
+      valid = false;
+    }
+  }
+  // If the valid status is true, mark the step as finished and valid:
+  if (valid) {
+    document.getElementsByClassName("step")[currentTab].className += " finish";
+  }
+  return valid; // return the valid status
+}
+
+function fixStepIndicator(n) {
+  // This function removes the "active" class of all steps...
+  var i, x = document.getElementsByClassName("step");
+  for (i = 0; i < x.length; i++) {
+    x[i].className = x[i].className.replace(" active", "");
+  }
+  //... and adds the "active" class on the current step:
+  x[n].className += " active";
+}
+
+</script>
+
+<script type="text/javascript" src="/jsi18n/"></script> 
+<script type="text/javascript" src="/static/admin/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+
+</body>
+</html>
+
+
+{% endblock %}

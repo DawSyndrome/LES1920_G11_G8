@@ -32,6 +32,11 @@
 								{% if perms.utilizadores.view_inscricao%}
 									<li class="nav-item">
         		        				<a class="nav-link" href="#">Inscrições</a>
+        		        					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          										<a class="dropdown-item" href="{% url 'main:register_col'%}">Fazer Inscrição</a>
+          										<a class="dropdown-item" href="{% url 'main:inscricao_col'%}">Ver Inscrição</a>
+											</div>
+
         		      				</li>
 								{% endif %}
 								{% if perms.utilizadores.view_atividade%}

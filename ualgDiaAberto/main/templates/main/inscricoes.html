@@ -1,0 +1,14 @@
+{% extends "main/header.html" %}
+		
+		
+  
+{% block content %}
+
+  {% for instance in object_list %}
+  {{ instance.participanteinfoid}} - {{instance.ano_escolar}}  {{instance.turma}}  {{instance.area}}</p>
+
+
+
+  {% endfor %}
+
+{% endblock %}

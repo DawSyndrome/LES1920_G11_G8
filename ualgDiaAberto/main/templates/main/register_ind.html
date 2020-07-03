@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <title>Title</title>
+    {% block style %}
+    {% load static %}
+
+  <style type="text/css">
+
+    /*custom font*/
+    @import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+    /*basic reset*/
+    * {margin: 0; padding: 0;}
+
+    /*progressbar*/
+    #progressbar {
+      margin-bottom: 30px;
+      overflow: hidden;
+      width: 100%;
+      /*CSS counters to number the steps*/
+      counter-reset: step;
+    }
+
+    #progressbar li {
+      list-style-type: none;
+      color: black;
+      text-transform: uppercase;
+      font-size: 9px;
+      width: 12%; /*Line size*/
+      float: left;
+      position: relative;
+    }
+
+    #progressbar li:before {
+      font-family: 'Font Awesome\ 5 Free';
+      font-weight: 900;
+      counter-increment: step;
+      width: 40px;
+      line-height: 40px;
+      display: block;
+      font-size: 10px;
+      color: #333;
+      background: gray;
+      border-radius: 50%;
+      margin: 0 auto 5px auto;
+    }
+
+    #progressbar #li_1:before {
+      content: "\f007";
+    }
+
+    #progressbar #li_2:before {
+      content: "\f19d";
+    }
+
+    #progressbar #li_3:before {
+      content: "\f238";
+    }
+
+    #progressbar #li_4:before {
+      content: "\f6d7";
+    }
+
+    #progressbar #li_5:before {
+      content: "\f274";
+    }
+
+    #progressbar #li_6:before {
+      content: "\f00c";
+    }
+
+    /*progressbar connectors*/
+    #progressbar li:after {
+      content: '';
+      width: 100%;
+      height: 2px;
+      background: gray;
+      position: absolute;
+      left: -50%;
+      top: 15px;
+      z-index: -1; /*put it behind the numbers*/
+    }
+
+    #progressbar li:first-child:after {
+      /*connector not needed before the first step*/
+      content: none; 
+    }
+
+    /*marking active/completed steps green*/
+    /*The number of the step and the connector before it = green*/
+    #progressbar li.active:before,  #progressbar li.active:after{
+      background: #27AE60;
+      color: white;
+    }
+
+    /*form styles*/
+    #msform {
+      width: 800px;
+      margin: 50px auto;
+      text-align: center;
+      position: relative;
+    }
+
+    #msform fieldset {
+      background: white;
+      border: 0 none;
+      border-radius: 3px;
+      box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+      padding: 20px 30px;
+      box-sizing: border-box;
+      width: 90%;
+      left: -10%;
+      margin: 0 10%;
+      
+      /*stacking fieldsets above each other*/
+      position: relative;
+    }
+
+    #msform label {
+      font-family: 'Monospace Regular';
+      font-size: 15px;
+      float: left;
+      margin-bottom: 1px;
+    }
+
+    /*Hide all except first fieldset*/
+    #msform fieldset:not(:first-of-type) {
+      display: none;
+    }
+
+    /*inputs*/
+    #msform input {
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      margin-bottom: 10px;
+      width: 40%;
+      box-sizing: border-box;
+      font-family: montserrat;
+      color: #2C3E50;
+      font-size: 13px;
+    }
+
+    #msform select {
+      width: 100%;
+      height: 50px;
+      margin-bottom: 10px;
+    }
+
+    /*buttons*/
+    #msform .action-button {
+      width: 100px;
+      background: #27AE60;
+      font-weight: bold;
+      color: white;
+      border: 0 none;
+      border-radius: 1px;
+      cursor: pointer;
+      padding: 10px 5px;
+      margin: 10px 5px;
+    }
+
+    #msform #cnpj_btn, #cnpj_btn2 {
+      width: 100%;
+      height: 40px;
+      background: #5999e5;
+      font-weight: bold;
+      color: white;
+      border: 0 none;
+      border-radius: 1px;
+      cursor: pointer;
+      padding: 10px 5px;
+      margin: 10px 5px;
+    }
+
+    #msform #cnpj_btn:hover, #cnpj_btn2:hover {
+      background: #265997;
+    }
+
+    #msform .action-button:hover, #msform .action-button:focus {
+      box-shadow: 0 0 0 2px white, 0 0 0 3px #27AE60;
+    }
+
+    #msform .action-button:disabled {
+      border: 1px solid #999999;
+      background-color: #cccccc;
+      color: #666666;
+      cursor: not-allowed;
+    }
+
+    element.style {
+      display: block;
+      left:0%;
+      opacity: 1;
+}
+  </style>
+
+{% endblock style %}
+    {% include "header.html" %}
+  </head>
+  <body>
+    {% block content %}
+
+  <form id="msform" enctype="multipart/form-data" action="" method="POST" style="width: 1300px; margin-right: 200px; left: 0%;">
+
+    <input type="hidden" name="all_data">
+
+    <ul id="progressbar" style="width: 1625px; margin-left: 0px;">
+      <li id="li_5"><p>Sessoes</p></li>
+      <li id="li_6"><p>Submissao</p></li>
+    </ul>
+
+    <!-- Fourth Page -->
+    <fieldset>
+      <h3>Informação de Atividades</h3>
+
+      <div id="first_page">
+        <input type="hidden" name="all_data">
+        <!-- Left Menu -->
+        <div id="left_side">
+
+          <h6>FILTROS ATIVIDADE</h6>
+
+          <div class="control has-icons-left is-clearfix">
+            <input type="text" id="search" placeholder="Nome da Atividade" class="form-control" aria-describedby="search-query">
+            <span id="search_icon" class="glyphicon glyphicon-search"></span>
+          </div>
+
+          <select id="select_activity_kind" name="activity_kind" class="form-control">
+            <option disabled="disabled" hidden="hidden" selected="selected" value="">Tipo de Atividade</option>
+            <option value="">Todas</option>
+            {% for activity_kind in activity_kind_list %}
+              <option value="{{ activity_kind }}">{{activity_kind}}</option>
+            {% endfor %}
+          </select>
+
+          <select id="select_campus" name="campus" class="form-control">
+            <option disabled="disabled" hidden="hidden" selected="selected" value="">Campus</option>
+            <option value="">Todos</option>
+            {% for campus in campus_list %}
+              <option value="{{ campus }}">{{ campus }}</option>
+            {% endfor %}
+          </select>
+
+          <select id="select_eo" name="eo" class="form-control">
+            <option disabled="disabled" hidden="hidden" selected="selected" value="">E.O.</option>
+            <option value="">Todas</option>
+            {% for eo in eo_list %}
+              <option value="{{ eo }}">{{ eo }}</option>
+            {% endfor %}
+          </select>
+
+          <div id="more_filters_div">
+            <a id="more_filters">
+              <small>Mais Filtros de Atividade</small>
+              <span>
+                <i class="fas fa-plus-square"></i>
+              </span>
+            </a>
+
+            <a id="less_filters">
+              <small>Mais Filtros de Atividade</small>
+              <span>
+                <i class="fas fa-minus-square"></i>
+              </span>
+            </a>
+          </div>
+
+          <div id="filters">
+            <input type="button" class="datepicker" name="after_date" class="form-control">
+            <input type="button" class="datepicker" name="before_date" class="form-control">
+          </div>
+
+          <div id="session_filters">
+            <h6>FILTROS SESSÃO</h6>
+
+            <div id="left_div">
+              <input type="button" id="timepkr_from" class="form-control" placeholder="De" />
+              <button type="button" class="btn btn-primary" onclick="showpickers1('timepkr_from',24)"><i type="button"class="fa fa-clock-o" style="font-size: 20px; margin-right: 60px;"></i></button>
+            </div> 
+
+            <div id="right_div">
+              <input type="button" id="timepkr_to" class="form-control" placeholder="Até" />
+              <button type="button" class="btn btn-primary" onclick="showpickers2('timepkr_to',24)"><i type="button" class="fa fa-clock-o" style="font-size: 20px; margin-right: 60px;"></i></button>
+            </div>
+
+            <div class="timepicker"></div>  <!--Important to add and keep it seprate to the end-->
+          </div>
+
+          <div id="minus_vacancies">
+            <h4>Mínimo de vagas</h4>
+            <div>
+              <input type="button" id="decrease_btn" name="decrease_btn" value="-" onclick="subtractVacancies(this)">
+            </div>
+            <div>
+              <input id="vacancies_qtt" type="text" name="vacancies_qtt" value="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+            </div>
+            <div>
+              <input type="button" id="increase_btn" name="increase_btn" value="+" onclick="addVacancies(this)">
+            </div>
+          </div>
+
+        </div>
+        <!-- End Left Menu -->
+
+        <!-- Main Table -->
+        <div id="table">
+          <table id="main_table" class="table table-bordered table-hover table-striped w-100">
+            <thead class="bg-primary-600">
+              <tr>
+                <th width="40px"></th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Campus</th>
+                <th>E.O.</th>
+                <th>Dep.</th>
+                <th style="display: none;"></th>
+                <th style="display: none;"></th>
+              </tr>
+            </thead>
+            
+          </table>
+        </div>
+        <!-- End Main Table -->
+
+        <div id="footer">
+
+          <h2 class="title has-text-grey is-uppercase"> Sessões Escolhidas </h2>
+
+          <table id="choiced_sessions" class="table table-bordered table-hover table-striped w-100">
+            <tbody id="no_choiced_sessions">
+              <tr>
+                <td>
+                  <p class="has-text-grey">Ainda não há sessões escolhidas</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+      </div>
+      <!-- End First Page -->
+
+      <a href="http://localhost:8000/inscricao/"> Cancelar </a> 
+      <input type="button" name="previous" class="previous action-button" value="Anterior" />
+      <input type="button" name="next" class="next action-button" value="Próximo" />
+    </fieldset>
+    <!-- End Fourth Page -->
+
+    <!-- Fiveth Page -->
+    <fieldset>
+      <p></p>
+      RESUMO DA INSCRIÇÃO<br>
+      Dados Pessoais, Dados da escola, Sessões escolhidas, etc...<br>
+      <p></p>
+      {% csrf_token %}
+      Um e-mail de confirmação será enviado para {{userid.email}}
+      <p></p>
+
+      <button type="button" class="button is-danger">
+        <span class="icon is-small">
+          <i class="fas fa-download"></i>
+        </span> 
+        <span> Obter PDF </span> <!---->
+      </button>
+      
+      <a href="http://localhost:8000/inscricao/"> Cancelar </a> 
+      <input type="button" name="previous" class="previous action-button" value="Anterior" />
+      <input type="submit" name="submit" class="submit action-button" value="Salvar" />
+    </fieldset>
+    <!-- End Fiveth Page -->
+
+    <!-- Sixth Page -->
+    <fieldset>
+      
+    </fieldset>
+    <!-- End Sixth Page -->
+
+  </form>
+
+  <script type="text/javascript">
+
+    //jQuery time
+    var current_fs, next_fs, previous_fs; //fieldsets
+    var left, opacity, scale; //fieldset properties which we will animate
+    var animating; //flag to prevent quick multi-click glitches
+
+    $(".next").click(function(){
+      if(animating) return false;
+      animating = true;
+      
+      current_fs = $(this).parent();
+      next_fs = $(this).parent().next();
+
+      //activate next step on progressbar using the index of next_fs
+      $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+      
+      //show the next fieldset
+      next_fs.show(); 
+      //hide the current fieldset with style
+      current_fs.animate({opacity: 0}, {
+        step: function(now, mx) {
+          //as the opacity of current_fs reduces to 0 - stored in "now"
+          //1. scale current_fs down to 80%
+          scale = 1 - (1 - now) * 0.2;
+          //2. bring next_fs from the right(50%)
+          left = (now * 50)+"%";
+          //3. increase opacity of next_fs to 1 as it moves in
+          opacity = 1 - now;
+          current_fs.css({
+            'transform': 'scale('+scale+')',
+            'position': 'absolute'
+          });
+          next_fs.css({'left': '-10%', 'opacity': opacity}); /*remove '25%' and put left*/
+        }, 
+        duration: 800, 
+        complete: function(){
+          current_fs.hide();
+          animating = false;
+        }, 
+        //this comes from the custom easing plugin
+        easing: 'easeInOutBack'
+      });
+    });
+
+    $(".previous").click(function(){
+      if(animating) return false;
+      animating = true;
+      
+      current_fs = $(this).parent();
+      previous_fs = $(this).parent().prev();
+
+      //de-activate current step on progressbar
+      $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+      
+      //show the previous fieldset
+      previous_fs.show(); 
+      //hide the current fieldset with style
+      current_fs.animate({opacity: 0}, {
+        step: function(now, mx) {
+          //as the opacity of current_fs reduces to 0 - stored in "now"
+          //1. scale previous_fs from 80% to 100%
+          scale = 0.8 + (1 - now) * 0.2;
+          //2. take current_fs to the right(50%) - from 0%
+          left = ((1-now) * 50)+"%";
+          //3. increase opacity of previous_fs to 1 as it moves in
+          opacity = 1 - now;
+          current_fs.css({'left': '25%'}); /*remove '25%' and put left*/
+          previous_fs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
+        }, 
+        duration: 800, 
+        complete: function(){
+          current_fs.hide();
+          animating = false;
+        }, 
+        //this comes from the custom easing plugin
+        easing: 'easeInOutBack'
+      });
+    });
+
+    // #########################################################################
+
+    $('.datepicker').datepicker({ 
+      dateFormat: "dd-mm-yy",
+      yearRange: "c-100:c+100",
+      changeMonth: true,
+      changeYear: true
+    });
+
+    $('#msform').on('submit', function(){
+
+      var all_data = [];
+
+      var trs = document.querySelectorAll('#sub_tbody tr');
+
+      for(i = 0; i < trs.length; ++i) {
+
+        var row = trs[i];
+
+        var schedule = row.cells[0].innerHTML;
+
+        var text = row.innerHTML;
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(text, "text/html");
+
+        var activity_id = doc.querySelector('input[name=sub_activity_id]');
+        activity_id = activity_id.value;
+
+        var session_id = doc.querySelector('input[name=sub_session_id]');
+        session_id = session_id.value;
+
+        var subscribers_number = doc.querySelector('input[name=subscribers_qtt]');
+
+        var subscribers = subscribers_number.value;
+        var activity_kind = row.cells[2].innerHTML;
+        var place = row.cells[3].innerHTML;
+        var campus = row.cells[4].innerHTML;
+
+        all_data.push({
+          'activity_id': activity_id,
+          'session_id': session_id,
+          'schedule': schedule,
+          'subscribers': subscribers,
+          'activity_kind': activity_kind,
+          'place': place,
+          'campus': campus
+        });
+
+        $('input[name=all_data]').val(JSON.stringify(all_data));
+
+      }
+
+    });
+
+</script>
+
+<script type="text/javascript" src="{% static '/main/js/others/others.js' %}"></script>
+<script type="text/javascript" src="{% static '/main/js/main_table/main_table.js' %}"></script>
+
+{% endblock content %}
+  </body>
+</html>

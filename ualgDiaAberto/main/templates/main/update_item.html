@@ -1,0 +1,38 @@
+{% extends "main/header.html" %}
+		
+		
+  
+{% block content %}
+<!-- caixas blog -->
+  <h1><center>Forneça os dados da escola</center> </h1>
+<br>
+
+	
+<p> </p>
+<p> </p>
+
+{% for i in item %}
+    <form action="{% url 'main:update_item' %}" method="post">
+        {% csrf_token %}
+        {{ i.name }}
+        <input name="id" type="hidden" value="{{ i.id }}" />
+        <input name="ano_escolar" type="text" value="{{ i.ano_escolar }}" />
+        <input type="submit" value="update" />
+    </form>
+{% endfor %}
+
+
+<form method="POST" action="">
+{% for i in obj %}
+
+      {{ i.name }}:<input type='text' id='txt{{forloop.counter}}' value='{{ i.ano_escolar }}' />
+      <input type='hidden' participanteinfoid='item{{forloop.counter}}' value='{{obj.pk}}' />
+      <input type='submit' value='update' id='sbm{{forloop.counter}}' />
+
+{% endfor %}
+</form>
+
+
+
+
+{% endblock %}

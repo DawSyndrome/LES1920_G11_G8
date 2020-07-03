@@ -1,0 +1,85 @@
+{% extends "diaAbertoConf/Home.html" %}
+		
+
+{% block content %}
+<!-- caixas blog -->
+<head>
+	{% load static %}
+	<!--link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+  <link href="{% static '/main/js/inscricao.js' %}" rel="stylesheet"-->
+    
+     <!--Compiled and minified CSS   -->
+    <link href="{% static 'main/css/materialize.css' %}" rel="stylesheet">
+
+     <!--Compiled and minified JavaScript  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+  <h1><center>Dados da Inscrição {{insc.participanteinfoid}}</center> </h1>
+<br>
+
+
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+{% csrf_token %}
+	
+	<hr>
+	<th><b>Dados da Escola</b>
+	<hr>
+	<th><b>Escola</b>: {{insc.utilizadorid.inscriçãoid.escolaid.nome|capfirst}}</th>
+	<p> </p>
+	<th><b>Localidade</b>: {{insc.utilizadorid.inscriçãoid.escolaid.localidade|capfirst}}</th>
+	<p> </p>
+	<th><b>Área</b>: {{insc.area|capfirst}}</th>
+	<p> </p>
+	<th><b>Ano</b>: {{insc.ano_escolar}}</th>
+	<p> </p>
+	<th><b>Turma</b>: {{insc.turma|capfirst}}</th>
+	<p> </p>
+	<th><b>Nº de alunos</b>: {{insc.total_de_participantes}}</th>
+	<p> </p>
+	<th><b>Nº de professores</b>: {{insc.total_de_professores}}</th>
+	<p> </p>
+	<hr>
+	<th><b>Transporte</b>
+	<hr>
+	<th><b>Tipo de Transporte</b>: {{ut_trans.transporteid.tipo_transporte}}</th>
+	<p> </p>
+	<th><b>Hora de Chegada</b>: {{insc.participanteinfoid.transporteid.transporteid.hora_de_chegada}}</th>
+	<p> </p>
+	<th><b>Hora de Partida</b>: {{insc.participanteinfoid.transporteid.transporteid.hora_de_partida}}</th>
+	<p> </p>
+	<hr>
+	<th><b>Almoço</b>
+	<hr>
+	
+	<th><b><ins>Senhas de Aluno</ins></b>
+	<p> </p>
+	<th><b>Preço Normal (2,80€)</b>: {{ut_ementa.ementaid.preco_normal}}</th>
+	<p> </p>
+	<th><b>Preço Economico (2,00€)</b>: {{ut_ementa.ementaid.preco_economico}}</th>
+	<p> </p>
+	<th><b><ins>Senhas de Professor</ins></b>
+	<p> </p>
+	<th><b>Preço Normal (4,25€)</b>: {{ut_ementa.ementaid.preco_outro}}</th>
+	<p> </p>
+	<th><b>Preço Economico (3,50€)</b>: {{ut_ementa.ementaid.preco_economico_outro}}</th>
+	<p> </p>
+
+	<hr>
+	<th><b><ins>Atividades</ins></b>
+	<hr>
+
+		{% for a in sess %}
+
+			<p> </p>
+			<th><b>Nome Atividade</b>: {{a.sessao_atividadeid.atividadeid.nome}}</th>
+			<th><b>   Hora</b>: {{a.sessao_atividadeid.sessaoid.hora_de_inicio}}</th>
+			<p> </p>
+		{% endfor %}
+
+
+{% endblock %}

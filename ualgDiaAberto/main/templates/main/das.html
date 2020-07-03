@@ -1,0 +1,596 @@
+{% extends "main/header.html" %}
+
+{% load static %}
+    
+
+        
+  
+{% block content %}
+<!-- caixas blog -->
+  <h1><center>Inscrição Coletiva</center> </h1>
+<br>
+
+    
+<p> </p>
+<p> </p>
+
+
+<!DOCTYPE html>
+<html>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<link href="css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+<body>
+
+
+<div id="main">
+    <form action="." method="POST">{% csrf_token %}
+
+        <div class="dropdowns">
+            
+              <button onclick="myFunction()" type="button" class="dropbtn">Procurar Nome</button>
+              <div id="myDropdown" class="dropdowns-content">
+                <input type="text" autocomplete="on" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+                {% for obj in data %}
+                    <a>{{obj.name}}</a>
+                {% endfor %}
+              </div>
+            
+        </div>
+
+        <input type="text" id="nm" name="nm" placeholder="name">
+        <input type="text" id="th" name="th" placeholder="theme">
+        <p id="filt">Filter</p>
+        <button id="appl" name="apply">apply</button>
+
+    <p id="avse">Available Sessions</p>
+    <div id="table">
+        <div id="sections">
+
+            
+            
+            <p class="title tit1">name</p>
+            <p class="title tit2">time</p>
+            <p class="title tit3">duration</p>
+            <p class="title tit4">limit of attendance</p>
+            <p class="title tit5">Amount of students</p>
+        </div>
+        <div id="schedule">
+            {% for obj in data %}
+                {% if  "apply" in request.POST %}
+                {% if obj.name == name or obj.theme == theme %}
+            <div id="elem">
+                <button id="add" name="{{ obj.name }}" class="el tit00">+</button>
+
+                <td class="w dropdown"><a role="button"><span class="icon"><i class="fas fa-angle-down"></i></span></a></td>
+
+                <div class="w w1">
+                <p class="el tit01">{{ obj.name }}</p>
+                </div>
+                <div class="w w2">
+                <p class="el tit02">{{ obj.time }}</p>
+                </div>
+                <div class="w w3">
+                <p class="el tit03">{{ obj.duration }}</p>
+                </div>
+                <div class="w w4">
+                <p class="el tit04">{{ obj.limit_of_attendance }}</p>
+                </div>
+                <div class="w w5">
+                <input type="number" value="0" id="zer" name="{{ obj.name }}" class="el tit05">
+                    </div>
+                </div>
+                {% endif %}
+                {% else %}
+            <div id="elem">
+                <button id="add" name="{{ obj.name }}" class="el tit00">+</button>
+
+
+                <div class="w w1">
+                <p class="el tit01">{{ obj.name }}</p>
+                </div>
+                <div class="w w2">
+                <p class="el tit02">{{ obj.time }}</p>
+                </div>
+                <div class="w w3">
+                <p class="el tit03">{{ obj.duration }}</p>
+                </div>
+                <div class="w w4">
+                <p class="el tit04">{{ obj.limit_of_attendance }}</p>
+                </div>
+                <div class="w w5">
+                <input type="number" value="0" id="zer" name="{{ obj.name }}" class="el tit05">
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    </form>
+        <form action="." method="GET">{% csrf_token %}
+        <p id="chos">Chosen Sessions</p>
+        <div id="table1">
+        <div id="sections1">
+            <p class="title tit1">name</p>
+            <p class="title tit2">time</p>
+            <p class="title tit3">duration</p>
+            <p class="title tit4">limit of attendance</p>
+            <p class="title tit5">Amount of students</p>
+        </div>
+        <div id="schedule1">
+            {% for obj in lis %}
+            <div id="elem1">
+                <button id="add1" name="{{ obj.name }}" class="el tit001">-</button>
+                <div class="w w01">
+                <p class="el tit01">{{ obj.name }}</p>
+                </div>
+                <div class="w w2">
+                <p class="el tit02">{{ obj.time }}</p>
+                </div>
+                <div class="w w3">
+                <p class="el tit03">{{ obj.duration }}</p>
+                </div>
+                <div class="w w4">
+                <p class="el tit04">{{ obj.limit_of_attendance }}</p>
+                </div>
+                <div class="w w5">
+                <p class="el tit05">{{ obj.num }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+            <button id="prev" name="prev">Previous</button>
+            <button id="next" name="next">Next</button>
+        </form>
+    <button id="put">Add Sessions</button>
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="src/autocomplete.js"></script>
+<script>
+    setInterval($.ajax({
+    url: "",
+    success: function(document){
+    var cl = $(document).find("#schedule1").html();
+    $("#schedule1").html(cl);
+    }
+    }, 3000))
+    $("#put").click(function(){
+    var bb = document.getElementById("add");
+    bb.click();
+    })
+
+    function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function filterFunction() {
+      var input, filter, ul, li, a, i;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      div = document.getElementById("myDropdown");
+      a = div.getElementsByTagName("a");
+      for (i = 0; i < a.length; i++) {
+        txtValue = a[i].textContent || a[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          a[i].style.display = "";
+        } else {
+          a[i].style.display = "none";
+        }
+      }
+    }
+
+</script>
+<style>
+
+.dropdown {
+    position: absolute;
+    left: -18%;
+}
+
+.dropdown:before {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #f00;
+}
+
+.dropdown:after {
+    content: "";
+    position: absolute;
+    right: 15px;
+    top: 3px;
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #333;
+}
+
+
+#put{
+position: absolute;
+top: 42%;
+left: 54%;
+width: 18%;
+height: 2%;
+}
+
+.w{
+position: relative;
+width: 16%;
+height: 100%;
+}
+.w1{
+position: absolute;
+left: 2%;
+width: 18%;
+}
+.w01{
+position: absolute;
+left: 5%;
+width: 18%;
+}
+.w2{
+position: absolute;
+left: 22%;
+}
+.w3{
+position: absolute;
+left: 42%;
+}
+.w4{
+position: absolute;
+left: 62%;
+}
+.w5{
+position: absolute;
+left: 88%;
+width: 12%;
+}
+#wind{
+position: absolute;
+border-style: solid;
+border-color: black;
+border-radius: 5px;
+width: 30%;
+height: 15%;
+left: 35%;
+top: 10%;
+background-color: white;
+display: none;
+}
+#main{
+border-style: solid;
+border-color: black;
+border-width: 2px;
+background-color: white;
+position: absolute;
+left: 10%;
+top: 30%;
+width: 80%;
+height: 200%;
+}
+#avse{
+position: absolute;
+font-family: Helvetica, sans-serif;
+font-size: 20px;
+left: 2%;
+top: 1%;
+}
+#filt{
+position: absolute;
+font-family: Helvetica, sans-serif;
+font-size: 20px;
+left: 77%;
+top: 1%;
+}
+#appl{
+position: absolute;
+font-family: Helvetica, sans-serif;
+font-size: 20px;
+left: 91.5%;
+top: 9%;
+}
+#nm{
+position: absolute;
+font-family: Helvetica, sans-serif;
+font-size: 20px;
+left: 77%;
+top: 5%;
+}
+#th{
+position: absolute;
+font-family: Helvetica, sans-serif;
+font-size: 20px;
+left: 77%;
+top: 7%;
+}
+#chos{
+position: absolute;
+font-family: Helvetica, sans-serif;
+font-size: 20px;
+left: 2%;
+top: 46%;
+}
+#sections{
+position: absolute;
+border-style: solid;
+border-color: grey;
+border-left: none;
+border-right: none;
+border-width: 2px;
+background-color: white;
+border-top: none;
+width: 100%;
+top: 1%;
+height: 10%;
+}
+#sections1{
+position: absolute;
+border-style: solid;
+border-color: grey;
+border-left: none;
+border-right: none;
+border-width: 2px;
+background-color: white;
+border-top: none;
+width: 100%;
+top: 1%;
+height: 10%;
+}
+#schedule{
+position: absolute;
+border-style: solid;
+border-color: white;
+width: 99.2%;
+height: 80%;
+top: 11%;
+overflow-y: scroll;
+}
+#schedule1{
+position: absolute;
+border-style: solid;
+border-color: white;
+width: 99.2%;
+height: 88%;
+top: 11%;
+overflow-y: scroll;
+}
+#elem{
+position: relative;
+border-style: solid;
+border-color: grey;
+border-left: none;
+border-right: none;
+border-width: 2px;
+background-color: white;
+top: 1%;
+height: 10%;
+width: 100%;
+}
+#elem1{
+position: relative;
+border-style: solid;
+border-color: grey;
+border-left: none;
+border-right: none;
+border-width: 2px;
+background-color: white;
+top: 1%;
+height: 10%;
+width: 100%;
+}
+.el{
+position: absolute;
+font-family: Helvetica, sans-serif;
+}
+.tit00{
+position: absolute;
+left: 1%;
+top: 20%;
+font-size: 140%;
+cursor: pointer;
+display: none;
+}
+.tit001{
+position: absolute;
+left: 1%;
+top: 20%;
+font-size: 140%;
+cursor: pointer;
+display: flex;
+}
+.tit01{
+position: absolute;
+left: 1%;
+top: -3%;
+font-size: 16px;
+}
+.tit02{
+position: absolute;
+left: 0%;
+font-size: 16px;
+}
+.tit03{
+position: absolute;
+left: 0%;
+font-size: 16px;
+}
+.tit04{
+position: absolute;
+left: 0%;
+font-size: 16px;
+}
+.tit05{
+position: absolute;
+left: 0%;
+width: 80%;
+top: 20%;
+height: 40%;
+}
+.title{
+position: absolute;
+font-family: Helvetica, sans-serif;
+font-size: 17px;
+color: grey;
+}
+
+.chevron-cell {
+position: absolute;
+left: 1%;
+}
+
+.tit1{
+position: absolute;
+left: 5%;
+}
+.tit2{
+position: absolute;
+left: 22%;
+}
+.tit3{
+position: absolute;
+left: 42%;
+}
+.tit4{
+position: absolute;
+left: 62%;
+}
+.tit5{
+position: absolute;
+left: 88%;
+}
+#table{
+position: absolute;
+border-style: solid;
+border-color: grey;
+border-left: none;
+border-right: none;
+border-width: 2px;
+width: 70%;
+left: 2%;
+top: 5%;
+height: 40%;
+}
+#table1{
+position: absolute;
+border-style: solid;
+border-color: grey;
+border-left: none;
+border-bottom: none;
+border-right: none;
+border-width: 2px;
+width: 70%;
+left: 2%;
+top: 50%;
+height: 40%;
+}
+#next{
+position: absolute;
+top: 94%;
+left: 58%;
+background-color: white;
+width: 30%;
+height: 3%;
+cursor: pointer;}
+#prev{
+position: absolute;
+top: 94%;
+left: 12%;
+background-color: white;
+width: 30%;
+height: 3%;
+cursor: pointer;
+}
+
+
+
+.dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #3e8e41;
+}
+
+#myInput {
+  box-sizing: border-box;
+  background-image: url('searchicon.png');
+  background-position: 14px 12px;
+  background-repeat: no-repeat;
+  font-size: 16px;
+  padding: 14px 20px 12px 45px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
+#myInput:focus {outline: 3px solid #ddd;}
+
+.dropdowns {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdowns-content {
+  display: none;
+  position: absolute;
+  background-color: #f6f6f6;
+  min-width: 230px;
+  overflow: auto;
+  border: 1px solid #ddd;
+  z-index: 1;
+}
+
+.dropdowns-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdowns a:hover {background-color: #ddd;}
+
+.show {display: block;}
+
+
+
+
+
+.control {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    clear: both;
+    font-size: 1rem;
+    position: relative;
+    text-align: left;
+</style>
+</html>
+
+{% endblock %}

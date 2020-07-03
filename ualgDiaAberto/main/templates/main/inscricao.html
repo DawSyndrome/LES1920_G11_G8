@@ -1,0 +1,43 @@
+{% extends "diaAbertoConf/Home.html" %}
+		
+
+{% block content %}
+<!-- caixas blog -->
+<head>
+	{% load static %}
+	<!--link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+  <link href="{% static '/main/js/inscricao.js' %}" rel="stylesheet"-->
+    
+     <!--Compiled and minified CSS   -->
+    <link href="{% static 'main/css/materialize.css' %}" rel="stylesheet">
+
+     <!--Compiled and minified JavaScript  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+
+ <center> 
+<h3> Escolha o tipo de inscrição que pretende efetuar </h3>
+<br>
+
+Se pretende inscrever-se individualmente, faça a sua inscrição aqui
+<p> </p>
+<a class="btn btn-primary" href="/register_ind">Inscrição individual</a>
+<br>
+<p> </p>
+<p> </p>
+<p> </p>
+Se pretende inscrever um grupo de alunos, faça a inscrição aqui
+<p> </p>
+
+<a class="btn btn-primary" href="/register_col">Inscrição coletiva</a>
+
+<p> </p>
+<p> </p>
+<p> </p>
+
+<p> </p>
+
+	<!--  Se já possui uma conta, faça <a href="/login"><strong>Login</a></strong>. -->
+</center>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+#menu a{
+  color: white;
+  background-color: #252525;
+  padding-bottom: 5px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+#menu a:hover {
+  color: #c5ecfd;
+  background-color: #252525;
+  border-bottom: #c5ecfd solid 1px;
+}

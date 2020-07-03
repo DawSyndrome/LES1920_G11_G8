@@ -1,0 +1,23 @@
+{% extends "main/header.html" %}
+		
+		
+  
+{% block content %}
+<!-- caixas blog -->
+  <h1><center>Definiçoes de Conta</center> </h1>
+<br>
+
+	
+<p> </p>
+<p> </p>
+
+<form action="{% url post_redirect %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" class="btn btn-success" value="Submit">
+</form>
+
+
+<!-- <button type="submit">Continue</button> -->
+
+{% endblock %}

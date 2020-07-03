@@ -1,0 +1,35 @@
+{% extends "diaAbertoConf/Home.html" %}
+		
+
+{% block content %}
+<!-- caixas blog -->
+<head>
+	{% load static %}
+	<!--link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+  <link href="{% static '/main/js/inscricao.js' %}" rel="stylesheet"-->
+    
+     <!--Compiled and minified CSS   -->
+    <link href="{% static 'main/css/materialize.css' %}" rel="stylesheet">
+
+     <!--Compiled and minified JavaScript  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+
+<center><h3> Escolha o tipo de Inscrição que pretende pesquisar </h3></center>
+<p></p>
+
+<center><a class="btn btn-primary" href="/inscricao_ind">Inscrições individuais</a></center>
+<p></p>
+
+<center><a class="btn btn-primary" href="/inscricao_col">Inscrições coletivas</a></center>
+
+<p> </p>
+<p> </p>
+<p> </p>
+
+<p> </p>
+
+	<!--  Se já possui uma conta, faça <a href="/login"><strong>Login</a></strong>. -->
+</center>
+
+{% endblock %}

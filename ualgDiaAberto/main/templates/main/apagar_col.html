@@ -1,0 +1,29 @@
+{% extends "main/header.html" %}
+		
+
+{% block content %}
+<!-- caixas blog -->
+<head>
+	{% load static %}
+	<!--link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+  <link href="{% static '/main/js/inscricao.js' %}" rel="stylesheet"-->
+    
+     <!--Compiled and minified CSS   -->
+    <link href="{% static 'main/css/materialize.css' %}" rel="stylesheet">
+
+     <!--Compiled and minified JavaScript  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+	
+<p>Tem a certeza que pretende eliminar esta submissão?</p>
+	
+<form action="{% url 'main:apagar_col' info.participanteinfoid %}" method="POST">
+
+
+	{% csrf_token %}
+	<a href="{% url 'main:homepage' %}" class="btn btn-sm btn-info"> Cancelar </a>
+
+	<input type="submit" class="btn btn-sm btn-info" name="Confirmar" value="Confirmar">
+</form>
+
+{% endblock %}

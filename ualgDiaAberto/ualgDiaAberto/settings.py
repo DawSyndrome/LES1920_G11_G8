@@ -15,6 +15,8 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+TABLE_JSON = os.path.join(BASE_DIR, 'main/static/main/js/data/main_table.json')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -36,6 +38,8 @@ INSTALLED_APPS = [
     'tarefas.apps.TarefasConfig',
     'utilizadores.apps.UtilizadoresConfig',
     'gottem.apps.GottemConfig',
+    'main.apps.diaAbertoConf',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,7 +64,7 @@ ROOT_URLCONF = 'ualgDiaAberto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'main/templates/main')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,9 +90,16 @@ DATABASES = {
         'OPTIONS': {
             'read_default_file': 'database/mysql_connection.cnf',
         },
-
-
     }
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'les',
+#        'USER': 'root',
+#        'PASSWORD': '',
+#        'HOST': 'localhost',
+#        'PORT': '3306',
+#
+#    }
 }
 
 AUTH_USER_MODEL = 'utilizadores.Utilizador'
